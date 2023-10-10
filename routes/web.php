@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\CatalogsController;
+use App\Livewire\SearchProducts;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,4 +27,20 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+});
+
+
+Route::get('admin/catalogos', [CatalogsController::class, 'index'])->name('catalogos');
+Route::get('search/product', SearchProducts::class)->name('buscar.producto');
+
+
+
+//rutas para livewire
+use Livewire\Livewire;
+Livewire::setUpdateRoute(function ($handle) {
+    return Route::post('/livewire/update', $handle);
+});
+
+Livewire::setScriptRoute(function ($handle) {
+    return Route::get('/livewire/livewire.js', $handle);
 });

@@ -123,7 +123,7 @@
 
                                 <td class="px-6 py-4">{{ $producto->name }}</td>
                                 <td class="px-6 py-4">{{ $producto->presentation->name }}</td>
-                                <td class="px-6 py-4">{{ $producto->grammage->name }}</td>
+                                <td class="px-6 py-4">{{ $producto->gramaje.' ' .$producto->grammage->name }}</td>
                                 <td class="px-6 py-4">
 
                                     <?php $nombreDeLaImagen = basename($producto->image_path); ?>
@@ -192,7 +192,7 @@
                     </div>
                     <div class="relative z-0 w-full group">
                         <x-label>Gramaje</x-label>
-                        <x-input type="text" class="w-full" placehorder="descripcion del producto"
+                        <x-input type="number" class="w-full" placehorder="descripcion del producto"
                             wire:model='form.gramaje' />
                         <x-input-error for="form.gramaje" />
                     </div>

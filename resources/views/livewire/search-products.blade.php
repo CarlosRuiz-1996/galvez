@@ -1,6 +1,7 @@
 <x-slot name="header">
-    <h2 class="font-semibold text-xl text-purple-800 leading-tight">
-        {{ __('Catalogos > productos') }}
+    <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
+       <a href="{{route('catalogos')}}"> {{ __('Catalogos > ') }}</a>
+        {{ __('productos') }}
     </h2>
 </x-slot>
 

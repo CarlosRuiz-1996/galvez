@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CatalogsController;
+use App\Livewire\GestionProduct;
 use App\Livewire\SearchProducts;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,7 @@ Route::middleware([
 
 Route::get('admin/catalogos', [CatalogsController::class, 'index'])->name('catalogos');
 Route::get('search/product', SearchProducts::class)->name('buscar.producto');
+Route::get('gestion/product/{category?}', GestionProduct::class)->name('gestion.ctg.producto');
 
 
 

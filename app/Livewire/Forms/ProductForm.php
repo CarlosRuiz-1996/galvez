@@ -80,7 +80,7 @@ class ProductForm extends Form
      //read productos categoria
      public function readProductCategory($id, $sort, $orderBy, $list)
      {
-         return Product::where('category_id', '=',$id)
+         return Product::where('ctg_category_id', '=',$id)
              ->Where('name', 'like', '%' . $this->search . '%')
  
              ->Where('description', 'like', '%' . $this->search . '%')

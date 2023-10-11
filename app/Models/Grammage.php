@@ -7,5 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Grammage extends Model
 {
+    
+    protected $table = 'ctg_grammages';
+
     use HasFactory;
 }

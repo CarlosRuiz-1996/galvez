@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Presentation extends Model
+class PresentationFood extends Model
 {
     use HasFactory;
     
-    protected $table = 'ctg_presentations';
+    protected $table = 'ctg_presentation_food';
 
 }

@@ -11,16 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('iva', function (Blueprint $table) {
+        Schema::create('ctg_presentation_food', function (Blueprint $table) {
             $table->id();
-            $table->string('name');//monto
+            $table->string('name');
             $table->integer('status')->default(1);
-            $table->timestamps();
         });
-        Schema::enableForeignKeyConstraints();
-
     }
 
     /**
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('iva');
+        Schema::dropIfExists('ctg_presentation_food');
     }
 };

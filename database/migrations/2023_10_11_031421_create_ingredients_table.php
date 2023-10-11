@@ -11,24 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        //marcas
-        Schema::create('ctg_brands', function (Blueprint $table) {
+        Schema::create('ingredients', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('status')->default(1);
+            $table->integer('cantidad');
+            $table->string('gramaje');
+            $table->foreignId('ctg_grammage_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('food_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+
             $table->timestamps();
         });
-        Schema::enableForeignKeyConstraints();
 
     }
-
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('ctg_brands');
+        Schema::dropIfExists('ingredients');
     }
 };

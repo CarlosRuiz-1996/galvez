@@ -12,11 +12,11 @@ class Product extends Model
     protected $fillable = [
         'name',
         'description',
-        'grammage_id',
+        'ctg_grammage_id',
         'gramaje',
-        'presentation_id',
-        'brand_id',
-        'category_id',
+        'ctg_presentation_id',
+        'ctg_brand_id',
+        'ctg_category_id',
         'price',
         'iva_id',
         'ieps_id',
@@ -27,7 +27,7 @@ class Product extends Model
     ];
     public function grammage()
     {
-        return $this->belongsTo(Grammage::class);
+        return $this->belongsTo(Grammage::class,'ctg_grammage_id' );
     }
     public function Categories()
     {
@@ -35,7 +35,7 @@ class Product extends Model
     }
     public function presentation()
     {
-        return $this->belongsTo(Presentation::class);
+        return $this->belongsTo(Presentation::class, 'ctg_presentation_id');
     }
     public function Brand()
     {

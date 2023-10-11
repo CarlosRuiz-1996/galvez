@@ -77,7 +77,7 @@ class GestionProduct extends Component
             $products = [];
             $grammages = [];
         }
-
+        
         return view('livewire.gestion-product', [
             'products' => $products,
             'presentations' => $presentations,

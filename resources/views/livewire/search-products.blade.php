@@ -1,6 +1,6 @@
 <x-slot name="header">
     <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
-       <a href="{{route('catalogos')}}"> {{ __('Catalogos > ') }}</a>
+        <a href="{{ route('catalogos') }}"> {{ __('Catalogos > ') }}</a>
         {{ __('productos') }}
     </h2>
 </x-slot>
@@ -35,22 +35,19 @@
                         </thead>
                         <tbody>
 
-                            @foreach ($products as $product)
+                            @forelse ($products as $product)
                                 <tr class="table-row bg-white border-b hover:bg-gray-50">
                                     <td class="px-6 py-4">{{ $product->name }}</td>
                                     <td class="px-4 py-4">{{ $product->presentation->name }}</td>
                                     <td class="px-6 py-4">{{ $product->grammage->name }}</td>
                                     <td class="px-6 py-4">
 
-                                        <img class="p-8 rounded-t-lg h-40"
-                                        <?php $nombreDeLaImagen = basename($product->image_path);?>
+                                        <img class="p-8 rounded-t-lg h-40" <?php $nombreDeLaImagen = basename($product->image_path); ?>
                                             @if ($product->image_path) src="{{ asset('storage/products/' . $nombreDeLaImagen) }}"
                                                 alt="product image"
                                             @else
                                                 src="{{ asset('img/producto.png/') }}"
-                                                alt="product image"
-                                            @endif
-                                         />
+                                                alt="product image" @endif />
                                     </td>
                                     <td>
                                         <?php
@@ -69,7 +66,11 @@
 
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                            <div class="px-6 py-4">
+                                <h1>No hay registros</h1>
+                            </div>
+                            @endforelse 
 
                         </tbody>
                     </table>

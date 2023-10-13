@@ -14,19 +14,19 @@ class ProductForm extends Form
     public $name;
     public $description;
     public $gramaje;
-    public $grammage_id;
-    public $brand_id;
-    public $presentation_id;
-    public $category_id;
+    public $ctg_grammage_id;
+    public $ctg_brand_id;
+    public $ctg_presentation_id;
+    public $ctg_category_id;
 
     protected $rules = [
         'name' => 'required',
         'description' => 'required',
         'gramaje' => 'required',
-        'grammage_id' => 'required',
-        'brand_id' => 'required',
-        'presentation_id' => 'required',
-        'category_id' => 'required',
+        'ctg_grammage_id' => 'required',
+        'ctg_brand_id' => 'required',
+        'ctg_presentation_id' => 'required',
+        'ctg_category_id' => 'required',
         'image_path' => 'required'
     ];
     public ?Product $product;
@@ -60,22 +60,22 @@ class ProductForm extends Form
         $this->name = $product->name;
         $this->description = $product->description;
         $this->gramaje = $product->gramaje;
-        $this->grammage_id = $product->grammage_id;
+        $this->ctg_grammage_id = $product->ctg_grammage_id;
         $this->image_path = $product->image_path;
-        $this->brand_id = $product->brand_id;
-        $this->presentation_id = $product->presentation_id;
-        $this->category_id = $product->category_id;
+        $this->ctg_brand_id = $product->ctg_brand_id;
+        $this->ctg_presentation_id = $product->ctg_presentation_id;
+        $this->ctg_category_id = $product->ctg_category_id;
     }
     public function setProductEmpty()
     {
         $this->name = "";
         $this->description = "";
         $this->gramaje = "";
-        $this->grammage_id = "";
+        $this->ctg_grammage_id = "";
         $this->image_path = "";
-        $this->brand_id = "";
-        $this->presentation_id = "";
-        $this->category_id = "";
+        $this->ctg_brand_id = "";
+        $this->ctg_presentation_id = "";
+        $this->ctg_category_id = "";
     }
      //read productos categoria
      public function readProductCategory($id, $sort, $orderBy, $list)
@@ -99,7 +99,7 @@ class ProductForm extends Form
      {
         $this->validate();
 
-         Product::create($this->only(['name', 'description', 'gramaje','grammage_id','brand_id', 'presentation_id', 'category_id', 'image_path']));
+         Product::create($this->only(['name', 'description', 'gramaje','ctg_grammage_id','ctg_brand_id', 'ctg_presentation_id', 'ctg_category_id', 'image_path']));
          $this->reset();
      }
  
@@ -108,7 +108,7 @@ class ProductForm extends Form
      {
          $this->validate();
          $this->product->update($this->all());
-         $this->reset('name', 'description', 'gramaje','grammage_id','brand_id', 'presentation_id', 'category_id', 'image_path');
+         $this->reset('name', 'description', 'gramaje','ctg_grammage_id','ctg_brand_id', 'ctg_presentation_id', 'ctg_category_id', 'image_path');
      }
  
  

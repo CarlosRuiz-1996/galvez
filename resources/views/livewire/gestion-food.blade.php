@@ -21,7 +21,6 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
         <div class="mt-4 p-5">
-            <x-alert />
 
             <div class=" py-6 px-4 bg-gray-50 flex">
 
@@ -71,9 +70,9 @@
                                 @endif
                             </th>
                             <th scope="col" class="w-40 px-6 py-3 cursor-pointer"
-                                wire:click="order('presentation_id')">PRESENTACIÓN
+                                wire:click="order('ctg_presentation_food_id')">PRESENTACIÓN
 
-                                @if ($sort == 'presentation_id')
+                                @if ($sort == 'ctg_presentation_food_id')
                                     @if ($orderBy == 'asc')
                                         <i class="fas fa-sort-alpha-up-alt mt-1"></i>
                                     @else
@@ -84,20 +83,7 @@
 
                                 @endif
                             </th>
-                            <th scope="col" class="w-40 px-6 py-3 cursor-pointer" wire:click="order('grammage_id')">
-                                GRAMAJE
-                                @if ($sort == 'grammage_id')
-                                    @if ($orderBy == 'asc')
-                                        <i class="fas fa-sort-alpha-up-alt mt-1"></i>
-                                    @else
-                                        <i class="fas fa-sort-alpha-down-alt mt-1"></i>
-                                    @endif
-                                @else
-                                    <i class="fas fa-sort float-right hover:float-left mt-1"></i>
 
-                                @endif
-
-                            </th>
                             <th scope="col" class="px-6 py-3">IMAGEN</th>
                             <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('description')">FICHA
                                 TECNICA
@@ -123,16 +109,15 @@
 
                                 <td class="px-6 py-4">{{ $producto->name }}</td>
                                 <td class="px-6 py-4">{{ $producto->presentation->name }}</td>
-                                <td class="px-6 py-4">{{ $producto->gramaje.' ' .$producto->grammage->name }}</td>
                                 <td class="px-6 py-4">
 
                                     <?php $nombreDeLaImagen = basename($producto->image_path); ?>
                                     <img class="p-8 rounded-t-lg"
                                         @if ($producto->image_path) src="{{ asset('storage/products/' . $nombreDeLaImagen) }}"
-                                    alt="product image"
-                                @else
-                                    src="{{ asset('img/producto.png/') }}"
-                                    alt="product image" @endif />
+                                            alt="product image"
+                                        @else
+                                            src="{{ asset('img/producto.png/') }}"
+                                            alt="product image" @endif />
                                 </td>
 
                                 <td class="px-6 py-4">{{ $producto->description }}</td>
@@ -166,75 +151,37 @@
 
     </div>
 
-
     {{-- MODAL --}}
-    @if ($open)
-        <x-dialog-modal wire:model.live="open">
-            @slot('title')
-                <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
-                    <h1> {{ $productId ? 'EDITAR PLATILLO' : 'AGREGAR PLATILLO' }}</h1>
-                 </div>
-            @endslot
-            @slot('content')
-                <div class="grid md:grid-cols-2 md:gap-6">
-                    <div class="relative z-0 w-full  group">
-                        <x-label>Nombre del producto</x-label>
-                        <x-input type="text" class="w-full" placehorder="Nombre del producto" wire:model='form.name' />
-                        <x-input-error for="form.name" />
-                    </div>
-                    <div class="relative z-0 w-full  group">
-                        <x-label>Presentación</x-label>
-                        <select class="form-control w-full" wire:model='form.ctg_presentation_id'>
-                            <option value="" selected>Seleccione una presentación</option>
-                            @foreach ($presentations as $presentation)
-                                <option value="{{ $presentation->id }}">{{ $presentation->name }}</option>
-                            @endforeach
-                        </select>
-                        <x-input-error for="form.ctg_presentation_id" />
-                    </div>
-                    <div class="relative z-0 w-full group">
-                        <x-label>Gramaje</x-label>
-                        <x-input type="number" class="w-full" placehorder="descripcion del producto"
-                            wire:model='form.gramaje' />
-                        <x-input-error for="form.gramaje" />
-                    </div>
-                    <div class="relative z-0 w-full  group">
-                        <x-label>Medida</x-label>
-                        <select class="form-control w-full" wire:model='form.ctg_grammage_id'>
-                            <option value="" selected>Seleccione una medida</option>
-                            @foreach ($grammages as $grammage)
-                                <option value="{{ $grammage->id }}">{{ $grammage->name }}</option>
-                            @endforeach
-                        </select>
-                        <x-input-error for="form.ctg_grammage_id" />
+    <x-dialog-modal wire:model.live="open">
+        @slot('title')
+            <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
+                <h1> {{ $productId ? 'EDITAR PRODUCTO' : 'AGREGAR PRODUCTO' }}</h1>
+            </div>
+        @endslot
+        @slot('content')
+            <div class="grid md:grid-cols-3 md:gap-6">
+                <div class="md:col-span-1">
+                    <div class="mb-4">
+                        <label for="{{ $identificador }}" class="block text-sm font-medium text-gray-700">Subir
+                            Imagen</label>
+                        <div
+                            class="flex items-center justify-center w-full h-20 border-dashed border-2 border-gray-300 rounded-lg">
+                            <label for="{{ $identificador }}" class="cursor-pointer text-blue-500 hover:underline">
+                                @if ($image)
+                                    <p class="text-green-600 text-center">Imagen seleccioanda:<br>
+                                        {{ $image->getClientOriginalName() }}</p>
+                                @else
+                                    Selecciona una imagen
+                                @endif
+                                <input type="file" wire:model="image" class="hidden" id="{{ $identificador }}"
+                                    accept="image/*" />
+                                    <x-input-error for="form.image_path" />
+
+                            </label>
+
+                        </div>
                     </div>
 
-                    <div class="relative z-0 w-full  group">
-                        <x-label>Descripción</x-label>
-                        <textarea rows="3" class="form-control w-full" wire:model='form.description'>
-                        </textarea>
-                        <x-input-error for="form.description" />
-
-                    </div>
-
-                    <div class="relative z-0 w-full  group">
-                        <x-label>Marca</x-label>
-                        <select class="form-control w-full" wire:model='form.ctg_brand_id'>
-                            <option value="" selected>Seleccione una marca</option>
-                            @foreach ($brands as $brand)
-                                <option value="{{ $brand->id }}">{{ $brand->name }}</option>
-                            @endforeach
-                        </select>
-                        <x-input-error for="form.ctg_brand_id" />
-                    </div>
-
-                    <div class="relative z-0 w-full  group">
-                        <x-label>Imagen</x-label>
-
-                        <input type="file" class="form-control" wire:model='image' id="{{ $identificador }}" />
-                        <x-input-error for="image" />
-
-                    </div>
                     <div class="relative z-0 w-full  group">
 
                         <div wire:loading wire:target='image'
@@ -244,28 +191,143 @@
                             <span class="block sm:inline text-blue-600">En un momento se vizualizara su imagen.</span>
 
                         </div>
-                        @if ($image)
-                            <img class="p-8 rounded-t-lg h-40" style="margin-top: -30%"
-                                src="{{ $image->temporaryUrl() }}" />
-                        @elseif($form->image_path)
-                            <?php $nombreDeLaImagen = basename($form->image_path); ?>
-                            <img class="p-8 rounded-t-lg h-40" style="margin-top: -30%"
-                                src="{{ asset('storage/products/' . $nombreDeLaImagen) }}" />
-                        @endif
+                        <div class="px-4 py-3">
+                            @if ($image)
+                                <img class="p-8 rounded-t-lg h-40" style="margin-top: -30%"
+                                    src="{{ $image->temporaryUrl() }}" />
+                            @elseif($form->image_path)
+                                <?php $nombreDeLaImagen = basename($form->image_path); ?>
+                                <img class="p-8 rounded-t-lg h-40" style="margin-top: -30%"
+                                    src="{{ asset('storage/products/' . $nombreDeLaImagen) }}" />
+                            @endif
+                        </div>
                     </div>
+
+                    {{-- mensaje de eliminado --}}
+                    <div x-data="{ show: false, message: '' }" x-init="Livewire.on('showFlashMessage', (msg) => {
+                        show = true;
+                        message = msg;
+                        setTimeout(() => {
+                            show = false;
+                            message = '';
+                        }, 3000); // 5000 milisegundos (5 segundos)
+                    })" x-show="show" x-transition
+                        class="bg-green-100 border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                        <strong class="font-bold">¡Éxito!</strong>
+                        <span class="block sm:inline" x-text="message"></span>
+                    </div>
+
                 </div>
-            @endslot
-            @slot('footer')
-                <x-secondary-button wire:click="closeModal">Cancelar</x-secondary-button>
-                {{--  wire:click="{{ $productId ? 'update' : 'save' }}"" --}}
-                <x-danger-button wire:click="$dispatch('confirm',{{ $productId }}) "
-                    class=" ml-3 disabled:opacity-25">ACEPTAR</x-danger-button>
-            @endslot
-        </x-dialog-modal>
-    @endif
+                <div class="md:col-span-2">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="col-span-1">
+                            <x-label>Nombre del platillo</x-label>
+                            <x-input type="text" class="w-full" placeholder="Nombre del platillo"
+                                wire:model="form.name" />
+                            <x-input-error for="form.name" />
+                        </div>
+                        <div class="col-span-1">
+                            <x-label>Presentación</x-label>
+                            <select class="w-full form-control" wire:model="form.ctg_presentation_food_id">
+                                <option value="" selected>Seleccione una presentación</option>
+                                @foreach ($presentations as $presentation)
+                                    <option value="{{ $presentation->id }}">{{ $presentation->name }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error for="form.ctg_presentation_food_id" />
+                        </div>
+                        <div class="col-span-2">
+                            <x-label>Descripción</x-label>
+                            <textarea rows="3" class="form-control w-full" wire:model='form.description'>
+                                </textarea>
+                            <x-input-error for="form.description" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-6">
+
+                        <div class="col-span-1">
+                            <x-label>Ingrediente</x-label>
+                            <x-input type="text" class="w-full"
+                                wire:model='ingredientName' />
+                            <x-input-error for="ingredientName" />
+                        </div>
+
+                        <div class="col-span-1">
+                            <x-label>Cantidad</x-label>
+                            <x-input type="number" class="w-full" wire:model='quantity' />
+                            <x-input-error for="quantity" />
+                        </div>
+                        <div class="col-span-1">
+                            <x-label>Gramaje</x-label>
+                            <x-input type="number" class="w-full" wire:model='grammage' />
+                            <x-input-error for="grammage" />
+                        </div>
+
+
+
+                        <div class="col-span-2">
+                            <x-label>Medida</x-label>
+                            <select class="form-control w-full" wire:model='id_selectedGrammage'>
+                                <option value="" selected>Seleccione una medida</option>
+                                @foreach ($grammages as $grammage)
+                                    <option value="{{ $grammage->id }}">{{ $grammage->name }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error for="id_selectedGrammage" />
+                        </div>
+                        <div class="col-span-1 mt-5">
+                            <button class="btn btn-blue" wire:click='addIngredient'>Agregar +</button>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-3">
+                <div class="px-6 py-4 flex items-center  bg-gray-100">
+                    <h1> Ingredientes</h1>
+                </div>
+                @if (count($ingredients))
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 px-6 py-4">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th>Ingrediente</th>
+                                <th>Cantidad</th>
+                                <th>Gramaje</th>
+                                <th>Medida</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($ingredients as $ingredient)
+                                <tr>
+                                    <td>{{ $ingredient['name'] }}</td>
+                                    <td>{{ $ingredient['quantity'] }}</td>
+                                    <td>{{ $ingredient['grammage'] }}</td>
+                                    <td>{{ $ingredient['id_selectedGrammage'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <div class="px-6 py-4">
+                        <h1>No hay Ingredientes</h1>
+                    </div>
+                @endif
+            </div>
+        @endslot
+        @slot('footer')
+            <x-secondary-button wire:click="closeModal">Cancelar</x-secondary-button>
+            {{--  wire:click="{{ $productId ? 'update' : 'save' }}"" --}}
+            <x-danger-button wire:click="$dispatch('confirm',{{ $productId }}) "
+                class=" ml-3 disabled:opacity-25">Guardar</x-danger-button>
+        @endslot
+    </x-dialog-modal>
 
 
     @push('js')
+        
         <script>
             document.addEventListener('livewire:initialized', () => {
                 // @this.on('deleteProd', (prodId) => {
@@ -297,7 +359,7 @@
                     var txt = productId != null ? "Actualizado" : "Creado"
                     Swal.fire({
                         title: '¿Estas seguro?',
-                        text: "El producto sera " + txt,
+                        text: "El Platillo sera " + txt,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
@@ -307,7 +369,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
 
-                            @this.dispatch(productId ? 'update-productos' : 'save-productos'); 
+                            @this.dispatch(productId ? 'update-food' : 'save-food');
 
                         }
                     })

@@ -31,7 +31,7 @@ class Product extends Model
     }
     public function Categories()
     {
-        return $this->belongsTo(Categories::class);
+        return $this->belongsTo(Categories::class, 'ctg_category_id');
     }
     public function presentation()
     {

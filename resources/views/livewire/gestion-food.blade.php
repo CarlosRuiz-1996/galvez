@@ -1,7 +1,7 @@
 <div wire:init='loadProducts'>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
-            <a href="{{ route('buscar.producto') }}" title="ATRAS">
+            <a href="{{ route('buscar.comida') }}" title="ATRAS">
                 <svg class="w-5 h-5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 14 10">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"
@@ -111,13 +111,13 @@
                                 <td class="px-6 py-4">{{ $producto->presentation->name }}</td>
                                 <td class="px-6 py-4">
 
-                                    <?php $nombreDeLaImagen = basename($producto->image_path); ?>
                                     <img class="p-8 rounded-t-lg"
-                                        @if ($producto->image_path) src="{{ asset('storage/products/' . $nombreDeLaImagen) }}"
+                                        @if ($producto->image_path) src="{{ asset('storage/' . $producto->image_path) }}"
                                             alt="product image"
                                         @else
                                             src="{{ asset('img/producto.png/') }}"
                                             alt="product image" @endif />
+
                                 </td>
 
                                 <td class="px-6 py-4">{{ $producto->description }}</td>
@@ -155,7 +155,7 @@
     <x-dialog-modal wire:model.live="open">
         @slot('title')
             <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
-                <h1> {{ $productId ? 'EDITAR PRODUCTO' : 'AGREGAR PRODUCTO' }}</h1>
+                <h1> {{ $foodId ? 'EDITAR PRODUCTO' : 'AGREGAR PRODUCTO' }}</h1>
             </div>
         @endslot
         @slot('content')
@@ -196,9 +196,8 @@
                                 <img class="p-8 rounded-t-lg h-40" style="margin-top: -30%"
                                     src="{{ $image->temporaryUrl() }}" />
                             @elseif($form->image_path)
-                                <?php $nombreDeLaImagen = basename($form->image_path); ?>
                                 <img class="p-8 rounded-t-lg h-40" style="margin-top: -30%"
-                                    src="{{ asset('storage/products/' . $nombreDeLaImagen) }}" />
+                                    src="{{ asset('storage/' . $form->image_path) }}" />
                             @endif
                         </div>
                     </div>
@@ -229,7 +228,7 @@
                         <div class="col-span-1">
                             <x-label>Presentación</x-label>
                             <select class="w-full form-control" wire:model="form.ctg_presentation_food_id">
-                                <option value="" selected>Seleccione una presentación</option>
+                                <option value="" selected>Seleccione:</option>
                                 @foreach ($presentations as $presentation)
                                     <option value="{{ $presentation->id }}">{{ $presentation->name }}</option>
                                 @endforeach
@@ -238,7 +237,7 @@
                         </div>
                         <div class="col-span-2">
                             <x-label>Descripción</x-label>
-                            <textarea rows="3" class="form-control w-full" wire:model='form.description'>
+                            <textarea rows="2" class="form-control w-full" wire:model='form.description'>
                                 </textarea>
                             <x-input-error for="form.description" />
                         </div>
@@ -254,26 +253,26 @@
 
                         <div class="col-span-1">
                             <x-label>Cantidad</x-label>
-                            <x-input type="number" class="w-full" wire:model='quantity' />
-                            <x-input-error for="quantity" />
+                            <x-input type="number" class="w-full" wire:model='cantidad' />
+                            <x-input-error for="cantidad" />
                         </div>
                         <div class="col-span-1">
                             <x-label>Gramaje</x-label>
-                            <x-input type="number" class="w-full" wire:model='grammage' />
-                            <x-input-error for="grammage" />
+                            <x-input type="number" class="w-full" wire:model='gramaje' />
+                            <x-input-error for="gramaje" />
                         </div>
 
 
 
                         <div class="col-span-2">
                             <x-label>Medida</x-label>
-                            <select class="form-control w-full" wire:model='id_selectedGrammage'>
+                            <select class="form-control w-full" wire:model='ctg_grammage_id'>
                                 <option value="" selected>Seleccione una medida</option>
                                 @foreach ($grammages as $grammage)
                                     <option value="{{ $grammage->id }}">{{ $grammage->name }}</option>
                                 @endforeach
                             </select>
-                            <x-input-error for="id_selectedGrammage" />
+                            <x-input-error for="ctg_grammage_id" />
                         </div>
                         <div class="col-span-1 mt-5">
                             <button class="btn btn-blue" wire:click='addIngredient'>Agregar +</button>
@@ -287,25 +286,39 @@
 
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-3">
                 <div class="px-6 py-4 flex items-center  bg-gray-100">
-                    <h1> Ingredientes</h1>
+                    <h1 class="font-bold"> Ingredientes</h1>
                 </div>
                 @if (count($ingredients))
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 px-6 py-4">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                <th>Ingrediente</th>
-                                <th>Cantidad</th>
-                                <th>Gramaje</th>
-                                <th>Medida</th>
+                                <th class="w-24 px-4 py-2">Ingrediente</th>
+                                <th class="w-24 px-4 py-2">Cantidad</th>
+                                <th class="w-24 px-4 py-2">Gramaje</th>
+                                <th class="w-24 px-4 py-2">Medida</th>
+                                <th class="w-24 px-4 py-2">Eliminar</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($ingredients as $ingredient)
+                            {{-- {{var_dump($ingredients)}} --}}
+                            @foreach ($ingredients as $index => $ingredient)
                                 <tr>
-                                    <td>{{ $ingredient['name'] }}</td>
-                                    <td>{{ $ingredient['quantity'] }}</td>
-                                    <td>{{ $ingredient['grammage'] }}</td>
-                                    <td>{{ $ingredient['id_selectedGrammage'] }}</td>
+                                    <td class="px-6 py-4">{{ $ingredient['name'] }}</td>
+                                    <td class="px-6 py-4">{{ $ingredient['cantidad'] }}</td>
+                                    <td class="px-6 py-4">{{ $ingredient['gramaje'] }}</td>
+                                    <td class="px-6 py-4">{{  $ingredient['grammage_name']?
+                                                                $ingredient['grammage_name']:
+                                                                $ingredient->grammage->name
+                                                            }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <button class="btn btn-red"
+                                            wire:click="deleteIngredient({{ $index }})"
+                                        >
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+
+                                        </button>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -319,9 +332,9 @@
         @endslot
         @slot('footer')
             <x-secondary-button wire:click="closeModal">Cancelar</x-secondary-button>
-            {{--  wire:click="{{ $productId ? 'update' : 'save' }}"" --}}
-            <x-danger-button wire:click="$dispatch('confirm',{{ $productId }}) "
-                class=" ml-3 disabled:opacity-25">Guardar</x-danger-button>
+            {{--  wire:click="{{ $foodId ? 'update' : 'save' }}"" --}}
+            <x-button wire:click="$dispatch('confirm',{{ $foodId }}) "
+                class=" ml-3 disabled:opacity-25">Guardar</x-button>
         @endslot
     </x-dialog-modal>
 
@@ -354,9 +367,9 @@
                 //         }
                 //     })
                 // })
-                @this.on('confirm', (productId) => {
+                @this.on('confirm', (foodId) => {
 
-                    var txt = productId != null ? "Actualizado" : "Creado"
+                    var txt = foodId != null ? "Actualizado" : "Creado"
                     Swal.fire({
                         title: '¿Estas seguro?',
                         text: "El Platillo sera " + txt,
@@ -369,7 +382,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
 
-                            @this.dispatch(productId ? 'update-food' : 'save-food');
+                            @this.dispatch(foodId ? 'update-food' : 'save-food');
 
                         }
                     })

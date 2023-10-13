@@ -26,7 +26,7 @@ class FoodForm extends Form
         'ctg_presentation_food_id' => 'required',
         'ctg_categories_food_id' => 'required'
     ];
-    public ?Food $product;
+    public ?Food $food;
     public $seach_cat = "";
     public $seach_prod = "";
     public $search = "";
@@ -51,8 +51,19 @@ class FoodForm extends Form
         }
     }
 
+    public function setFood(Food $food)
+    {
+        $this->food = $food;
 
-    public function setProductEmpty()
+        $this->name = $food->name;
+        $this->description = $food->description;
+        $this->image_path = $food->image_path;
+        $this->ctg_presentation_food_id = $food->ctg_presentation_food_id;
+        $this->ctg_categories_food_id = $food->ctg_categories_food_id;
+    }
+
+
+    public function setFoodEmpty()
     {
         $this->name = "";
         $this->description = "";
@@ -78,28 +89,62 @@ class FoodForm extends Form
 
     //save datos nuevos
     public function store($ingredients)
-{
-    $this->validate();
+    {
+        $this->validate();
 
-    // Crear el registro principal de Food                                 ctg_presentation_food_id 
-    $food = Food::create($this->only(['name', 'description','image_path', 'ctg_presentation_food_id', 'ctg_categories_food_id' ]));
+        // Crear el registro principal de Food                                 ctg_presentation_food_id 
+        $food = Food::create($this->only(['name', 'description', 'image_path', 'ctg_presentation_food_id', 'ctg_categories_food_id']));
 
-    // Recorrer el arreglo de ingredientes y crear registros para cada uno
-    foreach ($ingredients as $ingredient) {
-        $food->ingredients()->create([
-            'name' => $ingredient['name'],
-            'cantidad' => $ingredient['quantity'],
-            'gramaje' => $ingredient['grammage'],
-            'ctg_grammage_id' => $ingredient['id_selectedGrammage'],
-        ]);
+        // Recorrer el arreglo de ingredientes y crear registros para cada uno
+        foreach ($ingredients as $ingredient) {
+            $food->ingredients()->create([
+                'name' => $ingredient['name'],
+                'cantidad' => $ingredient['cantidad'],
+                'gramaje' => $ingredient['gramaje'],
+                'ctg_grammage_id' => $ingredient['ctg_grammage_id'],
+            ]);
+        }
+
+        $this->reset();
     }
 
-    $this->reset();
-}
-
+    //obtengo el nombre del gramage para mostrarlo en la vista del modal
     public function getOneGrammage($id)
     {
 
         return Grammage::findOrFail($id);
+    }
+
+    public function deleteIngredientsUp($ingredientesEliminados)
+    {
+    }
+
+    public function update($ingredients, $ingredientesEliminados, $foodId)
+    {
+        $this->validate();
+        $this->food->update($this->all());
+
+        Ingredients::destroy($ingredientesEliminados);
+
+        foreach ($ingredients as $ingredient) {
+            // Verificar si el ingrediente ya existe en la base de datos
+            $ingredientExistente = Ingredients::where('food_id', $foodId)
+                ->where('name', $ingredient['name'])
+                ->first();
+            
+
+            // Si no existe, entonces créalo
+            if (!$ingredientExistente) {
+                Ingredients::create([
+                    'name' => $ingredient['name'],
+                    'cantidad' => $ingredient['cantidad'],
+                    'gramaje' => $ingredient['gramaje'],
+                    'ctg_grammage_id' => $ingredient['ctg_grammage_id'],
+                    'food_id'=>$foodId
+                    // Agrega otros campos aquí
+                ]);
+            }
+        }
+        $this->reset('name', 'description', 'image_path', 'ctg_presentation_food_id', 'ctg_categories_food_id');
     }
 }

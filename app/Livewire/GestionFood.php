@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Livewire\Forms\FoodForm;
 use App\Models\CategoriesFood;
+use App\Models\Food;
 use App\Models\Grammage;
 use App\Models\PresentationFood;
 use Livewire\Component;
@@ -28,25 +29,25 @@ class GestionFood extends Component
     //sesion para guardar datos de ingredientes
     public $ingredients = [];
     public $ingredientName;
-    public $quantity;
-    public $grammage;
-    public $id_selectedGrammage;
-
-
+    public $cantidad;
+    public $gramaje;
+    public $ctg_grammage_id;
+    public $grammage_name;
+    public $ingredientesEliminados;//variable para cuando se edita desde la bd
     protected $queryString = [
         'list' => ['except' => '10'],
         'sort' => ['except' => 'id'],
         'orderBy' => ['except' => 'desc'],
         'form.search' => ['except' => ''],
     ];
-    public $open = true;
-    public $productId; //VARIABLE PARA CUANDO EDITE
+    public $open = false;
+    public $foodId; //VARIABLE PARA CUANDO EDITE
 
 
     public function create()
     {
-        $this->reset(['image', 'productId']);
-        $this->form->setProductEmpty();
+        $this->reset(['image', 'foodId', 'ingredientesEliminados', 'ingredients']);
+        $this->form->setFoodEmpty();
         $this->openModal();
     }
 
@@ -124,12 +125,12 @@ class GestionFood extends Component
     {
 
         if ($this->image) {
-            $this->form->image_path = $this->image->store('products'); //-la imagen se guarda con la ruta products/image.jpg
+            $this->form->image_path = $this->image->store('foods'); //-la imagen se guarda con la ruta products/image.jpg
         }
         $this->form->ctg_categories_food_id = $this->category->id;
 
         $this->form->store($this->ingredients);
-        $this->reset(['open', 'image','ingredients' ]);
+        $this->reset(['open', 'image', 'ingredients']);
         $this->identificador = rand();
 
         $this->dispatch('show-food');
@@ -137,41 +138,72 @@ class GestionFood extends Component
         $this->closeModal();
     }
 
+    public function edit(Food $food)
+    {
+        $this->form->setFood($food);
+        $this->foodId = $food->id;
+        $this->ingredients = $food->ingredients->all();
 
+        $this->openModal();
+    }
 
+    #[On('update-food')]
+    public function update()
+    {
+        // dd($this->ingredients);
+        if ($this->image) {
+            File::delete([$this->form->image_path]);
+            $this->form->image_path = $this->image->store('foods');
+        }
+        $this->form->update($this->ingredients,$this->ingredientesEliminados, $this->foodId);
+
+        $this->reset('image', 'foodId', 'ingredientesEliminados','ingredients');
+        $this->identificador = rand();
+        $this->dispatch('show-food');
+        $this->dispatch('alert', "El platillo se actializo satisfactoriamente.");
+        $this->closeModal();
+    }
+
+    //ingredientes geston add
     public function addIngredient()
     {
         $this->validate([
             'ingredientName' => 'required',
-            'quantity' => 'required|numeric',
-            'grammage' => 'required|numeric',
-            'id_selectedGrammage' => 'required',
+            'cantidad' => 'required|numeric',
+            'gramaje' => 'required|numeric',
+            'ctg_grammage_id' => 'required',
         ]);
-        $grammage_name = $this->form->getOneGrammage($this->id_selectedGrammage);
+        $this->grammage_name = $this->form->getOneGrammage($this->ctg_grammage_id);
 
         // Agregar los datos a la lista
         $this->ingredients[] = [
             'name' => $this->ingredientName,
-            'quantity' => $this->quantity,
-            'grammage' => $this->grammage,
-            'grammage_name' => $grammage_name,
-            'id_selectedGrammage' => $this->id_selectedGrammage,
-
+            'cantidad' => $this->cantidad,
+            'gramaje' => $this->gramaje,
+            'grammage_name' =>$this->grammage_name->name,
+            'ctg_grammage_id' => $this->ctg_grammage_id,
         ];
 
         // Limpiar los campos después de agregar
         $this->ingredientName = '';
-        $this->quantity = '';
-        $this->grammage = '';
-        $this->id_selectedGrammage = '';
+        $this->cantidad = '';
+        $this->gramaje = '';
+        $this->ctg_grammage_id = '';
 
 
-      
+
         //evento para alpine
-        $this->dispatch('showFlashMessage','Ingrediente agregado con éxito.');
-
+        $this->dispatch('showFlashMessage', 'Ingrediente agregado con éxito.');
     }
+    //ingredientes geston delete
+    public function deleteIngredient($index)
+    {
+        if (isset($this->ingredients[$index])) {
+            $ingredienteEliminado = $this->ingredients[$index];
 
-
-    
+            unset($this->ingredients[$index]);
+            $this->ingredients = array_values($this->ingredients); // Reindexar el arreglo
+            $this->ingredientesEliminados[] = $ingredienteEliminado['id'];
+        }
+    }
 }

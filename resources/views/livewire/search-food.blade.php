@@ -1,7 +1,7 @@
 <x-slot name="header">
     <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
         <a href="{{ route('catalogos') }}"> {{ __('Catalogos > ') }}</a>
-        {{ __('productos') }}
+        {{ __('Platillos') }}
     </h2>
 </x-slot>
 
@@ -40,8 +40,8 @@
                                     <td class="px-4 py-4">{{ $product->presentation->name }}</td>
                                     <td class="px-6 py-4">
 
-                                        <img class="p-8 rounded-t-lg h-40" <?php $nombreDeLaImagen = basename($product->image_path); ?>
-                                            @if ($product->image_path) src="{{ asset('storage/products/' . $nombreDeLaImagen) }}"
+                                        <img class="p-8 rounded-t-lg h-40" 
+                                            @if ($product->image_path) src="{{ asset('storage/' .$product->image_path) }}"
                                                 alt="product image"
                                             @else
                                                 src="{{ asset('img/producto.png/') }}"
@@ -107,16 +107,20 @@
             @slot('content')
                 <div class="flex">
                     <div class="w-1/2">
+                        <p class="text-xl font-bold text-gray-900 mb-3">Ingredientes</p>
                              @foreach ($ingredients as $ingredient)
                             <li>{{ $ingredient->name }}</li>
                         @endforeach
                     </div>
                     <div class="w-1/2">
+                        <p class="text-xl font-bold text-gray-900 mb-3">Descripción</p>
+
                         <p>{{ $detalle?$detalle:'Sin Detalles' }}</p>
                     </div>
                     <div class="w-1/2">
                         <img class="p-8 rounded-t-lg h-40"
-                            @if ($imagenPath) src="{{ asset('img/products/' . $imagenPath) }}"
+                            @if ($imagenPath) src="{{ asset('storage/' . $imagenPath) }}"
+
                             alt="product image"
                         @else
                             src="{{ asset('img/producto.png/') }}"

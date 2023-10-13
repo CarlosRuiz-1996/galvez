@@ -19,6 +19,17 @@
                 <x-input placeholder="Busca por categoria" type="text" class="w-full ml-4"
                     wire:model.live='form.seach_cat' />
 
+                <select name="" id="" class="form-control ml-4" wire:model.live='form.filtra_cat'>
+                    @if ($form->filtra_cat)
+                        <option value="0">Limpia filtro</option>
+                    @elseif($form->filtra_cat == 0)
+                        <option value="" selected>Selecciona una categoria</option>
+                    @endif
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}" {{ $form->filtra_cat ? 'selected' : '' }}>{{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
             <div class="p-8">
                 @if (isset($products))
@@ -67,10 +78,10 @@
                                     </td>
                                 </tr>
                             @empty
-                            <div class="px-6 py-4">
-                                <h1>No hay registros</h1>
-                            </div>
-                            @endforelse 
+                                <div class="px-6 py-4">
+                                    <h1>No hay registros</h1>
+                                </div>
+                            @endforelse
 
                         </tbody>
                     </table>
@@ -78,16 +89,19 @@
                 @if (isset($categories))
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         @foreach ($categories as $category)
-                            <div class="max-w-sm p-6 text-center bg-white border border-gray-200 rounded-lg shadow">
-                                <h5 class="mb-2 text-2xl  font-bold tracking-tight text-gray-900">
-                                    {{ $category->name }}
-                                </h5>
-
-                                <a href="{{ route('gestion.ctg.producto', ['category' => $category]) }}"
-                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-orange-700 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300">
-                                    Ingresar
-
-                                </a>
+                            <div class="max-w-sm p-3 text-center bg-white border border-gray-200 rounded-lg shadow">
+                                <div class="card-image">
+                                    <img class="p-8 rounded-t-lg"
+                                        src="{{ asset('images/ctg/' . $category->image_path) }}" alt="product image" />
+                                    <!-- Contenido de la tarjeta -->
+                                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                                        {{ $category->name }}
+                                    </h5>
+                                    <a href="{{ route('gestion.ctg.producto', ['category' => $category]) }}"
+                                        class="inline-flex items-center px-3 py-2 text-xl font-medium text-center text-white bg-orange-700 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300">
+                                        Ingresar
+                                    </a>
+                                </div>
                             </div>
                         @endforeach
 

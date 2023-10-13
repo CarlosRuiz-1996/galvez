@@ -30,6 +30,7 @@ class FoodForm extends Form
     public $seach_cat = "";
     public $seach_prod = "";
     public $search = "";
+    public $filtra_cat=0;
 
     //filtro de categoria
     public function readCategory()
@@ -38,6 +39,9 @@ class FoodForm extends Form
 
         if (!empty($this->seach_cat)) {
             $query->where('name', 'like', '%' . $this->seach_cat . '%');
+        }
+        if (!empty($this->filtra_cat)) {
+            $query->where('id', '=',  $this->filtra_cat);
         }
 
         return $query->get();

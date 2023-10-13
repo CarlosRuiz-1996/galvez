@@ -16,7 +16,6 @@ class SearchProducts extends Component
     public $nameProduct;
     public $detalle;
     public $imagenPath;
-
     public function showMore(Product $product)
     {
         // dd($product);
@@ -41,7 +40,9 @@ class SearchProducts extends Component
 
     public function render()
     {
+
         $categories = $this->form->readCategory();
+        
         $products = $this->form->readProduct();
         return view('livewire.search-products', ['products'=>$products, 'categories'=>$categories]);
     }

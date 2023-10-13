@@ -33,6 +33,7 @@ class ProductForm extends Form
     public $seach_cat = "";
     public $seach_prod = "";
     public $search = "";
+    public $filtra_cat=0;
 
     //filtro de categoria
     public function readCategory()
@@ -42,9 +43,12 @@ class ProductForm extends Form
         if (!empty($this->seach_cat)) {
             $query->where('name', 'like', '%' . $this->seach_cat . '%');
         }
-
+        if (!empty($this->filtra_cat)) {
+            $query->where('id', '=',  $this->filtra_cat);
+        }
         return $query->get();
     }
+
     //filtro de productos
     public function readProduct()
     {
@@ -77,44 +81,44 @@ class ProductForm extends Form
         $this->ctg_presentation_id = "";
         $this->ctg_category_id = "";
     }
-     //read productos categoria
-     public function readProductCategory($id, $sort, $orderBy, $list)
-     {
-         return Product::where('ctg_category_id', '=',$id)
-             ->Where('name', 'like', '%' . $this->search . '%')
- 
-             ->Where('description', 'like', '%' . $this->search . '%')
-             ->WhereHas('presentation', function ($query) {
-                 $query->where('name', 'like', '%' . $this->search . '%');
-             })
-             ->WhereHas('grammage', function ($query) {
-                 $query->where('name', 'like', '%' . $this->search . '%');
-             })
-             ->orderBy($sort, $orderBy)
-             ->paginate($list);
-     }
- 
-     //save datos nuevos
-     public function store()
-     {
+    //read productos categoria
+    public function readProductCategory($id, $sort, $orderBy, $list)
+    {
+        return Product::where('ctg_category_id', '=', $id)
+            ->Where('name', 'like', '%' . $this->search . '%')
+
+            ->Where('description', 'like', '%' . $this->search . '%')
+            ->WhereHas('presentation', function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%');
+            })
+            ->WhereHas('grammage', function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%');
+            })
+            ->orderBy($sort, $orderBy)
+            ->paginate($list);
+    }
+
+    //save datos nuevos
+    public function store()
+    {
         $this->validate();
 
-         Product::create($this->only(['name', 'description', 'gramaje','ctg_grammage_id','ctg_brand_id', 'ctg_presentation_id', 'ctg_category_id', 'image_path']));
-         $this->reset();
-     }
- 
- 
-     public function update()
-     {
-         $this->validate();
-         $this->product->update($this->all());
-         $this->reset('name', 'description', 'gramaje','ctg_grammage_id','ctg_brand_id', 'ctg_presentation_id', 'ctg_category_id', 'image_path');
-     }
- 
- 
-     public function delete()
-     {
-         $this->product->delete();
-         $this->reset();
-     }
+        Product::create($this->only(['name', 'description', 'gramaje', 'ctg_grammage_id', 'ctg_brand_id', 'ctg_presentation_id', 'ctg_category_id', 'image_path']));
+        $this->reset();
+    }
+
+
+    public function update()
+    {
+        $this->validate();
+        $this->product->update($this->all());
+        $this->reset('name', 'description', 'gramaje', 'ctg_grammage_id', 'ctg_brand_id', 'ctg_presentation_id', 'ctg_category_id', 'image_path');
+    }
+
+
+    public function delete()
+    {
+        $this->product->delete();
+        $this->reset();
+    }
 }

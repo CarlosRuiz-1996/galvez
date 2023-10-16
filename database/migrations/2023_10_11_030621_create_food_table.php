@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('food', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('descripcion');
+            $table->text('description');
             $table->string('imagen_path');
             $table->unsignedBigInteger('ctg_presentation_food_id');
             $table->unsignedBigInteger('ctg_categories_food_id');

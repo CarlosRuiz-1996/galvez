@@ -15,6 +15,7 @@ return new class extends Migration
         $table->id();
         $table->string('name');
         $table->string('palabra_clave');
+        $table->string('image_path');
         $table->timestamps();
         $table->boolean('status')->default(1);
     });

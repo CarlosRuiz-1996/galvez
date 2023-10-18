@@ -56,6 +56,7 @@
                                             @else
                                                 src="{{ asset('img/producto.png/') }}"
                                                 alt="product image" @endif />
+                                                
                                     </td>
                                     <td>
                                         <?php

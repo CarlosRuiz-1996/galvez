@@ -28,11 +28,11 @@ class DatabaseSeeder extends Seeder
         $this->call(ProductosTableSeeder::class);
 
         //creo un usuario de prueba para la base
-        \App\Models\User::factory()->create([
-            'name' => 'Test',
-            'surname' => 'User',
-            'email' => 'test@test.com',
-        ])->assignRole('Admin');
+        // \App\Models\User::factory()->create([
+        //     'name' => 'Test',
+        //     'surname' => 'User',
+        //     'email' => 'test@test.com',
+        // ])->assignRole('Admin');
         // \App\Models\User::factory()->create([
         //     'name' => 'Test',
         //     'surname' => 'User',

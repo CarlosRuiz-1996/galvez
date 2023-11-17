@@ -65,11 +65,11 @@ class GestionProduct extends Component
     #[On('show-productos')]
     public function render()
     {
+        // 
         if ($this->readyToLoad) {
             $brands = Brand::all();
             $presentations = Presentation::all();
             $grammages = Grammage::all();
-
             $products = $this->form->readProductCategory($this->category->id, $this->sort, $this->orderBy, $this->list);
         } else {
             $brands = [];

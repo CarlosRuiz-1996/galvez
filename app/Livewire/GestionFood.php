@@ -33,7 +33,7 @@ class GestionFood extends Component
     public $gramaje;
     public $ctg_grammage_id;
     public $grammage_name;
-    public $ingredientesEliminados;//variable para cuando se edita desde la bd
+    public $ingredientesEliminados; //variable para cuando se edita desde la bd
     protected $queryString = [
         'list' => ['except' => '10'],
         'sort' => ['except' => 'id'],
@@ -155,9 +155,9 @@ class GestionFood extends Component
             File::delete([$this->form->image_path]);
             $this->form->image_path = $this->image->store('foods');
         }
-        $this->form->update($this->ingredients,$this->ingredientesEliminados, $this->foodId);
+        $this->form->update($this->ingredients, $this->ingredientesEliminados, $this->foodId);
 
-        $this->reset('image', 'foodId', 'ingredientesEliminados','ingredients');
+        $this->reset('image', 'foodId', 'ingredientesEliminados', 'ingredients');
         $this->identificador = rand();
         $this->dispatch('show-food');
         $this->dispatch('alert', "El platillo se actializo satisfactoriamente.");
@@ -180,7 +180,7 @@ class GestionFood extends Component
             'name' => $this->ingredientName,
             'cantidad' => $this->cantidad,
             'gramaje' => $this->gramaje,
-            'grammage_name' =>$this->grammage_name->name,
+            'grammage_name' => $this->grammage_name->name,
             'ctg_grammage_id' => $this->ctg_grammage_id,
         ];
 

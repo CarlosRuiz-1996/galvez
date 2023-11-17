@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('iep', function (Blueprint $table) {
+        Schema::create('cliente_foods', function (Blueprint $table) {
             $table->id();
-            $table->string('name');//monto
+            $table->string('description');
+            $table->integer('max');
+            $table->integer('min');
             $table->integer('status')->default(1);
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('food_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
-        Schema::enableForeignKeyConstraints();
-
     }
 
     /**
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('iep');
+        Schema::dropIfExists('cliente_food');
     }
 };

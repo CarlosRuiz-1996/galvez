@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
-        Schema::create('iva', function (Blueprint $table) {
+        Schema::create('cliente_products', function (Blueprint $table) {
             $table->id();
-            $table->string('name');//monto
+            $table->string('description');
+            $table->integer('max');
+            $table->integer('min');
             $table->integer('status')->default(1);
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('product_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
-        Schema::enableForeignKeyConstraints();
-
     }
 
     /**
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('iva');
+        Schema::dropIfExists('cliente_products');
     }
 };

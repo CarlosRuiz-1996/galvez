@@ -83,9 +83,9 @@ class FoodForm extends Form
             ->Where('name', 'like', '%' . $this->search . '%')
 
             ->Where('description', 'like', '%' . $this->search . '%')
-            ->WhereHas('presentation', function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%');
-            })
+            // ->orWhereHas('presentation', function ($query) {
+            //     $query->where('name', 'like', '%' . $this->search . '%');
+            // })
 
             ->orderBy($sort, $orderBy)
             ->paginate($list);

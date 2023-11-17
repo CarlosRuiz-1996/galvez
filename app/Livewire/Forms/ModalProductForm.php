@@ -3,13 +3,13 @@
 namespace App\Livewire\Forms;
 
 use Livewire\Attributes\Rule;
+
 use Livewire\Form;
 use App\Models\Product;
 use App\Models\Categories;
 
-class ProductForm extends Form
+class ModalProductForm extends Form
 {
-
     public $image_path;
     public $name;
     public $description;
@@ -33,31 +33,41 @@ class ProductForm extends Form
     public $seach_cat = "";
     public $seach_prod = "";
     public $search = "";
-    public $filtra_cat=0;
+    public $filtra_cat = 0;
 
     //filtro de categoria
-    public function readCategory()
-    {
-        $query = Categories::query();
+    // public function readCategory()
+    // {
+    //     $query = Categories::query();
 
-        if (!empty($this->seach_cat)) {
-            $query->where('name', 'like', '%' . $this->seach_cat . '%');
-        }
-        if (!empty($this->filtra_cat)) {
-            $query->where('id', '=',  $this->filtra_cat);
-        }
-        return $query->get();
-    }
+    //     if (!empty($this->seach_cat)) {
+    //         $query->where('name', 'like', '%' . $this->seach_cat . '%');
+    //     }
+    //     if (!empty($this->filtra_cat)) {
+    //         $query->where('id', '=',  $this->filtra_cat);
+    //     }
+    //     return $query->get();
+    // }
 
     //filtro de productos
     public function readProduct()
     {
-
-        if (!empty($this->seach_prod)) {
-            return  Product::where('name', 'like', '%' . $this->seach_prod . '%')->orderBy('id', 'desc')->get();
-        }
+        return Product::when(!empty($this->seach_prod), function ($query) {
+            return $query->where('name', 'like', '%' . $this->seach_prod . '%');
+        })
+            ->when(!empty($this->filtra_cat), function ($query) {
+                return $query->where('ctg_category_id', '=', $this->filtra_cat);
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(2);
     }
 
+    //obtengo el nombre del gramage para mostrarlo en la vista del modal
+    public function getOneProduct($id)
+    {
+
+        return Product::findOrFail($id);
+    }
     public function setProduct(Product $product)
     {
         $this->product = $product;
@@ -86,7 +96,7 @@ class ProductForm extends Form
     {
         return Product::where('ctg_category_id', '=', $id)
             ->where('name', 'like', '%' . $this->search . '%')
-            
+
 
             ->where('description', 'like', '%' . $this->search . '%')
             // ->where('gramaje', 'like', '%' . $this->search . '%')

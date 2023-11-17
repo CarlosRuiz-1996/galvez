@@ -4,12 +4,12 @@ namespace App\Livewire\Forms;
 
 use Livewire\Attributes\Rule;
 use Livewire\Form;
-use App\Models\Product;
+use App\Models\Food;
 use App\Models\Categories;
 
-class ProductForm extends Form
-{
+class ModalFoodForm extends Form
 
+{
     public $image_path;
     public $name;
     public $description;
@@ -29,36 +29,34 @@ class ProductForm extends Form
         'ctg_category_id' => 'required',
         'image_path' => 'required'
     ];
-    public ?Product $product;
+    public ?Food $product;
     public $seach_cat = "";
-    public $seach_prod = "";
+    public $seach_food = "";
     public $search = "";
-    public $filtra_cat=0;
+    public $filtra_cat = 0;
 
-    //filtro de categoria
-    public function readCategory()
-    {
-        $query = Categories::query();
-
-        if (!empty($this->seach_cat)) {
-            $query->where('name', 'like', '%' . $this->seach_cat . '%');
-        }
-        if (!empty($this->filtra_cat)) {
-            $query->where('id', '=',  $this->filtra_cat);
-        }
-        return $query->get();
-    }
+   
 
     //filtro de productos
-    public function readProduct()
+    public function readFood()
     {
-
-        if (!empty($this->seach_prod)) {
-            return  Product::where('name', 'like', '%' . $this->seach_prod . '%')->orderBy('id', 'desc')->get();
-        }
+        return Food::when(!empty($this->seach_food), function ($query) {
+            return $query->where('name', 'like', '%' . $this->seach_food . '%');
+        })
+            ->when(!empty($this->filtra_cat), function ($query) {
+                return $query->where('ctg_categories_food_id', '=', $this->filtra_cat);
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(2);
     }
 
-    public function setProduct(Product $product)
+    //obtengo el nombre del gramage para mostrarlo en la vista del modal
+    public function getOneProduct($id)
+    {
+
+        return Food::findOrFail($id);
+    }
+    public function setProduct(Food $product)
     {
         $this->product = $product;
         $this->name = $product->name;
@@ -81,32 +79,14 @@ class ProductForm extends Form
         $this->ctg_presentation_id = "";
         $this->ctg_category_id = "";
     }
-    //read productos categoria
-    public function readProductCategory($id, $sort, $orderBy, $list)
-    {
-        return Product::where('ctg_category_id', '=', $id)
-            ->where('name', 'like', '%' . $this->search . '%')
-            
-
-            ->where('description', 'like', '%' . $this->search . '%')
-            // ->where('gramaje', 'like', '%' . $this->search . '%')
-
-            // ->orWhereHas('presentation', function ($query) {
-            //     $query->where('namae', 'like', '%' . $this->search . '%');
-            // })
-            // ->orWhereHas('grammage', function ($query) {
-            //     $query->where('name', 'like', '%' . $this->search . '%');
-            // })
-            ->orderBy($sort, $orderBy)
-            ->paginate($list);
-    }
+   
 
     //save datos nuevos
     public function store()
     {
         $this->validate();
 
-        Product::create($this->only(['name', 'description', 'gramaje', 'ctg_grammage_id', 'ctg_brand_id', 'ctg_presentation_id', 'ctg_category_id', 'image_path']));
+        Food::create($this->only(['name', 'description', 'gramaje', 'ctg_grammage_id', 'ctg_brand_id', 'ctg_presentation_id', 'ctg_category_id', 'image_path']));
         $this->reset();
     }
 

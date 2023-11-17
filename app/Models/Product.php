@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'id'; // o el nombre de tu clave primaria si es diferente
 
     protected $fillable = [
         'name',

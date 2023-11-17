@@ -40,6 +40,7 @@
 
                 <x-button class="ml-4" wire:click="create">Nuevo</x-button>
             </div>
+
             @if (count($products))
 
                 <table class="w-full text-sm text-left text-gray-500">
@@ -71,9 +72,9 @@
                                 @endif
                             </th>
                             <th scope="col" class="w-40 px-6 py-3 cursor-pointer"
-                                wire:click="order('presentation_id')">PRESENTACIÓN
+                                wire:click="order('ctg_presentation_id')">PRESENTACIÓN
 
-                                @if ($sort == 'presentation_id')
+                                @if ($sort == 'ctg_presentation_id')
                                     @if ($orderBy == 'asc')
                                         <i class="fas fa-sort-alpha-up-alt mt-1"></i>
                                     @else
@@ -84,9 +85,9 @@
 
                                 @endif
                             </th>
-                            <th scope="col" class="w-40 px-6 py-3 cursor-pointer" wire:click="order('grammage_id')">
+                            <th scope="col" class="w-40 px-6 py-3 cursor-pointer" wire:click="order('ctg_grammage_id')">
                                 GRAMAJE
-                                @if ($sort == 'grammage_id')
+                                @if ($sort == 'ctg_grammage_id')
                                     @if ($orderBy == 'asc')
                                         <i class="fas fa-sort-alpha-up-alt mt-1"></i>
                                     @else
@@ -127,7 +128,7 @@
                                 <td class="px-6 py-4">
 
                                     <?php $nombreDeLaImagen = basename($producto->image_path); ?>
-                                    <img class="p-8 rounded-t-lg"
+                                    <img class="rounded-t-lg w-auto h-auto"
                                         @if ($producto->image_path) src="{{ asset('storage/products/' . $nombreDeLaImagen) }}"
                                     alt="product image"
                                 @else

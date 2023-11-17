@@ -40,6 +40,7 @@
                 <x-button class="ml-4" wire:click="create">Nuevo</x-button>
             </div>
             @if (count($products))
+            {{$form->search}}
 
                 <table class="w-full text-sm text-left text-gray-500">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
@@ -105,7 +106,7 @@
 
                         @foreach ($products as $producto)
                             <tr class="table-row bg-white border-b hover:bg-gray-50">
-                                <td class="px-6 py-4">{{ $producto->id }}</td>
+                                <td class="px-6 py-4">{{ $producto->id .'--'.$producto->ctg_categories_food_id }}</td>
 
                                 <td class="px-6 py-4">{{ $producto->name }}</td>
                                 <td class="px-6 py-4">{{ $producto->presentation->name }}</td>

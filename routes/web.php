@@ -33,12 +33,23 @@ Route::middleware([
 });
 
 
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+
 Route::get('admin/catalogos', [CatalogsController::class, 'index'])->name('catalogos');
 Route::get('search/product', SearchProducts::class)->name('buscar.producto');
 Route::get('gestion/product/{category?}', GestionProduct::class)->name('gestion.ctg.producto');
 Route::get('search/food', SearchFood::class)->name('buscar.comida');
 Route::get('gestion/food/{category?}', GestionFood::class)->name('gestion.ctg.comida');
 
+//clientes
+
+Route::get('admin/clientes', [CatalogsController::class, 'clientes'])->name('clientes');
+
+});
 
 //rutas para livewire
 use Livewire\Livewire;

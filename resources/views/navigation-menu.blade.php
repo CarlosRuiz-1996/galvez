@@ -15,14 +15,23 @@
                     {{-- <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link> --}}
-                    @can('admin')
+                    {{-- {{ auth()->user()->roles }} --}}
 
-                    <x-nav-link href="{{ route('catalogos') }}" :active="request()->routeIs('catalogos') ||
-                        request()->routeIs('buscar.producto') ||
-                        request()->routeIs('buscar.comida') ||
-                        request()->routeIs('gestion.ctg.comida')||
-                        request()->routeIs('gestion.ctg.producto')">
-                        {{-- Str::startsWith(
+
+                    @if(auth()->user()->roles[0]->name === 'Cliente')
+                    <x-nav-link href="{{ route('clientes.pedidos') }}" :active="request()->routeIs('clientes.pedidos')">
+                        {{ __('Pedidos') }}
+                    </x-nav-link>
+                    
+                    @endif
+                  
+                    @can('admin')
+                        <x-nav-link href="{{ route('catalogos') }}" :active="request()->routeIs('catalogos') ||
+                            request()->routeIs('buscar.producto') ||
+                            request()->routeIs('buscar.comida') ||
+                            request()->routeIs('gestion.ctg.comida') ||
+                            request()->routeIs('gestion.ctg.producto')">
+                            {{-- Str::startsWith(
                             request()
                                 ->route()
                                 ->getName(),
@@ -30,14 +39,26 @@
                         ) --}}
 
 
-                        {{ __('Catalogos') }}
-                    </x-nav-link>
+                            {{ __('Catalogos') }}
+                        </x-nav-link>
 
-                    <x-nav-link href="{{ route('clientes') }}" :active="request()->routeIs('clientes')">
-                        {{ __('Clientes') }}
-                    </x-nav-link>
+                        <x-nav-link href="{{ route('clientes') }}" :active="request()->routeIs('clientes')">
+                            {{ __('Clientes') }}
+
+
+                        </x-nav-link>
+
+                        <x-nav-link href="{{ route('clientes.abastecimiento') }}" :active="request()->routeIs('clientes.abastecimiento')">
+                            {{ __('Abastecimiento') }}
+
+
+                        </x-nav-link>
                     @endcan
-                   
+
+
+
+
+
                 </div>
             </div>
 

@@ -11,8 +11,8 @@ class Detail extends Model
     protected $table = 'detail';
 
     protected $fillable = [
-        'order_id',
-        'product_id',
+        'user_id',
+        'cliente_product_id',
         'amount',
         'created_at',
         'updated_at',

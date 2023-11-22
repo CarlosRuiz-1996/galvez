@@ -16,7 +16,7 @@ class RoleSeeder extends Seeder
     {
         // creo los roles que habran, que son admin y hospital
         $role1 = Role::create(['name' => 'Admin']);
-        $role2 = Role::create(['name' => 'Hospital']);
+        $role2 = Role::create(['name' => 'Cliente']);
 
         /*
         #creo los permisos
@@ -26,6 +26,8 @@ class RoleSeeder extends Seeder
         //admin hospital
         
         Permission::create(['name' => 'admin'])->syncRoles([$role1]);
+        Permission::create(['name' => 'cliente'])->syncRoles([$role2]);
+
         // Permission::create(['name' => 'admin.hospitals.detalle'])->syncRoles([$role1]);// aqui asigno el rol al permiso
         // Permission::create(['name' => 'admin.hospitals.editar'])->syncRoles([$role1]);
         // Permission::create(['name' => 'admin.hospitals.eliminar'])->syncRoles([$role1]);

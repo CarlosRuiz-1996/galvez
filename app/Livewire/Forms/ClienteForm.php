@@ -67,6 +67,11 @@ class ClienteForm extends Form
     {
 
         $this->validate();
+
+        $this->password=  bcrypt($this->password);
+
+        // dd($this->password);
+        // die();
         $user = User::create($this->only(['name', 'email', 'password', 'address', 'cat_cp_id', 'cliente', 'rfc', 'phone', 'no_contrato']));
 
         $user->roles()->sync(2);

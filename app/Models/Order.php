@@ -9,18 +9,19 @@ class Order extends Model
 {
     use HasFactory;
 
-    public function hospital()
-    {
-        return $this->belongsTo(Hospital::class);
-    }
+    // public function hospital()
+    // {
+    //     return $this->belongsTo(Hospital::class);
+    // }
+    protected $table = 'order';
 
     
     public function detalles()
     {
         return $this->hasMany('App\Models\Detail');
     }
-    public function product()
+    public function product_cliente()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(ClienteProduct::class);
     }
 }

@@ -42,7 +42,9 @@
                             {{ __('Catalogos') }}
                         </x-nav-link>
 
-                        <x-nav-link href="{{ route('clientes') }}" :active="request()->routeIs('clientes')">
+                        <x-nav-link href="{{ route('clientes') }}" :active="request()->routeIs('clientes') ||
+                                                        request()->routeIs('clientes.gestion') 
+                            ">
                             {{ __('Clientes') }}
 
 

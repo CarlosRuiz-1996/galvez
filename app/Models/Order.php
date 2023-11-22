@@ -13,8 +13,13 @@ class Order extends Model
     // {
     //     return $this->belongsTo(Hospital::class);
     // }
-    protected $table = 'order';
-
+    protected $table = 'orders';
+    protected $fillable = [
+        'deadline',
+        'observations',
+        'total',
+        'user_id',
+    ];
     
     public function detalles()
     {

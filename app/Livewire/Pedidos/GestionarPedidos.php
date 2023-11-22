@@ -31,7 +31,10 @@ class GestionarPedidos extends Component
     ];
     public $open = false;
     public $openP = false;
-    public $productosArray;
+    public $openPL = false;
+
+
+    public $productosArrayCliente;
 
     public function openModal()
     {
@@ -53,7 +56,15 @@ class GestionarPedidos extends Component
         $this->openP = false;
     }
 
-
+    public function openModalPL()
+    {
+        $this->resetValidation();
+        $this->openPL = true;
+    }
+    public function closeModalPL()
+    {
+        $this->openPL = false;
+    }
     //renderisa la tabla una ves que carga la pagina
     public function loadOrders()
     {
@@ -69,7 +80,7 @@ class GestionarPedidos extends Component
     #[On('list-products-cliente')]
     public function mount()
     {
-        $this->productosArray = Session::get('productosArray', []);
+        $this->productosArrayCliente = Session::get('productosArrayCliente', []);
         // $this->FoodsArray = Session::get('FoodsArray', []);
     }
 
@@ -135,9 +146,9 @@ class GestionarPedidos extends Component
              
                 $product = $this->form->getOneProduct($isSelected);
 
-                Session::push('productosArray', [
+                Session::push('productosArrayCliente', [
                     'name' => $product->name,
-                    'description' => $product->description,
+                    'descripcion' => $product->description,
                     'presentation' => $product->presentation->name,
                     'gramagge' => $product->grammage->name,
                     'gramaje' => $product->gramaje,
@@ -152,5 +163,43 @@ class GestionarPedidos extends Component
 
         $this->closeModalP();
 
+    }
+
+
+
+     //borrar elementos de productos
+     public function deleteIntemProd($index)
+     {
+         $products = Session::get('productosArrayCliente', []);
+         if (count($products)) {
+ 
+             foreach ($products as $key => $producto) {
+                 if ($producto['id'] == $index) {
+ 
+                     unset($products[$key]);
+                     break;
+                 }
+             }
+         }
+ 
+         Session::put('productosArrayCliente', $products);
+ 
+         $this->dispatch('list-products-cliente');
+         $this->closeModalPL();
+     }
+
+
+     public function save()
+    {
+        $this->form->store();
+        session()->forget('productosArrayCliente');
+        // session()->forget('FoodsArray');
+
+        //evento para el modal del cliente
+        $this->dispatch('list-products-cliente');
+
+        $this->dispatch('alert', "El pedido se realizo con exito!.");
+
+        $this->closeModal();
     }
 }

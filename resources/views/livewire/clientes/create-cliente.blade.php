@@ -98,7 +98,7 @@
                     <select wire:model="form.cat_cp_id" class="w-full form-control">
                         @if ($form->colonias)
                             @foreach ($form->colonias as $cp)
-                                <option value="{{ $cp->id }}">{{ $cp->colonia }}</option>
+                                <option value="{{ $cp->idcp }}">{{ $cp->colonia }}</option>
                             @endforeach
                         @else
                             <option value="">Esperando...</option>

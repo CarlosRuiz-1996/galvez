@@ -20,19 +20,18 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
         $this->call(BrandSeeder::class);
         $this->call(PresentationSeeder::class);
-        $this->call(IvaSeeder::class);
-        $this->call(IpesSeeder::class);
+        // $this->call(IvaSeeder::class);
+        // $this->call(IpesSeeder::class);
         $this->call(GrammageSeeder::class);
-        $this->call(HospitalesTableSeeder::class);
+        // $this->call(HospitalesTableSeeder::class);
         $this->call(CategorySeeder::class);
         $this->call(ProductosTableSeeder::class);
 
         //creo un usuario de prueba para la base
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test',
-        //     'surname' => 'User',
-        //     'email' => 'test@test.com',
-        // ])->assignRole('Admin');
+        \App\Models\User::factory()->create([
+            'name' => 'Test',
+            'email' => 'test@test.com',
+        ])->assignRole('Admin');
         // \App\Models\User::factory()->create([
         //     'name' => 'Test',
         //     'surname' => 'User',

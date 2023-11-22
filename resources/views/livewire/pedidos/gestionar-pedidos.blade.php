@@ -8,7 +8,6 @@
 
     </x-slot>
 
-
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
         <div class="mt-4 p-5">
@@ -98,11 +97,11 @@
                             <tr class="table-row bg-white border-b hover:bg-gray-50">
                                 <td class="px-6 py-4">{{ $order->id }}</td>
 
-                                <td class="px-6 py-4">{{ $order->name }}</td>
-                                <td class="px-6 py-4">{{ $order->presentation->name }}</td>
+                                <td class="px-6 py-4">{{ $order->created_at }}</td>
+                                <td class="px-6 py-4">{{ $order->deadline }}</td>
 
 
-                                <td class="px-6 py-4">{{ $order->description }}</td>
+                                <td class="px-6 py-4">{{ $order->observations }}</td>
                                 <td class="text-center">
                                     <button class="btn btn-green mr-2 p-2" wire:click='edit({{ $order }})'>
                                         <i class="fas fa-edit"></i>
@@ -175,26 +174,24 @@
                         <button wire:click="openModalP" class="btn btn-orange">INCLUIR PRODUCTOS</button>
                     </div>
                     <div class="col-span-1">
-
-                        <livewire:clientes.modal-foods />
+                        @if ($productosArrayCliente)
+                            <x-button wire:click="openModalPL">
+                                VER PRODUCTOS
+                            </x-button>
+                        @endif
+                        {{-- <livewire:clientes.modal-foods /> --}}
                     </div>
                     <div class="col-span-1">
-                        <livewire:clientes.listar-productos />
+                        {{-- <livewire:clientes.listar-productos /> --}}
 
                     </div>
                 </div>
-                @if ($productosArray)
-                    <x-button wire:click="openModalP">
-                        {{-- class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-orange-700 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300"> --}}
-                        VER PRODUCTOS
-                    </x-button>
-                @endif
+
             </div>
         @endslot
         @slot('footer')
             <x-secondary-button wire:click="closeModal">Cancelar</x-secondary-button>
-            {{--  wire:click="{{ $foodId ? 'update' : 'save' }}"" --}}
-            <x-button wire:click="" class=" ml-3 disabled:opacity-25">Guardar</x-button>
+            <x-button wire:click="save" class=" ml-3 disabled:opacity-25">Guardar</x-button>
         @endslot
     </x-dialog-modal>
 
@@ -309,4 +306,139 @@
             <x-danger-button wire:click="agregarProductos" class="ml-3">Aceptar</x-danger-button>
         @endslot
     </x-dialog-modal-xl>
+
+
+
+    <x-dialog-modal-xl wire:model.live="openPL">
+        @slot('title')
+            <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
+                <h1>Productos para el pedido</h1>
+            </div>
+        @endslot
+        @slot('content')
+            <table class="table">
+                <thead>
+                    <th>NOMBRE</th>
+                    <th>PRESENTACION</th>
+                    <th>GRAMAGE</th>
+                    <th>IMAGEN</th>
+                    <th>DESCRIPCION</th>
+
+                    <th>ELIMINAR</th>
+
+                </thead>
+                <tbody>
+                    {{-- {{ }} --}}
+                    @foreach ($productosArrayCliente as $index => $ingredient)
+                        <tr>
+                            <td class="px-6 py-4">{{ $ingredient['name'] }}</td>
+                            {{-- <td class="px-6 py-4">{{ $ingredient['descripcion'] }}</td> --}}
+                            <td class="px-6 py-4">{{ $ingredient['presentation'] }}</td>
+                            <td class="px-6 py-4">{{ $ingredient['gramagge'] . ' ' . $ingredient['gramaje'] }}</td>
+                            {{-- <td class="px-6 py-4">{{ $ingredient['gramaje'] }}</td> --}}
+                            <td class="px-6 py-4">
+                                <img class="p-8 rounded-t-lg h-40" <?php $nombreDeLaImagen = basename($ingredient['image_path']); ?>
+                                    @if ($ingredient['image_path']) src="{{ asset('storage/products/' . $nombreDeLaImagen) }}"
+                            alt="product image"
+                        @else
+                            src="{{ asset('img/producto.png/') }}"
+                            alt="product image" @endif />
+
+                            </td>
+                            <td class="px-6 py-4">{{ $ingredient['descripcion'] }}</td>
+
+                            <td class="px-6 py-4">
+                                <x-danger-button
+                                    wire:click="deleteIntemProd({{ $ingredient['id'] }})">Borrar</x-danger-button>
+
+                            </td>
+
+
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+        @endslot
+        @slot('footer')
+            <x-secondary-button wire:click="closeModalPL">CERRAR</x-secondary-button>
+            {{-- <x-danger-button class="ml-2" wire:click="save">Aceptar</x-danger-button> --}}
+        @endslot
+    </x-dialog-modal-xl>
+
+    <x-dialog-modal-xl wire:model.live="openPL">
+        @slot('title')
+            <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
+                <h1>Detalles del pedido</h1>
+            </div>
+        @endslot
+        @slot('content')
+            <table class="table">
+                <thead>
+                    <th>NOMBRE</th>
+                    <th>PRESENTACION</th>
+                    <th>GRAMAGE</th>
+                    <th>IMAGEN</th>
+                    <th>DESCRIPCION</th>
+
+                    <th>ELIMINAR</th>
+
+                </thead>
+                <tbody>
+                    {{-- {{ }} --}}
+                    @foreach ($productosArrayCliente as $index => $ingredient)
+                        <tr>
+                            <td class="px-6 py-4">{{ $ingredient['name'] }}</td>
+                            {{-- <td class="px-6 py-4">{{ $ingredient['descripcion'] }}</td> --}}
+                            <td class="px-6 py-4">{{ $ingredient['presentation'] }}</td>
+                            <td class="px-6 py-4">{{ $ingredient['gramagge'] . ' ' . $ingredient['gramaje'] }}</td>
+                            {{-- <td class="px-6 py-4">{{ $ingredient['gramaje'] }}</td> --}}
+                            <td class="px-6 py-4">
+                                <img class="p-8 rounded-t-lg h-40" <?php $nombreDeLaImagen = basename($ingredient['image_path']); ?>
+                                    @if ($ingredient['image_path']) src="{{ asset('storage/products/' . $nombreDeLaImagen) }}"
+                            alt="product image"
+                        @else
+                            src="{{ asset('img/producto.png/') }}"
+                            alt="product image" @endif />
+
+                            </td>
+                            <td class="px-6 py-4">{{ $ingredient['descripcion'] }}</td>
+
+                            <td class="px-6 py-4">
+                                <x-danger-button
+                                    wire:click="deleteIntemProd({{ $ingredient['id'] }})">Borrar</x-danger-button>
+
+                            </td>
+
+
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+        @endslot
+        @slot('footer')
+            <x-secondary-button wire:click="closeModalPL">CERRAR</x-secondary-button>
+            {{-- <x-danger-button class="ml-2" wire:click="save">Aceptar</x-danger-button> --}}
+        @endslot
+    </x-dialog-modal-xl>
+
+    @push('js')
+        <script>
+            document.addEventListener('livewire:initialized', () => {
+
+
+                Livewire.on('alert', function(message) {
+                    Swal.fire({
+                        // position: 'top-end',
+                        icon: 'success',
+                        title: message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                });
+
+            });
+        </script>
+    @endpush
 </div>

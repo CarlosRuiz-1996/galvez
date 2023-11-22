@@ -3,20 +3,31 @@
 namespace App\Livewire\Forms;
 
 use App\Models\ClienteProduct;
+use App\Models\Detail;
 use App\Models\Order;
 use App\Models\Product;
 use Livewire\Attributes\Rule;
 use Livewire\Form;
+use Illuminate\Support\Facades\Session;
 
 class GestionPedidos extends Form
 {
     //
 
+    public $deadline;
+    public $total;
+    public $observations;
+    public $user_id;
     public $search = "";
     public $search_prod = "";
     public $filtra_cat = 0;
 
-
+    protected $rules = [
+        'deadline' => 'required',
+        'total' => 'required', // Ajusta según tus necesidades
+        'observations' => 'required',
+        
+    ];
     //read productos categoria
     public function readOrders($sort, $orderBy, $list)
     {
@@ -86,7 +97,37 @@ class GestionPedidos extends Form
             ->orderBy('cliente_products.id', 'desc')
             ->paginate(100);
     }
+    public function store()
+    {
 
+        $this->validate();
+
+
+        $this->user_id = auth()->user()->id;
+        // die();
+        $order = Order::create($this->only(['deadline', 'observations', 'total','user_id']));
+
+
+        $orderId = $order->id;
+
+        $productos = Session::get('productosArrayCliente', []);
+
+        if (count($productos)) {
+            foreach ($productos as $producto) {
+                Detail::create([
+                    'amount' => 1,
+                    'order_id' => $orderId,
+                    'cliente_product_id' => $producto['id'],
+
+                ]);
+            }
+        }
+        
+
+
+
+        $this->reset();
+    }
 
     public function getOneProduct($id)
     {

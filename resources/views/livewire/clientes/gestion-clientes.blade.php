@@ -38,7 +38,7 @@
                     <x-input type="text" placeholder="Busca un producto" class="w-full ml-4"
                         wire:model.live='form.search' />
     
-                    <x-button class="ml-4" wire:click="create">Nuevo</x-button>
+                    <x-button class="ml-4" wire:click="">Nuevo</x-button>
                 </div>
                 
                 @if (count($users))
@@ -169,7 +169,7 @@
                                 <td class="px-6 py-4">{{ $user->no_contrato }}</td>
 
                                 <td class="text-center">
-                                    <button class="btn btn-green mr-2 p-2" wire:click='edit({{ $user }})'>
+                                    <button class="btn btn-green mr-2 p-2" wire:click=''>
                                         <i class="fas fa-edit"></i>
                                     </button>
                                 </td>

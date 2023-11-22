@@ -98,11 +98,11 @@
                             <tr class="table-row bg-white border-b hover:bg-gray-50">
                                 <td class="px-6 py-4">{{ $order->id }}</td>
 
-                                <td class="px-6 py-4">{{ $order->name }}</td>
-                                <td class="px-6 py-4">{{ $order->presentation->name }}</td>
+                                <td class="px-6 py-4">{{ $order->deadline }}</td>
+                                <td class="px-6 py-4">{{ $order->created_at }}</td>
 
 
-                                <td class="px-6 py-4">{{ $order->description }}</td>
+                                <td class="px-6 py-4">{{ $order->observations }}</td>
                                 {{-- <td class="text-center">
                                 <button class="btn btn-green mr-2 p-2" wire:click='edit({{ $order }})'>
                                     <i class="fas fa-edit"></i>

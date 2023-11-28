@@ -17,6 +17,7 @@ class ClienteFood extends Model
         'min',
         'user_id',
         'food_id',
+        'status'
     ];
 
 

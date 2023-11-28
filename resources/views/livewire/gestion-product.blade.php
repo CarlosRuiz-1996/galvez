@@ -136,7 +136,7 @@
                                     alt="product image" @endif />
                                 </td>
 
-                                <td class="px-6 py-4">{{ $producto->description }}</td>
+                                <td class="px-6 py-4">{{ $producto->description ?$producto->description:'Sin descripción'}}</td>
                                 <td class="text-center">
                                     <button class="btn btn-green mr-2 p-2" wire:click='edit({{ $producto }})'>
                                         <i class="fas fa-edit"></i>

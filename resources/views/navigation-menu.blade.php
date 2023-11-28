@@ -55,6 +55,13 @@
 
 
                         </x-nav-link>
+
+
+                        <x-nav-link href="{{ route('clientes.cotizacion') }}" :active="request()->routeIs('clientes.cotizacion')">
+                            {{ __('Cotizaciones') }}
+
+
+                        </x-nav-link>
                     @endcan
 
 

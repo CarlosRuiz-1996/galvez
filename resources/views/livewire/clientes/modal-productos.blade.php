@@ -29,7 +29,7 @@
                         </option>
                     @endforeach
                 </select>
-                
+
             </div>
             <div wire:init='loadProducts'>
                 @if (count($products))
@@ -42,7 +42,13 @@
                                 <th scope="col" class="col-1">PRESENTACIÓN</th>
                                 <th scope="col" class="col-1">GRAMAGE</th>
                                 <th scope="col" class="col-1">IMAGEN</th>
-                                <th scope="col" class="">DESCRIPCIÓN</th>
+                                <th scope="col" class="">
+                                    @if ($type == 2)
+                                        PRECIO UNITARIO
+                                    @else
+                                        DESCRIPCIÓN
+                                    @endif
+                                </th>
                                 <th scope="col" class="">MAXIMO</th>
                                 <th scope="col" class="">MINIMO</th>
 
@@ -54,8 +60,9 @@
                                 <tr class="table-row bg-white border-b text-center hover:bg-gray-50">
                                     <td class="w-1/18">
                                         <div class="flex items-center justify-center">
-                                            <input type="checkbox" wire:model="productosSeleccionados.{{ $product->id }}" value="{{ $product->id }}" id="check-{{ $product->id }}"
-                                                onclick="checkear({{ $product->id }})"
+                                            <input type="checkbox" wire:model="productosSeleccionados.{{ $product->id }}"
+                                                value="{{ $product->id }}" id="check-{{ $product->id }}"
+                                                onclick="checkearProd({{ $product->id }})"
                                                 class="w-5 h-5 text-blue-600  border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                         </div>
                                     </td>
@@ -74,23 +81,29 @@
                                             alt="product image" @endif />
                                     </td>
                                     <td class="w-1/4">
-                                        <textarea rows="4" id="description-{{ $product->id }}" disabled
-                                            wire:model="description.{{ $product->id }}" 
-                                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-100 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+
+                                        @if ($type == 2)
+                                            <input
+                                                class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                                type="number" disabled id="price-{{ $product->id }}"
+                                                wire:model="price.{{ $product->id }}" />
+                                        @else
+                                            <textarea rows="4" id="description-{{ $product->id }}" disabled wire:model="description.{{ $product->id }}"
+                                                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-100 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        </textarea>
+                                        @endif
                                     </td>
                                     <td class="w-1/18">
                                         <div class="col-span-2 sm:col-span-1 ml-2 mr-2">
-                                            <input type="number" id="max-{{ $product->id }}" disabled 
-                                            wire:model="max.{{ $product->id }}"
-                                               
+                                            <input type="number" id="max-{{ $product->id }}" disabled
+                                                wire:model="max.{{ $product->id }}"
                                                 class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                                         </div>
                                     </td>
                                     <td class="w-1/18">
                                         <div class="col-span-2 sm:col-span-1">
                                             <input type="number" id="min-{{ $product->id }}" disabled
-                                            wire:model="min.{{ $product->id }}"
-                                              
+                                                wire:model="min.{{ $product->id }}"
                                                 class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                                         </div>
                                     </td>
@@ -129,23 +142,38 @@
             //muevo el dom de los productos checkeados
             // @this.dispatch(productId ? 'update-productos' : 'save-productos'); 
 
-            function checkear(id) {
+            function checkearProd(id) {
 
                 var checkbox = document.getElementById('check-' + id);
                 var descInput = document.getElementById('description-' + id);
                 var maxInput = document.getElementById('max-' + id);
                 var minInput = document.getElementById('min-' + id);
-                // console.log(checkbox)
+                var price = document.getElementById('price-' + id);
+
+
                 if (checkbox.checked) {
-                    // console.log('checkeado')
+                    console.log('checkeado')
 
                     // Habilita el campo min y quita el atributo disabled
-                    descInput.removeAttribute('disabled');
+                    if (descInput) {
+                        descInput.removeAttribute('disabled');
+                    } else {
+                        price.removeAttribute('disabled');
+
+                    }
                     maxInput.removeAttribute('disabled');
                     minInput.removeAttribute('disabled');
+
                     // Cambia la clase de fondo del campo 
-                    descInput.classList.remove('bg-gray-100');
-                    descInput.classList.add('bg-white');
+                    if (descInput) {
+
+                        descInput.classList.remove('bg-gray-100');
+                        descInput.classList.add('bg-white');
+                    } else {
+                        price.classList.remove('bg-gray-100');
+                        price.classList.add('bg-white');
+
+                    }
                     maxInput.classList.remove('bg-gray-100');
                     maxInput.classList.add('bg-white');
                     minInput.classList.remove('bg-gray-100');
@@ -159,25 +187,44 @@
                     console.log('des checkeado')
 
                     // Deshabilita el campo min y agrega el atributo disabled
-                    descInput.setAttribute('disabled', 'disabled');
+                    if (descInput) {
+
+                        descInput.setAttribute('disabled', 'disabled');
+                    } else {
+                        price.setAttribute('disabled', 'disabled');
+
+                    }
                     maxInput.setAttribute('disabled', 'disabled');
                     minInput.setAttribute('disabled', 'disabled');
 
+
                     // Cambia la clase de fondo del campo min
-                    descInput.classList.remove('bg-white');
-                    descInput.classList.add('bg-gray-100');
+                    if (descInput) {
+
+                        descInput.classList.remove('bg-white');
+                        descInput.classList.add('bg-gray-100');
+                    } else {
+                        price.classList.remove('bg-white');
+                        price.classList.add('bg-gray-100');
+                    }
                     maxInput.classList.remove('bg-white');
                     maxInput.classList.add('bg-gray-100');
                     minInput.classList.remove('bg-white');
                     minInput.classList.add('bg-gray-100');
+
                     // Limpia el valor del campo min
-                    descInput.value = '';
+
+                    if (descInput) {
+
+                        descInput.value = '';
+                    }else{
+                        price.value = '';
+
+                    }
                     maxInput.value = '';
                     minInput.value = '';
                 }
             }
-
-          
         </script>
     @endpush
 

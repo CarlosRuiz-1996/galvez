@@ -16,6 +16,8 @@ class ClienteProduct extends Model
         'min',
         'user_id',
         'product_id',
+        'price_prod',
+        'status',
     ];
     public function product()
     {

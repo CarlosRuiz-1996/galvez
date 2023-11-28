@@ -50,7 +50,7 @@ class CreateCliente extends Component
 
     public function save()
     {
-        $this->form->store();
+        $this->form->store(1);
         session()->forget('productosArray');
         session()->forget('FoodsArray');
 

@@ -35,6 +35,7 @@ class User extends Authenticatable
         'rfc',
         'phone',
         'no_contrato',
+        'status_user'
     ];
 
     /**

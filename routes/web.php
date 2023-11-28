@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CatalogsController;
 use App\Livewire\Clientes\GestionClientes;
+use App\Livewire\Cotizaciones\GestionCotizacion;
 use App\Livewire\GestionFood;
 use App\Livewire\GestionProduct;
 use App\Livewire\Pedidos\Abastecimiento;
@@ -53,6 +54,7 @@ Route::middleware([
     Route::get('admin/clientes', [CatalogsController::class, 'clientes'])->name('clientes');
     Route::get('admin/clientes/gestion', GestionClientes::class)->name('clientes.gestion');
     Route::get('admin/abastecimiento', Abastecimiento::class)->name('clientes.abastecimiento');
+    Route::get('admin/cotizacion', GestionCotizacion::class)->name('clientes.cotizacion');
 
 
     Route::get('clientes/pedidos', GestionarPedidos::class)->name('clientes.pedidos');

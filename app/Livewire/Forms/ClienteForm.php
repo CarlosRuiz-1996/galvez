@@ -23,7 +23,7 @@ class ClienteForm extends Form
     public $phone;
     public $rfc;
     public $address;
-
+    public $status_user;
 
     public $estado;
     public $municipio;
@@ -42,7 +42,8 @@ class ClienteForm extends Form
         'cliente' => 'required',
         'rfc' => 'required',
         'phone' => 'required|max:10|min:8',
-        'no_contrato' => 'required',
+        // 'no_contrato' => 'required',
+                
     ];
 
 
@@ -63,16 +64,17 @@ class ClienteForm extends Form
     }
 
 
-    public function store()
+    public function store($sts)
     {
 
         $this->validate();
 
-        $this->password=  bcrypt($this->password);
+        $this->password =  bcrypt($this->password);
+        $this->status_user =  $sts;
 
-        // dd($this->password);
+        // dd($this->no_contrato);
         // die();
-        $user = User::create($this->only(['name', 'email', 'password', 'address', 'cat_cp_id', 'cliente', 'rfc', 'phone', 'no_contrato']));
+        $user = User::create($this->only(['name', 'email', 'password', 'address', 'cat_cp_id', 'cliente', 'rfc', 'phone', 'no_contrato', 'status_user']));
 
         $user->roles()->sync(2);
 
@@ -82,13 +84,26 @@ class ClienteForm extends Form
 
         if (count($productos)) {
             foreach ($productos as $producto) {
-                ClienteProduct::create([
-                    'description' => $producto['descripcion'],
-                    'max' => $producto['max'],
-                    'min' => $producto['min'],
-                    'product_id' => $producto['id'],
-                    'user_id' => $clienteId,
-                ]);
+
+                if ($sts == 2) {
+                    ClienteProduct::create([
+                        'description' => $producto['descripcion'],
+                        'max' => $producto['max'],
+                        'min' => $producto['min'],
+                        'status' => $sts,
+                        'price_prod'=> $producto['price'],
+                        'product_id' => $producto['id'],
+                        'user_id' => $clienteId,
+                    ]);
+                } else {
+                    ClienteProduct::create([
+                        'description' => $producto['descripcion'],
+                        'max' => $producto['max'],
+                        'min' => $producto['min'],
+                        'product_id' => $producto['id'],
+                        'user_id' => $clienteId,
+                    ]);
+                }
             }
         }
         $foods = Session::get('FoodsArray', []);

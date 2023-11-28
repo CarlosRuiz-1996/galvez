@@ -17,8 +17,10 @@ return new class extends Migration
             $table->integer('max');
             $table->integer('min');
             $table->integer('status')->default(1);
+            $table->float('price_prod')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+
             $table->timestamps();
         });
     }

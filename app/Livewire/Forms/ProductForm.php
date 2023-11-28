@@ -85,20 +85,22 @@ class ProductForm extends Form
     public function readProductCategory($id, $sort, $orderBy, $list)
     {
         return Product::where('ctg_category_id', '=', $id)
-            ->where('name', 'like', '%' . $this->search . '%')
+          
+            ->where(function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('description', 'like', '%' . $this->search . '%')
+                    ->orWhere('gramaje', 'like', '%' . $this->search . '%');
+            })
+            ->WhereHas('presentation', function ($query) {
+                $query->orWhere('name', 'like', '%' . $this->search . '%');
+            }) 
+
             
-
-            ->where('description', 'like', '%' . $this->search . '%')
-            // ->where('gramaje', 'like', '%' . $this->search . '%')
-
-            // ->orWhereHas('presentation', function ($query) {
-            //     $query->where('namae', 'like', '%' . $this->search . '%');
-            // })
-            // ->orWhereHas('grammage', function ($query) {
-            //     $query->where('name', 'like', '%' . $this->search . '%');
-            // })
             ->orderBy($sort, $orderBy)
             ->paginate($list);
+
+
+            
     }
 
     //save datos nuevos

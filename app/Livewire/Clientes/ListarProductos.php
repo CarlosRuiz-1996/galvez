@@ -35,10 +35,11 @@ class ListarProductos extends Component
         $this->openF = false;
     }
 
-
+    public $type;
     #[On('list-products')]
-    public function mount()
+    public function mount($type = null)
     {
+        $this->type= $type;
         $this->productosArray = Session::get('productosArray', []);
         $this->FoodsArray = Session::get('FoodsArray', []);
     }

@@ -26,6 +26,8 @@ return new class extends Migration
             $table->string('rfc')->nullable();
             $table->string('phone')->nullable();
             $table->string('no_contrato')->nullable();
+            $table->integer('status_user')->default(1);
+
 
             $table->timestamps();
         });

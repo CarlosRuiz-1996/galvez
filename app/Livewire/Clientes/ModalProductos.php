@@ -21,6 +21,8 @@ class ModalProductos extends Component
 
     public $productosSeleccionados = [];
     public $description = [];
+    public $price = [];
+
     public $max = [];
     public $min = [];
 
@@ -87,6 +89,7 @@ class ModalProductos extends Component
                     'descripcion' => $this->description[$id] ?? '',
                     'max' => $this->max[$id] ?? '',
                     'min' => $this->min[$id] ?? '',
+                    'price'=>$this->price[$id] ?? '',
                     'name' => $product->name,
                     // 'description' => $product->description,
                     'presentation' => $product->presentation->name,
@@ -106,7 +109,7 @@ class ModalProductos extends Component
         $this->productosSeleccionados = [];
 
         //evento para el modal del cliente
-        $this->dispatch('list-products');
+        $this->dispatch('list-products', type: $this->type);
 
         $this->closeModalP();
     }
@@ -121,5 +124,14 @@ class ModalProductos extends Component
     public function loadProducts()
     {
         $this->readyToLoad = true;
+    }
+
+
+//verifico quien me solicita el mdal si cotizacion o crear cliente
+    public $type;
+ 
+    public function mount($type = null)
+    {
+        $this->type = $type;
     }
 }

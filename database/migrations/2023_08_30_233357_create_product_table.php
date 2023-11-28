@@ -16,17 +16,17 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('description')->nullable();;
+            $table->text('description')->nullable();
             $table->unsignedBigInteger('ctg_grammage_id');
             $table->string('gramaje')->nullable();;
             $table->unsignedBigInteger('ctg_presentation_id');
             $table->unsignedBigInteger('ctg_brand_id'); //marca id
-            $table->float('price')->nullable();;
+            $table->float('price')->nullable();
             $table->unsignedBigInteger('iva_id');
             $table->unsignedBigInteger('ieps_id');
-            $table->float('total')->nullable();;
-            $table->integer('stock')->nullable();;
-            $table->string('image_path')->nullable();;
+            $table->float('total')->nullable();
+            $table->integer('stock')->nullable();
+            $table->string('image_path')->nullable();
             $table->unsignedBigInteger('ctg_category_id');
             $table->timestamps();
             $table->foreign('ctg_category_id')->references('id')->on('ctg_categories')->onDelete('cascade');

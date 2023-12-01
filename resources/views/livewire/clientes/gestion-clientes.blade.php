@@ -23,7 +23,7 @@
             <div class="mt-4 p-5">
                 <x-alert />
     
-                <div class=" py-6 px-4 bg-gray-50 flex">
+                <div class=" py-6 px-4 bg-gray-200 flex">
     
                     <div class="flex items-center">
                         <span>Mostrar</span>
@@ -44,7 +44,7 @@
                 @if (count($users))
 
                 <table class="w-full text-sm text-left text-gray-500">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-200">
                         <tr>
                             <th scope="col" class="w-24 px-4 py-2 cursor-pointer" wire:click="order('id')">ID
                                 @if ($sort == 'id')

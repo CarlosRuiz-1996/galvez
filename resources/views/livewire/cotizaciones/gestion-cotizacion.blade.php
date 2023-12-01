@@ -12,15 +12,15 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
         <div class="mt-4 p-5">
-            
-            <div class=" py-6 px-4 bg-gray-50 flex">
-    
+
+            <div class=" py-6 px-4 bg-gray-200 flex">
+
                 <div class="flex items-center">
                     <span>Mostrar</span>
-                    {{-- <select class="form-control" wire:model.live='list'>
+                    <select class="form-control" wire:model.live='list'>
                         @foreach ($entrada as $item)
                             <option value="{{ $item }}">{{ $item }}</option>
-                        @endforeach --}}
+                        @endforeach
                     </select>
                     <span>Entradas</span>
                 </div>
@@ -34,7 +34,7 @@
             @if (count($orders))
 
                 <table class="w-full text-sm text-left text-gray-500">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 text-center">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-200 text-center">
                         <tr>
                             <th scope="col" class="w-24 px-4 py-2 cursor-pointer" wire:click="order('id')">ID
                                 @if ($sort == 'id')
@@ -49,7 +49,7 @@
                                 @endif
                             </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('name')">
-                                    CONTACTO
+                                CONTACTO
                                 @if ($sort == 'name')
                                     @if ($orderBy == 'asc')
                                         <i class="fas fa-sort-alpha-up-alt mt-1"></i>
@@ -130,11 +130,21 @@
 
                                 <td class="px-6 py-4">{{ $order->cliente }}</td>
                                 <td class="px-6 py-4">{{ $order->rfc }}</td>
-                                <td class="px-6 py-4">{{ $order->phone }}</td>    
+                                <td class="px-6 py-4">{{ $order->phone }}</td>
                                 <td>
-                                    <button class="btn btn-green mr-2 p-2" wire:click=''>
-                                        <i class="fas fa-edit"></i>
-                                    </button>                                </td>
+
+                                    {{-- <p class="mt-4 flex"> --}}
+                                        <a class="btn btn-green mr-2 p-2" 
+                                        href="{{ route('clientes.cotizacion.excel', ['user' => $order->id]) }}">
+                                            Excel<i class="fa fa-download" aria-hidden="true"></i>
+
+                                        </a>
+                                    {{-- </p> --}}
+                                    <button class="btn btn-blue mr-2 p-2" wire:click='openModalD({{ $order->id }})'>
+                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+
+                                    </button>
+                                </td>
                             </tr>
                         @endforeach
 
@@ -180,13 +190,14 @@
                 <div class="relative z-0 w-full  group"></div>
                 <div class="relative z-0 w-full  group">
                     {{-- <x-label>Numero de contrato</x-label> --}}
-                    
-                    <x-input type="number" value="0" hidden disabled class="w-full bg-gray-200" wire:model='form_cliente.no_contrato' />
+
+                    <x-input type="number" value="0" hidden disabled class="w-full bg-gray-200"
+                        wire:model='form_cliente.no_contrato' />
                     <x-input-error for="form_cliente.no_contrato" />
                 </div>
                 <div class="relative z-0 w-full  group">
                     <x-label>Nombre del cliente</x-label>
-                    <x-input type="text" class="w-full uppercase"  wire:model='form_cliente.cliente' />
+                    <x-input type="text" class="w-full uppercase" wire:model='form_cliente.cliente' />
                     <x-input-error for="form_cliente.cliente" />
                 </div>
                 <div class="relative z-0 w-full  group">
@@ -271,7 +282,7 @@
             <div class="mt-3">
                 <div class="grid grid-cols-3 gap-6 mt-4">
 
-                    
+
 
                     <div class="col-span-1">
 
@@ -291,6 +302,59 @@
         @slot('footer')
             <x-secondary-button wire:click="closeModal">Cancelar</x-secondary-button>
             <x-danger-button class="ml-2" wire:click="save">Aceptar</x-danger-button>
+        @endslot
+    </x-dialog-modal-xl>
+
+
+    <x-dialog-modal-xl wire:model.live="openD">
+        @slot('title')
+            <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
+                <h1>Productos de la cotización</h1>
+            </div>
+        @endslot
+        @slot('content')
+            
+
+            <table class="w-full text-sm text-left text-gray-500">
+                <thead class="items-center  bg-gray-50 overflow-x-auto shadow-md sm:rounded-lg">
+                    <th class="px-6 py-4">Nombre producto</th>
+                    <th class="px-6 py-4">Presentación</th>
+                    <th class="px-6 py-4">Gramage</th>
+
+                    <th class="px-6 py-4">Precio unitario</th>
+                    <th class="px-6 py-4">Maximo</th>
+                    <th class="px-6 py-4">Minimo</th>
+                    <th class="px-6 py-4">Total maximo</th>
+                    <th class="px-6 py-4">Total minimo</th>
+                </thead>
+                <tbody>
+                    @if ($products)
+                        @foreach ($products['data'] as $product)
+                            <tr class="text-center table-row bg-white border-b hover:bg-gray-50 px-4 py-2 ">
+                                <td>{{ $product['product']['name'] }}</td>
+                                <td>{{ $product['product']['presentation']['name'] }}</td>
+                                {{-- <td>{{ $clienteProduct->producto->presentacion->nombre }}</td> --}}
+
+                                <td>{{ $product['product']['grammage']['name'] }}</td>
+
+                                <td>{{ $product['price_prod'] }}</td>
+                                <td>{{ $product['min'] }}</td>
+                                <td>{{ $product['max'] * $product['price_prod']}}</td>
+                                <td>{{ $product['min'] * $product['price_prod']}}</td>
+                                <td>{{ $product['id'] }}</td>
+
+
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+
+
+        @endslot
+        @slot('footer')
+            <x-secondary-button wire:click="closeModalD">Cerrar</x-secondary-button>
+            {{-- <x-danger-button class="ml-2" wire:click="save">Aceptar</x-danger-button> --}}
         @endslot
     </x-dialog-modal-xl>
 

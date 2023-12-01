@@ -28,4 +28,9 @@ class Detail extends Model
     {
         return $this->hasMany(Detail::class);
     }
+
+    public function clienteProduct(){
+        return $this->belongsTo(ClienteProduct::class);
+
+    }
 }

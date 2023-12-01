@@ -10,7 +10,7 @@ use Livewire\WithPagination;
 class GestionCotizacion extends Component
 {
 
-    
+
     public CotizacionForm $form;
     public ClienteForm $form_cliente;
     use WithPagination;
@@ -72,6 +72,8 @@ class GestionCotizacion extends Component
 
 
     public $open = false;
+    public $openD = false;
+
     public $productosArray = [];
 
     public function openModal()
@@ -117,5 +119,21 @@ class GestionCotizacion extends Component
         $this->closeModal();
     }
 
-    
+
+    //modal detalle:
+    public $products;
+    public function openModalD($id)
+    {
+
+        $this->resetValidation();
+        $products = $this->form->readCotizacionProducts($id);
+        // dd($this->products);
+        $this->products = $products->toArray();
+
+        $this->openD = true;
+    }
+    public function closeModalD()
+    {
+        $this->openD = false;
+    }
 }

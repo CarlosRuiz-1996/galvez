@@ -20,13 +20,18 @@ class Order extends Model
         'total',
         'user_id',
     ];
-    
+
     public function detalles()
     {
         return $this->hasMany('App\Models\Detail');
     }
-    public function product_cliente()
+    public function user()
     {
-        return $this->belongsTo(ClienteProduct::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public function details()
+    {
+        return $this->hasMany(Detail::class);
     }
 }

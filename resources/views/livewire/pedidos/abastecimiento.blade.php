@@ -13,9 +13,9 @@
 
         <div class="mt-4 p-5">
 
-            {{-- <div class=" py-6 px-4 bg-gray-50 flex"> --}}
+            <div class=" py-6 px-4 bg-gray-200 flex">
 
-            {{-- <div class="flex items-center">
+                <div class="flex items-center">
                     <span>Mostrar</span>
                     <select class="form-control" wire:model.live='list'>
                         @foreach ($entrada as $item)
@@ -28,13 +28,13 @@
                 <x-input type="text" placeholder="Busca un producto" class="w-full ml-4"
                     wire:model.live='form.search' />
 
-                <x-button class="ml-4" wire:click="create">Nuevo</x-button> --}}
-            {{-- </div> --}}
+                {{-- <x-button class="ml-4" wire:click="create">Nuevo</x-button> --}}
+            </div>
 
             @if (count($orders))
 
                 <table class="w-full text-sm text-left text-gray-500">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-200">
                         <tr>
                             <th scope="col" class="w-24 px-4 py-2 cursor-pointer" wire:click="order('id')">ID
                                 @if ($sort == 'id')
@@ -48,6 +48,21 @@
 
                                 @endif
                             </th>
+                            <th scope="col" class="w-40 px-4 py-2 cursor-pointer" wire:click="order('id')">CLIENTE
+                                @if ($sort == 'id')
+                                    @if ($orderBy == 'asc')
+                                        <i class="fas fa-sort-alpha-up-alt mt-1"></i>
+                                    @else
+                                        <i class="fas fa-sort-alpha-down-alt mt-1"></i>
+                                    @endif
+                                @else
+                                    <i class="fas fa-sort float-right hover:float-left mt-1"></i>
+
+                                @endif
+                            </th>
+                            <th scope="col" class="w-28 px-4 py-2 cursor-pointer">RFC</th>
+                            <th scope="col" class="w-40 px-4 py-2 cursor-pointer">CONTACTO</th>
+                            <th scope="col" class="w-24 px-4 py-2 cursor-pointer">TELÉFONO</th>
                             <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('created_at')">
                                 FECHA DEL PEDIDO
                                 @if ($sort == 'created_at')
@@ -75,7 +90,18 @@
 
                                 @endif
                             </th>
+                            <th scope="col" class="w-24 px-4 py-2 cursor-pointer" wire:click="order('total')">TOTAL
+                                @if ($sort == 'total')
+                                    @if ($orderBy == 'asc')
+                                        <i class="fas fa-sort-alpha-up-alt mt-1"></i>
+                                    @else
+                                        <i class="fas fa-sort-alpha-down-alt mt-1"></i>
+                                    @endif
+                                @else
+                                    <i class="fas fa-sort float-right hover:float-left mt-1"></i>
 
+                                @endif
+                            </th>
                             <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('observations')">
                                 OBSERVACIONES
                                 @if ($sort == 'observations')
@@ -89,7 +115,7 @@
 
                                 @endif
                             </th>
-                            {{-- <th scope="col" class="px-6 py-3">DETALLES</th> --}}
+                            <th scope="col" class="px-6 py-3">DETALLES</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -98,16 +124,23 @@
                             <tr class="table-row bg-white border-b hover:bg-gray-50">
                                 <td class="px-6 py-4">{{ $order->id }}</td>
 
+                                <td class="px-6 py-4">{{ $order->user->cliente }}</td>
+                                <td class="px-6 py-4">{{ $order->user->rfc }}</td>
+                                <td class="px-6 py-4">{{ $order->user->name }}</td>
+
+                                <td class="px-6 py-4">{{ $order->user->phone }}</td>
+
                                 <td class="px-6 py-4">{{ $order->deadline }}</td>
                                 <td class="px-6 py-4">{{ $order->created_at }}</td>
+                                <td class="px-6 py-4">${{ $order->total }}</td>
 
 
                                 <td class="px-6 py-4">{{ $order->observations }}</td>
-                                {{-- <td class="text-center">
-                                <button class="btn btn-green mr-2 p-2" wire:click='edit({{ $order }})'>
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </td> --}}
+                                <td class="text-center">
+                                    <button class="btn btn-blue mr-2 p-2" wire:click='detail({{ $order->id }})'>
+                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                    </button>
+                                </td>
                             </tr>
                         @endforeach
 
@@ -135,5 +168,51 @@
 
     </div>
 
+    <x-dialog-modal-xl wire:model.live="open">
+        @slot('title')
+            <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
+                <h1>Productos del pedido</h1>
+            </div>
+        @endslot
+        @slot('content')
 
+
+            <table class="w-full text-sm text-left text-gray-500">
+                <thead class="items-center  bg-gray-50 overflow-x-auto shadow-md sm:rounded-lg">
+                    <th class="px-6 py-4">Nombre producto</th>
+                    <th class="px-6 py-4">Presentación</th>
+                    <th class="px-6 py-4">Gramage</th>
+
+                    <th class="px-6 py-4">Marca</th>
+                    <th class="px-6 py-4">Maximo</th>
+                    <th class="px-6 py-4">Minimo</th>
+                   
+                </thead>
+                <tbody>
+                    @if ($products)
+                        @foreach ($products as $product)
+                           
+                            <tr class="text-center table-row bg-white border-b hover:bg-gray-50 px-4 py-2">
+                                <td>{{ $product['cliente_product']['product']['name'] }}</td>
+                                <td> {{ $product['cliente_product']['product']['presentation']['name'] }}</td>
+                                <td> {{ $product['cliente_product']['product']['grammage']['name'] }}</td>
+                                <td> {{ $product['cliente_product']['product']['brand']['name'] }}</td>
+
+                                <td> {{ $product['cliente_product']['max'] }}</td>
+                                <td> {{ $product['cliente_product']['min'] }}</td>
+
+
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+
+
+        @endslot
+        @slot('footer')
+            <x-secondary-button wire:click="closeModal">Cerrar</x-secondary-button>
+            {{-- <x-danger-button class="ml-2" wire:click="save">Aceptar</x-danger-button> --}}
+        @endslot
+    </x-dialog-modal-xl>
 </div>

@@ -5,14 +5,14 @@ namespace App\Livewire\Pedidos;
 use Livewire\Component;
 use App\Livewire\Forms\GestionPedidos;
 use Livewire\WithPagination;
-
+use App\Models\User;
 class Abastecimiento extends Component
 {
 
     public GestionPedidos $form;
     use WithPagination;
 
-    public  $identificador, $image;
+    public $identificador, $image;
     public $entrada = array('5', '10', '15', '20', '50', '100');
     public $list = '10';
     public $readyToLoad = false;
@@ -66,4 +66,19 @@ class Abastecimiento extends Component
         }
     }
     
+
+    public $products;
+    public function detail($id){
+        $products = $this->form->readPedidoProducts($id);
+        $this->products = $products->toArray();
+        $this->openModal();
+    }
+
+    public $open = false;
+    public function openModal(){
+        $this->open = true;
+    }
+    public function closeModal(){
+        $this->open = false;
+    }
 }

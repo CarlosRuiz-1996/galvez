@@ -202,4 +202,21 @@ class GestionarPedidos extends Component
 
         $this->closeModal();
     }
+
+
+
+    public $productsDetail;
+    public function detail($id){
+        $products = $this->form->readPedidoProducts($id);
+        $this->productsDetail = $products->toArray();
+        $this->openModalD();
+    }
+
+    public $openD = false;
+    public function openModalD(){
+        $this->openD = true;
+    }
+    public function closeModalD(){
+        $this->openD = false;
+    }
 }

@@ -26,7 +26,7 @@ class GestionPedidos extends Form
         'deadline' => 'required',
         'total' => 'required', // Ajusta según tus necesidades
         'observations' => 'required',
-        
+
     ];
     //read productos categoria
     public function readOrders($sort, $orderBy, $list)
@@ -46,16 +46,26 @@ class GestionPedidos extends Form
     public function readOrdersAbastecimiento($sort, $orderBy, $list)
     {
         return Order::where('deadline', 'like', '%' . $this->search . '%')
-            ->Where('observations', 'like', '%' . $this->search . '%')
-
-            ->Where('total', 'like', '%' . $this->search . '%')
-            ->Where('created_at', 'like', '%' . $this->search . '%')
-
-
+            ->orWhere('observations', 'like', '%' . $this->search . '%')
+            ->orWhere('total', 'like', '%' . $this->search . '%')
+            ->orWhere('created_at', 'like', '%' . $this->search . '%')
+            ->orWhereHas('user', function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('phone', 'like', '%' . $this->search . '%')
+                    ->orWhere('cliente', 'like', '%' . $this->search . '%');
+            })
             ->orderBy($sort, $orderBy)
             ->paginate($list);
     }
 
+    public function readPedidoProducts($order_id){
+
+        return Order::with('details.clienteProduct.product.presentation',
+        'details.clienteProduct.product.grammage', 'details.clienteProduct.product.brand')
+        ->find($order_id)->details;
+
+
+    }
 
 
 
@@ -105,7 +115,7 @@ class GestionPedidos extends Form
 
         $this->user_id = auth()->user()->id;
         // die();
-        $order = Order::create($this->only(['deadline', 'observations', 'total','user_id']));
+        $order = Order::create($this->only(['deadline', 'observations', 'total', 'user_id']));
 
 
         $orderId = $order->id;
@@ -122,7 +132,7 @@ class GestionPedidos extends Form
                 ]);
             }
         }
-        
+
 
 
 

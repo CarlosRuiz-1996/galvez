@@ -40,7 +40,7 @@ class Product extends Model
     }
     public function Brand()
     {
-        return $this->belongsTo(Brand::class);
+        return $this->belongsTo(Brand::class, 'ctg_brand_id');
     }
     public function iva()
     {

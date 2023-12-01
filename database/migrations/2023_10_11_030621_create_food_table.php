@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->string('imagen_path');
+            $table->string('image_path');
             $table->unsignedBigInteger('ctg_presentation_food_id');
             $table->unsignedBigInteger('ctg_categories_food_id');
 

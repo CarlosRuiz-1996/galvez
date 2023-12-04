@@ -28,7 +28,7 @@
                 </div>
                 <div class="relative z-0 w-full  group">
                     <x-label>Nombre del cliente</x-label>
-                    <x-input type="text" class="w-full uppercase"  wire:model='form.cliente' />
+                    <x-input type="text" class="w-full uppercase" wire:model='form.cliente' />
                     <x-input-error for="form.cliente" />
                 </div>
                 <div class="relative z-0 w-full  group">
@@ -97,6 +97,8 @@
 
                     <select wire:model="form.cat_cp_id" class="w-full form-control">
                         @if ($form->colonias)
+                            <option value="">Selecciona una colonia</option>
+
                             @foreach ($form->colonias as $cp)
                                 <option value="{{ $cp->idcp }}">{{ $cp->colonia }}</option>
                             @endforeach
@@ -113,7 +115,7 @@
             <div class="mt-3">
                 <div class="grid grid-cols-3 gap-6 mt-4">
 
-                    
+
 
                     <div class="col-span-1">
 

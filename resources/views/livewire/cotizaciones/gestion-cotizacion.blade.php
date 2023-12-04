@@ -266,6 +266,8 @@
 
                     <select wire:model="form_cliente.cat_cp_id" class="w-full form-control">
                         @if ($form_cliente->colonias)
+                        <option value="">Selecciona una colonia</option>
+
                             @foreach ($form_cliente->colonias as $cp)
                                 <option value="{{ $cp->idcp }}">{{ $cp->colonia }}</option>
                             @endforeach

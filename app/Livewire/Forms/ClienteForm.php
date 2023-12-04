@@ -43,7 +43,7 @@ class ClienteForm extends Form
         'rfc' => 'required',
         'phone' => 'required|max:10|min:8',
         // 'no_contrato' => 'required',
-                
+
     ];
 
 
@@ -51,8 +51,16 @@ class ClienteForm extends Form
     public function validarCp()
     {
         // $cp = Cp::where('cp', 'LIKE', '%' . $cp . '%')->first();
-        $codigo = DB::select('CALL readCpByCP(?)', [$this->cp]);
+        // $codigo = DB::select('CALL readCpByCP(?)', [$this->cp]);
         // $codigo = Cp::where('cp', 'LIKE', '%' . $this->cp . '%')->orderBy('colonia', 'desc')->get();
+
+        $codigo = DB::select("
+    SELECT a.idcp, a.colonia, b.municipio, c.estado 
+    FROM cat_cp a 
+    LEFT JOIN cat_estados c ON c.idestado = a.idestado
+    LEFT JOIN cat_municipios b ON b.idmunicipio = a.idmunicipio AND b.idestado = c.idestado 
+    WHERE cp LIKE CONCAT('%', ? , '%')
+    ", [$this->cp]);
         if ($codigo) {
             $this->municipio = $codigo[0]->municipio;
             $this->estado = $codigo[0]->estado;
@@ -91,7 +99,7 @@ class ClienteForm extends Form
                         'max' => $producto['max'],
                         'min' => $producto['min'],
                         'status' => $sts,
-                        'price_prod'=> $producto['price'],
+                        'price_prod' => $producto['price'],
                         'product_id' => $producto['id'],
                         'user_id' => $clienteId,
                     ]);

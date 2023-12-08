@@ -138,15 +138,22 @@ class ClienteForm extends Form
 
     public function getAll($sort, $orderBy, $list)
     {
-        return User::role('2')
-            ->where('name', 'like', '%' . $this->search . '%')
-            ->orWhere('email', 'like', '%' . $this->search . '%')
-            ->orWhere('cliente', 'like', '%' . $this->search . '%')
-            ->orWhere('rfc', 'like', '%' . $this->search . '%')
-            ->orWhere('phone', 'like', '%' . $this->search . '%')
-            ->orWhere('no_contrato', 'like', '%' . $this->search . '%')
+        return User::role('cliente')
+        ->where(function ($query) {
+            $query->where('name', 'like', '%' . $this->search . '%')
+                ->orWhere('email', 'like', '%' . $this->search . '%')
+                ->orWhere('cliente', 'like', '%' . $this->search . '%')
+                ->orWhere('rfc', 'like', '%' . $this->search . '%')
+                ->orWhere('phone', 'like', '%' . $this->search . '%')
+                ->orWhere('no_contrato', 'like', '%' . $this->search . '%');
+        })
             ->orderBy($sort, $orderBy)
             ->paginate($list);
+
+            //  return User::role('2')
+            //  ->where('name', 'like', '%' . $this->search . '%')
+            //  ->orderBy($sort, $orderBy)
+            //  ->get();
     }
 
 

@@ -193,11 +193,11 @@
 
                         </tbody>
                     </table>
-                    @if ($users->hasPages())
+                    {{-- @if ($users->hasPages())
                         <div class="px-6 py-3 text-gray-500">
                             {{ $users->links() }}
                         </div>
-                    @endif
+                    @endif --}}
                 @else
                     @if ($readyToLoad)
                         <h1 class="px-6 py-3 text-gray-500 ">No hay datos disponibles</h1>

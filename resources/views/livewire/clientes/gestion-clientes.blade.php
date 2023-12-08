@@ -184,9 +184,9 @@
                                             <i class="fas fa-edit"></i>
 
                                         </a>
-                                        <button class="btn btn-red mr-2 p-2" wire:click=''>
+                                        {{-- <button class="btn btn-red mr-2 p-2" wire:click=''>
                                             <i class="fa fa-trash"></i>
-                                        </button>
+                                        </button> --}}
                                     </td>
                                 </tr>
                             @endforeach

@@ -15,6 +15,7 @@ class ClienteFood extends Model
         'description',
         'max',
         'min',
+        'price_food',
         'user_id',
         'food_id',
         'status'

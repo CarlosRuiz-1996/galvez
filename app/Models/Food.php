@@ -27,6 +27,5 @@ class Food extends Model
 
     public function ingredients(){
         return $this->hasMany(Ingredients::class);
-
     }
 }

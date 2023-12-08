@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Session;
 class GestionPedidos extends Form
 {
     //
-
     public $deadline;
     public $total;
     public $observations;

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CatalogsController;
 use App\Http\Controllers\UserController;
+use App\Livewire\Clientes\EditarCliente;
 use App\Livewire\Clientes\GestionClientes;
 use App\Livewire\Cotizaciones\GestionCotizacion;
 use App\Livewire\GestionFood;
@@ -60,6 +61,7 @@ Route::middleware([
     Route::get('admin/cotizacion', GestionCotizacion::class)->name('clientes.cotizacion');
     Route::get('admin/cotizacion/excel/{user}', [UserController::class, 'excel'])->name('clientes.cotizacion.excel');
 
+    Route::get('admin/editar/{user}', EditarCliente::class)->name('clientes.editar');
 
     Route::get('clientes/pedidos', GestionarPedidos::class)->name('clientes.pedidos');
 

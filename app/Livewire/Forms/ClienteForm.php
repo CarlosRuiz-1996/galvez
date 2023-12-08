@@ -24,18 +24,20 @@ class ClienteForm extends Form
     public $rfc;
     public $address;
     public $status_user;
-
+    public $user;
     public $estado;
     public $municipio;
     public $colonias;
     public $cp;
     public $cat_cp_id;
     public $cp_invalido = "";
-
+    public $search = "";
+    public $searchP = "";
+    public $seach_food = "";
 
     protected $rules = [
         'name' => 'required',
-        'email' => 'required|email|unique:users,email', // Ajusta según tus necesidades
+        'email' => 'required|email', // Ajusta según tus necesidades |unique:users,email
         'cp' => 'required|max:5',
         'address' => 'required',
         'cat_cp_id' => 'required',
@@ -55,12 +57,12 @@ class ClienteForm extends Form
         // $codigo = Cp::where('cp', 'LIKE', '%' . $this->cp . '%')->orderBy('colonia', 'desc')->get();
 
         $codigo = DB::select("
-    SELECT a.idcp, a.colonia, b.municipio, c.estado 
-    FROM cat_cp a 
-    LEFT JOIN cat_estados c ON c.idestado = a.idestado
-    LEFT JOIN cat_municipios b ON b.idmunicipio = a.idmunicipio AND b.idestado = c.idestado 
-    WHERE cp LIKE CONCAT('%', ? , '%')
-    ", [$this->cp]);
+        SELECT a.idcp, a.colonia, b.municipio, c.estado 
+        FROM cat_cp a 
+        LEFT JOIN cat_estados c ON c.idestado = a.idestado
+        LEFT JOIN cat_municipios b ON b.idmunicipio = a.idmunicipio AND b.idestado = c.idestado 
+        WHERE cp LIKE CONCAT('%', ? , '%')
+        ", [$this->cp]);
         if ($codigo) {
             $this->municipio = $codigo[0]->municipio;
             $this->estado = $codigo[0]->estado;
@@ -131,5 +133,186 @@ class ClienteForm extends Form
 
 
         $this->reset();
+    }
+
+
+    public function getAll($sort, $orderBy, $list)
+    {
+        return User::role('2')
+            ->where('name', 'like', '%' . $this->search . '%')
+            ->orWhere('email', 'like', '%' . $this->search . '%')
+            ->orWhere('cliente', 'like', '%' . $this->search . '%')
+            ->orWhere('rfc', 'like', '%' . $this->search . '%')
+            ->orWhere('phone', 'like', '%' . $this->search . '%')
+            ->orWhere('no_contrato', 'like', '%' . $this->search . '%')
+            ->orderBy($sort, $orderBy)
+            ->paginate($list);
+    }
+
+
+    public function setUser(User $user)
+    {
+        $this->user = $user;
+        $this->name = $user->name;
+        $this->email = $user->email;
+        $this->address = $user->address;
+        $this->cliente = $user->cliente;
+        $this->rfc = $user->rfc;
+        $this->phone = $user->phone;
+        $this->no_contrato = $user->no_contrato;
+
+        $cp = Cp::where('idcp', '=', $user->cat_cp_id)->first();;
+        if (!$cp) {
+            throw new \Exception("Código postal no válido");
+        }
+        $codigo = DB::select("
+        SELECT a.idcp, a.colonia, b.municipio, c.estado , a.cp
+        FROM cat_cp a 
+        LEFT JOIN cat_estados c ON c.idestado = a.idestado
+        LEFT JOIN cat_municipios b ON b.idmunicipio = a.idmunicipio AND b.idestado = c.idestado 
+        WHERE cp LIKE CONCAT('%', ? , '%')
+        ", [$cp->cp]);
+
+        if (empty($codigo)) {
+            throw new \Exception("Código postal no válido");
+        }
+        // dd($codigo[0]);
+
+        $this->municipio = $codigo[0]->municipio;
+        $this->estado = $codigo[0]->estado;
+        $this->cp = $codigo[0]->cp;
+        $this->cat_cp_id = $user->cat_cp_id;
+
+        $this->colonias = $codigo;
+    }
+
+
+
+    //productos
+    public function getAllProducts(User $user, $sort, $orderBy, $list)
+    {
+
+
+        return ClienteProduct::with(['product', 'product.presentation', 'product.grammage'])
+            ->where('user_id', '=', $user->id)
+            ->where('status', '=', 1)
+            ->where(function ($query) {
+                $query->where('min', '=', $this->searchP)
+                    ->orWhere('max', '=', $this->searchP)
+
+                    ->orWhere(function ($subquery) {
+                        $subquery->whereHas('product', function ($productQuery) {
+                            $productQuery->where('name', 'like', '%' . $this->searchP . '%')
+                                ->orWhere('description', 'like', '%' . $this->searchP . '%');
+                        })
+                            ->orWhereHas('product.presentation', function ($presentationQuery) {
+                                $presentationQuery->where('name', 'like', '%' . $this->searchP . '%');
+                            })
+                            ->orWhereHas('product.grammage', function ($grammageQuery) {
+                                $grammageQuery->where('name', 'like', '%' . $this->searchP . '%');
+                            });
+                    });
+            })
+            ->orderBy('id', 'asc')
+            ->paginate($list);
+    }
+    
+
+
+    public function updateCliente()
+    {
+
+        $this->validate();
+
+        $this->user->update($this->only(['name', 'email', 'address', 'cat_cp_id', 'cliente', 'rfc', 'phone', 'no_contrato']));
+    }
+
+
+    //editar producto ************
+
+    public $product;
+    public $max;
+    public $min;
+    public $description;
+    public $price_prod;
+    public function setProduct(ClienteProduct $product)
+    {
+        // dd($product);
+        $this->product = $product;
+        $this->max = $product['max'];
+        $this->min = $product['min'];
+        $this->description = $product['description'];
+        $this->price_prod = $product['price_prod'];
+
+        // dd($this->product);
+
+    }
+
+
+    public function updateClienteProd()
+    {
+
+
+        $this->product->update($this->only(['description', 'max', 'min', 'price_prod']));
+        $this->reset('description', 'max', 'min', 'price_prod');
+    }
+
+
+
+    //platillos:
+
+    public function getAllFood(User $user, $sort, $orderBy, $list)
+    {
+
+
+        return  ClienteFood::with(['food', 'food.presentation', 'food.categorie', 'food.ingredients'])
+            ->where('user_id', '=', $user->id) // O el número deseado de elementos por página            
+            ->where('status', '=', 1)
+            ->where(function ($query) {
+                $query->where('min', '=', $this->seach_food)
+                    ->orWhere('max', '=', $this->seach_food)
+
+                    ->orWhere(function ($subquery) {
+                        $subquery->whereHas('food', function ($productQuery) {
+                            $productQuery->where('name', 'like', '%' . $this->seach_food . '%')
+                                ->orWhere('description', 'like', '%' . $this->seach_food . '%');
+                        })
+                            ->orWhereHas('food.presentation', function ($presentationQuery) {
+                                $presentationQuery->where('name', 'like', '%' . $this->seach_food . '%');
+                            })
+                            ->orWhereHas('food.categorie', function ($categorieQuery) {
+                                $categorieQuery->where('name', 'like', '%' . $this->seach_food . '%');
+                            });
+                    });
+            })
+            ->orderBy($sort, $orderBy)
+            ->paginate($list);
+    }
+
+
+    public $food;
+    public $price_food;
+
+    public function setFood(ClienteFood $food)
+    {
+        // dd($product);
+        $this->food = $food;
+        $this->max = $food['max'];
+        $this->min = $food['min'];
+        $this->description = $food['description'];
+        $this->price_food = $food['price_food'];
+
+        // dd($this->product);
+
+    }
+
+
+
+    public function updateClienteFood()
+    {
+
+
+        $this->food->update($this->only(['description', 'max', 'min', 'price_food']));
+        $this->reset('description', 'max', 'min', 'price_food');
     }
 }

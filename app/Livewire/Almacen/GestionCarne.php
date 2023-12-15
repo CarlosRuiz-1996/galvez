@@ -42,7 +42,7 @@ class GestionCarne extends Component
     public function saveE(){
 
 
-        dd($this->form->tipoE,$this->form->catidadE,$this->form->grasaE,$this->form->huesoE);
+        // dd($this->form->tipoE,$this->form->catidadE,$this->form->grasaE,$this->form->huesoE);
 
         // $this->form->store();
     }

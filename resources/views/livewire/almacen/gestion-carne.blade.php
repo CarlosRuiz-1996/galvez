@@ -59,26 +59,55 @@
                             {{-- <i class="fa fa-chevron-down" aria-hidden="true"></i> --}}
                             <i x-bind:class="{ 'fa-chevron-down': !open, 'fa-chevron-up': open }" class="fa"
                                 aria-hidden="true"></i>
-                            <input type="text" hidden wire:model='tipoE' value="1">
+                                <input type="text" hidden wire:model='tipoE' value="1">
 
                         </h2>
                     </div>
                     <div x-show="open">
 
 
-                        <div>
-                            <label for="cantidad">Cantidad:</label>
-                            <input id="cantidad" type="number">
-                        
-                            <div id="checkbox-container">
-                                {{-- @for($i = 1; $i <= 5; $i++) --}}
-                                    <input type="checkbox" id="checkbox_1" data-index="1">
-                                    <label for="checkbox_1">Opción 1</label>
-                                    <input type="number" id="cantidadOpcion_1" disabled>
-                                {{-- @endfor --}}
+                        <div x-data="{ totalKilos: '' }">
+                            <div class="mb-4">
+                                <label class="block text-gray-700">Cantidad de Kilos:</label>
+                                <input type="text" x-model="totalKilos"  wire:model.live='catidadE' class="w-full border border-gray-300 p-2">
                             </div>
-                        </div>
+                            {{-- <span x-text="totalKilos"></span> --}}
+
+                            <div x-data="{
+                                checks: {
+                                    ham: { selected: false, quantity: 0 },
+                                    trotters: { selected: false, quantity: 0 },
+                                    hock: { selected: false, quantity: 0 }
+                                }, 
+                            }">
+                                <!-- Check para el jamón -->
+                                <div class="mb-2">
+                                    <input type="checkbox" id="ham" x-model="checks.ham.selected" class="mr-2">
+                                    <label for="ham">Bisteck</label>
+                                    <x-input type="number" x-show="checks.ham.selected" x-model="checks.ham.quantity"
+                                        placeholder="Cantidad en kilos" wire:model.live='form.bisteckE' />
+
+                                </div>
+
+                                <!-- Check para los trotters -->
+                                <div class="mb-2">
+                                    <input type="checkbox" id="trotters" x-model="checks.trotters.selected" class="mr-2">
+                                    <label for="trotters">Hueso</label>
+                                    <x-input type="number" x-show="checks.trotters.selected"
+                                        x-model="checks.trotters.quantity" wire:model.live='form.huesoE' placeholder="Cantidad en kilos" />
+                                </div>
+
+                                <!-- Check para el hock -->
+                                <div class="mb-2">
+                                    <input type="checkbox" id="hock" x-model="checks.hock.selected" class="mr-2">
+                                    <label for="hock">Grasa</label>
+                                    <x-input type="number" x-show="checks.hock.selected" x-model="checks.hock.quantity"
+                                        placeholder="Cantidad en kilos" wire:model.live='form.grasaE'/>
+                                </div>
+                            </div>
+                          
                             <x-danger-button wire:click='saveE'>Aceptar</x-danger-button>
+                        </div>
 
 
                     </div>
@@ -96,16 +125,55 @@
                             {{-- <i class="fa fa-chevron-down" aria-hidden="true"></i> --}}
                             <i x-bind:class="{ 'fa-chevron-down': !open, 'fa-chevron-up': open }" class="fa"
                                 aria-hidden="true"></i>
-                            <input type="text" hidden wire:model='tipoP' value="2">
+                                <input type="text" hidden wire:model='tipoP' value="2">
 
                         </h2>
                     </div>
                     <div x-show="open">
 
 
+                        <div x-data="{ totalKilos: '' }">
+                            <div class="mb-4">
+                                <label class="block text-gray-700">Cantidad de Kilos:</label>
+                                <input type="text" x-model="totalKilos" wire:model='catidadP' class="w-full border border-gray-300 p-2">
+                            </div>
+                            {{-- <span x-text="totalKilos"></span> --}}
+                            
+                            <div x-data="{
+                                checks: {
+                                    ham: { selected: false, quantity: 0 },
+                                    trotters: { selected: false, quantity: 0 },
+                                    hock: { selected: false, quantity: 0 }
+                                }, 
+                            }">
+                                <!-- Check para el jamón -->
+                                <div class="mb-2">
+                                    <input type="checkbox" id="ham" x-model="checks.ham.selected" class="mr-2">
+                                    <label for="ham">Bisteck</label>
+                                    <x-input type="text" x-show="checks.ham.selected" x-model="checks.ham.quantity"
+                                        placeholder="Cantidad en kilos" wire:model='form.bisteckP' />
 
-                        <x-danger-button wire:click='saveP'>Aceptar</x-danger-button>
+                                </div>
 
+                                <!-- Check para los trotters -->
+                                <div class="mb-2">
+                                    <input type="checkbox" id="trotters" x-model="checks.trotters.selected" class="mr-2">
+                                    <label for="trotters">Hueso</label>
+                                    <x-input type="text" x-show="checks.trotters.selected"
+                                        x-model="checks.trotters.quantity" wire:model='form.huesoP' placeholder="Cantidad en kilos" />
+                                </div>
+
+                                <!-- Check para el hock -->
+                                <div class="mb-2">
+                                    <input type="checkbox" id="hock" x-model="checks.hock.selected" class="mr-2">
+                                    <label for="hock">Grasa</label>
+                                    <x-input type="text" x-show="checks.hock.selected" x-model="checks.hock.quantity"
+                                        placeholder="Cantidad en kilos" wire:model='form.grasaP'/>
+                                </div>
+                            </div>
+                            <x-danger-button wire:click='saveP'>Aceptar</x-danger-button>
+
+                        </div>
 
 
 
@@ -114,48 +182,13 @@
             </div>
         @endslot
         @slot('footer')
-            <x-secondary-button wire:click="closeModalCarnes">Cancelar</x-secondary-button>
+            <x-secondary-button wire:click="closeModalCarnes">Cerrar</x-secondary-button>
             {{--  wire:click="{{ $productId ? 'update' : 'save' }}"" wire:click="$dispatch('confirm',{{ $productId }}) " --}}
-            <x-danger-button class=" ml-3 disabled:opacity-25" wire:click="$dispatch('confirm')">ACEPTAR</x-danger-button>
+            {{-- <x-danger-button class=" ml-3 disabled:opacity-25" wire:click="$dispatch('confirm')">ACEPTAR</x-danger-button> --}}
         @endslot
     </x-dialog-modal>
 
     @push('js')
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-        const cantidadInput = document.getElementById('cantidad');
-        const checkboxContainer = document.getElementById('checkbox-container');
-
-        cantidadInput.addEventListener('input', function () {
-            const cantidadTotal = parseInt(cantidadInput.value) || 0;
-            const checkboxes = checkboxContainer.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(function (checkbox) {
-                const cantidadOpcionInput = document.getElementById('cantidadOpcion_' + checkbox.dataset.index);
-                cantidadOpcionInput.disabled = !checkbox.checked;
-
-                if (!checkbox.checked) {
-                    cantidadOpcionInput.value = '';
-                } else if (parseInt(cantidadOpcionInput.value) > cantidadTotal) {
-                    cantidadOpcionInput.value = cantidadTotal;
-                }
-            });
-        });
-
-        checkboxContainer.addEventListener('change', function (event) {
-            const checkbox = event.target;
-            const cantidadOpcionInput = document.getElementById('cantidadOpcion_' + checkbox.dataset.index);
-            cantidadOpcionInput.disabled = !checkbox.checked;
-
-            if (!checkbox.checked) {
-                cantidadOpcionInput.value = '';
-            } else {
-                const cantidadTotal = parseInt(cantidadInput.value) || 0;
-                if (parseInt(cantidadOpcionInput.value) > cantidadTotal) {
-                    cantidadOpcionInput.value = cantidadTotal;
-                }
-            }
-        });
-    });
-        </script>
+     
     @endpush
 </div>

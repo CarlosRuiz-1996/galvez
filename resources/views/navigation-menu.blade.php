@@ -62,6 +62,12 @@
 
 
                         </x-nav-link>
+
+                        <x-nav-link href="{{ route('clientes.almacen') }}" :active="request()->routeIs('clientes.almacen')">
+                            {{ __('Almacen') }}
+
+
+                        </x-nav-link>
                     @endcan
 
 

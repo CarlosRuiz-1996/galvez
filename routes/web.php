@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\CatalogsController;
 use App\Http\Controllers\UserController;
+use App\Livewire\Almacen\GestionAlmacen;
+use App\Livewire\Almacen\GestionCarne;
 use App\Livewire\Clientes\EditarCliente;
 use App\Livewire\Clientes\GestionClientes;
 use App\Livewire\Cotizaciones\GestionCotizacion;
@@ -64,6 +66,8 @@ Route::middleware([
     Route::get('admin/editar/{user}', EditarCliente::class)->name('clientes.editar');
 
     Route::get('clientes/pedidos', GestionarPedidos::class)->name('clientes.pedidos');
+    Route::get('clientes/almacen', GestionAlmacen::class)->name('clientes.almacen');
+    Route::get('admin/clientes/carnes', GestionCarne::class)->name('clientes.carnes');
 
 });
 

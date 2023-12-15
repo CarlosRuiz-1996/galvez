@@ -23,6 +23,9 @@ class Product extends Model
         'ieps_id',
         'total',
         'stock',
+        'status_product',
+        'status_stock',
+        'stock_min',
         'image_path'
         // Agrega aquí otros campos que desees que sean asignables en masa
     ];

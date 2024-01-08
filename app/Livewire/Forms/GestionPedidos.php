@@ -9,7 +9,7 @@ use App\Models\Product;
 use Livewire\Attributes\Rule;
 use Livewire\Form;
 use Illuminate\Support\Facades\Session;
-
+use Illuminate\Support\Facades\Auth;
 class GestionPedidos extends Form
 {
     //
@@ -30,11 +30,14 @@ class GestionPedidos extends Form
     //read productos categoria
     public function readOrders($sort, $orderBy, $list)
     {
+        $userID = Auth::id(); // Asegúrate de tener disponible el ID del usuario logueado
+
         return Order::where('deadline', 'like', '%' . $this->search . '%')
             ->Where('observations', 'like', '%' . $this->search . '%')
 
             ->Where('total', 'like', '%' . $this->search . '%')
             ->Where('created_at', 'like', '%' . $this->search . '%')
+            ->where('user_id', $userID) // Agrega esta condición
 
 
             ->orderBy($sort, $orderBy)

@@ -28,9 +28,10 @@
                 <x-input type="text" placeholder="Busca un producto" class="w-full ml-4"
                     wire:model.live='form.search' />
 
-                    <a href="{{ route('clientes.carnes') }}" class="ml-4">
-                        <x-button>CARNES</x-button>
-                    </a>            </div>
+                <a href="{{ route('clientes.carnes') }}" class="ml-4">
+                    <x-button>CARNES</x-button>
+                </a>
+            </div>
 
             @if (count($products))
 
@@ -139,7 +140,7 @@
 
                         @foreach ($products as $product)
                             <tr
-                                class="table-row bg-white border-b hover:bg-blue-50 {{ $product->stock < $product->stock_min ? 'bg-red-200' : '' }}">
+                                class="table-row  border-b hover:bg-blue-50 {{ $product->stock < $product->stock_min ? 'bg-red-200' : 'bg-white' }}">
 
                                 <td class="px-6 py-4">{{ $product->id }}</td>
                                 <td class="px-6 py-4">{{ $product->name }}</td>
@@ -148,7 +149,8 @@
                                 <td class="px-6 py-4">{{ $product->presentation->name }}</td>
                                 <td class="px-6 py-4">{{ $product->brand->name }}</td>
                                 <td class="px-6 py-4">${{ $product->price }}</td>
-                                <td class="px-6 py-4">{{ $product->stock }}</td>
+                                <td class="px-6 py-4">
+                                    {{ $product->stock < $product->stock_min ? 'bg-red-200' : 'xxx' }}</td>
                                 <td>
                                     <button class="btn btn-green mr-2 p-2" wire:click='openModal({{ $product }})'>
                                         <i class="fas fa-edit"></i>
@@ -198,19 +200,29 @@
                 <div class="relative z-0 w-full  group">
 
                 </div>
-                <div class="relative z-0 w-full  group">
-                    <x-label>STOCK</x-label>
+                <div class="relative z-0 w-full  group" x-data="{ open: false }">
+                   
+
+                    <x-label>STOCK
+                        <button x-on:mouseenter="open = ! open" x-on:mouseleave="open = false">
+                            <i class="fa fa-info-circle bg-orange-400 text-white rounded-full p-1"></i>
+                        </button></x-label>
+                        <div x-show="open" id="tooltip-light" role="tooltip"
+                            class="absolute z-10 mt-2 bg-white border border-orange-300 rounded p-2 text-sm shadow-md">
+                            La cantidad en existencia del producto.
+                            <div class="tooltip-arrow" data-popper-arrow></div>
+                        </div>
                     <x-input type="text" class="w-full" placehorder="stock" wire:model='form.stock' />
 
                     <x-input-error for="form.ctg_presentation_id" />
                 </div>
                 <div class="relative z-0 w-full  group" x-data="{ open: false }">
-                    
-                    <x-label >STOCK MINIMO 
+
+                    <x-label>STOCK MINIMO
                         <button x-on:mouseenter="open = ! open" x-on:mouseleave="open = false">
                             <i class="fa fa-info-circle bg-orange-400 text-white rounded-full p-1"></i>
                         </button></x-label>
-                        <div x-show="open" id="tooltip-light" role="tooltip"
+                    <div x-show="open" id="tooltip-light" role="tooltip"
                         class="absolute z-10 mt-2 bg-white border border-orange-300 rounded p-2 text-sm shadow-md">
                         El stock minimo ayuda a que una ves que se disminuya este minimo el sistema nos muestre que debemos
                         de surtir.
@@ -219,7 +231,7 @@
                     <x-input type="text" class="w-full" placehorder="stock minimo" wire:model='form.stock_min' />
                     <x-input-error for="form.stock_min" />
 
-                   
+
                 </div>
 
             </div>
@@ -233,7 +245,7 @@
     </x-dialog-modal>
 
 
-  
+
 
     @push('js')
         <script>

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CatalogsController;
 use App\Http\Controllers\UserController;
 use App\Livewire\Almacen\GestionAlmacen;
 use App\Livewire\Almacen\GestionCarne;
+use App\Livewire\Clientes\CreateCliente;
 use App\Livewire\Clientes\EditarCliente;
 use App\Livewire\Clientes\GestionClientes;
 use App\Livewire\Cotizaciones\GestionCotizacion;
@@ -59,6 +60,9 @@ Route::middleware([
 
     Route::get('admin/clientes', [CatalogsController::class, 'clientes'])->name('clientes');
     Route::get('admin/clientes/gestion', GestionClientes::class)->name('clientes.gestion');
+    Route::get('admin/clientes/crear', CreateCliente::class)->name('clientes.crear');
+
+
     Route::get('admin/abastecimiento', Abastecimiento::class)->name('clientes.abastecimiento');
     Route::get('admin/cotizacion', GestionCotizacion::class)->name('clientes.cotizacion');
     Route::get('admin/cotizacion/excel/{user}', [UserController::class, 'excel'])->name('clientes.cotizacion.excel');

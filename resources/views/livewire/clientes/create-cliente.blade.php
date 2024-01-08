@@ -1,22 +1,34 @@
 <div>
-    <button wire:click="openModal"
-        class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-orange-700 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300">
-        Ingresar
-    </button>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
+            <a href="{{ route('clientes') }}" title="ATRAS">
+                <svg class="w-5 h-5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 14 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"
+                        d="M13 5H3M8 1L3 5l5 4" />
+                </svg>
+            </a>
+            &nbsp;
+            {{ __('Clientes') }}
+        </h2>
 
 
 
-    <x-dialog-modal-xl wire:model.live="open">
-        @slot('title')
-            <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
+    </x-slot>
+
+
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+        <div class="mt-4 p-5 bg-white">
+            <x-alert />
+            <div class="px-6 py-4 items-center  bg-gray-50 mb-3 overflow-x-auto shadow-md sm:rounded-lg">
                 <h1>Alta de cliente nuevo</h1>
             </div>
-        @endslot
-        @slot('content')
             <div class="grid md:grid-cols-3 md:gap-6">
                 <div class="relative z-0 w-full  group">
                     <h1 class="text-2xl mt-5 
-                    text-gray-900 md:text-lg lg:text-2xl">Datos generales</h1>
+                    text-gray-900 md:text-lg lg:text-2xl">Datos generales
+                    </h1>
                     <hr>
 
                 </div>
@@ -75,10 +87,9 @@
                     @endif
                     <x-input-error for="form.cp" />
                 </div>
-                <div class="col-span-1 mt-5" style="margin-left: -80px">
+                <div class="col-span-1 mt-5">
                     <x-button wire:click='validarCp'>Validar cp</x-button>
                 </div>
-                <div class="col-span-1"></div>
                 <div class="col-span-1">
                     <x-label>Alcaldia/Municipio</x-label>
                     <x-input type="text" disabled wire:model='form.municipio' class="w-full bg-gray-200" />
@@ -110,18 +121,22 @@
                     <x-input-error for="form.cat_cp_id" />
 
                 </div>
+                <div class="col-span-1 mt-6">
+
+                    <x-danger-button class="ml-2" wire:click="$dispatch('confirm')">GUARDAR CLIENTE</x-danger-button>
+                </div>
 
             </div>
             <div class="mt-3">
-                <div class="grid grid-cols-3 gap-6 mt-4">
+                <div class="grid grid-cols-2 gap-6 mt-4">
 
 
 
-                    <div class="col-span-1">
+                    <div class="col-span-2">
 
                         <livewire:clientes.modal-productos />
                     </div>
-                    <div class="col-span-1">
+                    <div class="col-span-2">
 
                         <livewire:clientes.modal-foods />
                     </div>
@@ -131,15 +146,49 @@
                     </div>
                 </div>
             </div>
-        @endslot
-        @slot('footer')
-            <x-secondary-button wire:click="closeModal">Cancelar</x-secondary-button>
-            <x-danger-button class="ml-2" wire:click="save">Aceptar</x-danger-button>
-        @endslot
-    </x-dialog-modal-xl>
+
+        </div>
+        <br><br>
+    </div>
 
 
+    @push('js')
+        <script>
+            document.addEventListener('livewire:initialized', () => {
+
+                @this.on('confirm', () => {
+
+                    Swal.fire({
+                        title: '¿Estas seguro?',
+                        text: "El cliente sera guardado",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si, adelante!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            @this.dispatch('save-cliente');
+                        }
+                    })
+                })
+                Livewire.on('alert', function(message) {
+                    Swal.fire({
+                        // position: 'top-end',
+                        icon: 'success',
+                        title: message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                });
+
+            });
+        </script>
+    @endpush
 
 
 
 </div>
+
+

@@ -4,6 +4,7 @@ namespace App\Livewire\Clientes;
 
 use Livewire\Component;
 use App\Livewire\Forms\ClienteForm;
+use Livewire\Attributes\On;
 
 class CreateCliente extends Component
 {
@@ -45,9 +46,11 @@ class CreateCliente extends Component
     public function render()
     {
 
+        // return view('livewire.clientes.create-cliente');
         return view('livewire.clientes.create-cliente');
-    }
 
+    }
+    #[On('save-cliente')]
     public function save()
     {
         $this->form->store(1);
@@ -58,6 +61,6 @@ class CreateCliente extends Component
         $this->dispatch('list-products');
 
         $this->dispatch('alert', "El cliente se creo satisfactoriamente.");
-        $this->closeModal();
+        // $this->closeModal();
     }
 }

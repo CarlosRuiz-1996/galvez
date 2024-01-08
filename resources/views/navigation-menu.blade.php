@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('catalogos') }}">
+                    <a href="{{ route('dashboard') }}">
                         <x-application-mark class="block h-9 w-auto" />
                     </a>
                 </div>
@@ -43,8 +43,9 @@
                         </x-nav-link>
 
                         <x-nav-link href="{{ route('clientes') }}" :active="request()->routeIs('clientes') ||
-                                                        request()->routeIs('clientes.gestion') 
-                            ">
+                                                        request()->routeIs('clientes.gestion') ||
+                                                        request()->routeIs('clientes.crear')||
+                                                        request()->routeIs('clientes.editar')">
                             {{ __('Clientes') }}
 
 

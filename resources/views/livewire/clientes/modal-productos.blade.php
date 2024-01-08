@@ -1,6 +1,10 @@
 <div>
 
-    <button wire:click="openModalP" class="btn btn-orange">INCLUIR PRODUCTOS</button>
+    <button wire:click="openModalP" class="btn btn-blue">
+        
+        <i class="fa fa-plus-square" aria-hidden="true"></i>
+
+        PRODUCTOS</button>
 
 
 

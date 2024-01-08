@@ -38,7 +38,7 @@
                     <x-input type="text" placeholder="Busca un cliente" class="w-full ml-4"
                         wire:model.live='form.search' />
 
-                    {{-- <x-button class="ml-4" wire:click="">Nuevo</x-button> --}}
+                    <x-button class="ml-4" wire:click="redirectToRoute">Nuevo</x-button>
                 </div>
 
                 @if (count($users))
@@ -179,8 +179,9 @@
                                     <td class="px-6 py-4">{{ $user->no_contrato }}</td>
 
                                     <td class="text-center">
-                                       
-                                        <a class="btn btn-green mr-2 p-2" href="{{ route('clientes.editar', [$user]) }}">
+
+                                        <a class="btn btn-green mr-2 p-2"
+                                            href="{{ route('clientes.editar', [$user]) }}">
                                             <i class="fas fa-edit"></i>
 
                                         </a>
@@ -216,7 +217,7 @@
 
 
 
-      
 
 
-</div>
+
+    </div>

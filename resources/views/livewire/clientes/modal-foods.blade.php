@@ -1,6 +1,10 @@
 <div>
 
-    <button wire:click="openModalPL" class="btn btn-orange">INCLUIR PLATILLOS</button>
+    <button wire:click="openModalPL" 
+    class="btn btn-blue">
+    <i class="fa fa-plus-square" aria-hidden="true"></i>
+
+    PLATILLOS</button>
 
 
 

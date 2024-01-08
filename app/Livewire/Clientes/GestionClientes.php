@@ -54,7 +54,12 @@ class GestionClientes extends Component
         }
     }
 
+    public function redirectToRoute()
+    {
+        // Aquí puedes personalizar la ruta a la que deseas redirigir
 
+        return redirect()->to('/admin/clientes/crear');
+    }
     
 
 }

@@ -1,7 +1,7 @@
 <div>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
-            {{ __('CARNES') }}
+            {{ __('Carnes') }}
         </h2>
 
 
@@ -9,186 +9,246 @@
     </x-slot>
 
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-        <div class="mt-4 p-5">
 
-            <div class=" py-6 px-4 bg-gray-200 flex">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-3" x-data="{ activeTab: 'Pollo' }">
+        {{-- muestro los tabs --}}
 
-                <div class="flex items-center">
-                    <span>Mostrar</span>
-                    <select class="form-control" wire:model.live='list'>
-                        @foreach ($entrada as $item)
-                            <option value="{{ $item }}">{{ $item }}</option>
-                        @endforeach
-                    </select>
-                    <span>Entradas</span>
+        <ul class="flex" role="tablist">
+
+            @foreach ($carne_tipo as $tipo)
+                <li role="presentation" class="mr-2">
+                    <button @click="activeTab = '{{ $tipo['name'] }}'"
+                        :class="{ 'bg-blue-500': activeTab === '{{ $tipo['name'] }}', 'text-white': activeTab === '{{ $tipo['name'] }}', 'border': activeTab !== '{{ $tipo['name'] }}', 'border-gray-300': activeTab !== '{{ $tipo['name'] }}' }"
+                        :style="{
+                            'background-color': activeTab === '{{ $tipo['name'] }}' ? '' : 'white',
+                            'color': activeTab === '{{ $tipo['name'] }}' ?
+                                '' : 'black'
+                        }"
+                        class="py-2 px-4 rounded-t-md" role="tab" aria-selected="true">{{ $tipo['name'] }}</button>
+                </li>
+            @endforeach
+
+
+        </ul>
+
+        {{-- muestro datos dentro de los tabs --}}
+        @foreach ($carne_tipo as $tipo)
+            <div x-show="activeTab === '{{ $tipo['name'] }}'" class="py-4 px-0 bg-gray-100">
+                <div class="py-6 px-4 bg-gray-200 flex">
+                    <div class="flex items-center">
+                        <span>Mostrar</span>
+                        <select class="form-control" wire:model.live='list'>
+                            @foreach ($entrada as $item)
+                                <option value="{{ $item }}">{{ $item }}</option>
+                            @endforeach
+                        </select>
+                        <span>Entradas</span>
+                    </div>
+
+                    <x-input type="text" placeholder="Busca un {{ $tipo['name'] }}" class="w-full ml-4" />
+
+                    <x-button class="ml-4" wire:click="openModal({{ $tipo['id'] }})">Registrar </x-button>
                 </div>
 
-                <x-input type="text" placeholder="Busca un CARNE" class="w-full ml-4" />
+                
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-200 text-center">
+                        <tr>
+                            <th scope="col" class="w-24 px-4 py-2 cursor-pointer" wire:click="order('id')">ID
+                                @if ($sort == 'id')
+                                    @if ($orderBy == 'asc')
+                                        <i class="fas fa-sort-alpha-up-alt mt-1"></i>
+                                    @else
+                                        <i class="fas fa-sort-alpha-down-alt mt-1"></i>
+                                    @endif
+                                @else
+                                    <i class="fas fa-sort float-right hover:float-left mt-1"></i>
 
-                <x-button class="ml-4" wire:click="openModalCarnes">AGREGAR CARNES</x-button>
+                                @endif
+                            </th>
+                            
+                            <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('ctg_grammage_id')">
+                                GRAMAJE
+
+                                @if ($sort == 'ctg_grammages')
+                                    @if ($orderBy == 'asc')
+                                        <i class="fas fa-sort-alpha-up-alt mt-1"></i>
+                                    @else
+                                        <i class="fas fa-sort-alpha-down-alt mt-1"></i>
+                                    @endif
+                                @else
+                                    <i class="fas fa-sort float-right hover:float-left mt-1"></i>
+
+                                @endif
+                            </th>
+
+                            <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('created_at')">
+                                FECHA ALTA
+
+                                @if ($sort == 'created_at')
+                                    @if ($orderBy == 'asc')
+                                        <i class="fas fa-sort-alpha-up-alt mt-1"></i>
+                                    @else
+                                        <i class="fas fa-sort-alpha-down-alt mt-1"></i>
+                                    @endif
+                                @else
+                                    <i class="fas fa-sort float-right hover:float-left mt-1"></i>
+
+                                @endif
+                            </th>
+
+                            <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('updated_at')">
+                                FECHA ACTUALIZADO
+
+                                @if ($sort == 'updated_at')
+                                    @if ($orderBy == 'asc')
+                                        <i class="fas fa-sort-alpha-up-alt mt-1"></i>
+                                    @else
+                                        <i class="fas fa-sort-alpha-down-alt mt-1"></i>
+                                    @endif
+                                @else
+                                    <i class="fas fa-sort float-right hover:float-left mt-1"></i>
+
+                                @endif
+                            </th>
+                            <th scope="col" class="px-6 py-3">DETALLES</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+
+                        @foreach ($carnes as $product)
+                        @if( $tipo['id'] == $product->ctg_tipo_carnes_id )
+
+                            <tr
+                                class="table-row  border-b hover:bg-blue-50" >
+
+                                <td class="px-6 py-4">{{ $product->id }}</td>
+                                <td class="px-6 py-4">{{ $product->gramaje_total.' '. $product->grammage->name }}</td>
+                                <td class="px-6 py-4">{{ $product->created_at }}</td>
+                                <td class="px-6 py-4">{{ $product->updated_at }}</td>
+                                <td>
+                                   editar
+                                </td>
+                            </tr>
+                            @endif
+
+                        @endforeach
+                    </tbody>
+                </table>
+
             </div>
-
-
-
-        </div>
-
+        @endforeach
     </div>
 
 
 
 
 
-    <x-dialog-modal wire:model.live="openCarnes">
+
+
+
+
+    <x-dialog-modal-xl wire:model.live="open">
         @slot('title')
             <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
-                <h1> CARNES </h1>
+                <h1> CARNE DE {{ Str::upper($nombre_modal) }}</h1>
             </div>
         @endslot
         @slot('content')
-            <div class="">
+            <x-label>ENTRADA TOTAL</x-label>
 
-                <div class="mt-4 p-5 bg-white" x-data="{ open: false }">
-
-                    <div class=" py-6 px-4 bg-purple-100 flex" @click="open = ! open">
-
-                        <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
-
-                            {{ __('ESPALDILLA') }}
-                            {{-- <i class="fa fa-chevron-down" aria-hidden="true"></i> --}}
-                            <i x-bind:class="{ 'fa-chevron-down': !open, 'fa-chevron-up': open }" class="fa"
-                                aria-hidden="true"></i>
-                                <input type="text" hidden wire:model='tipoE' value="1">
-
-                        </h2>
-                    </div>
-                    <div x-show="open">
+            <div class="flex items-center w-full">
 
 
-                        <div x-data="{ totalKilos: '' }">
-                            <div class="mb-4">
-                                <label class="block text-gray-700">Cantidad de Kilos:</label>
-                                <input type="text" x-model="totalKilos"  wire:model.live='catidadE' class="w-full border border-gray-300 p-2">
-                            </div>
-                            {{-- <span x-text="totalKilos"></span> --}}
-
-                            <div x-data="{
-                                checks: {
-                                    ham: { selected: false, quantity: 0 },
-                                    trotters: { selected: false, quantity: 0 },
-                                    hock: { selected: false, quantity: 0 }
-                                }, 
-                            }">
-                                <!-- Check para el jamón -->
-                                <div class="mb-2">
-                                    <input type="checkbox" id="ham" x-model="checks.ham.selected" class="mr-2">
-                                    <label for="ham">Bisteck</label>
-                                    <x-input type="number" x-show="checks.ham.selected" x-model="checks.ham.quantity"
-                                        placeholder="Cantidad en kilos" wire:model.live='form.bisteckE' />
-
-                                </div>
-
-                                <!-- Check para los trotters -->
-                                <div class="mb-2">
-                                    <input type="checkbox" id="trotters" x-model="checks.trotters.selected" class="mr-2">
-                                    <label for="trotters">Hueso</label>
-                                    <x-input type="number" x-show="checks.trotters.selected"
-                                        x-model="checks.trotters.quantity" wire:model.live='form.huesoE' placeholder="Cantidad en kilos" />
-                                </div>
-
-                                <!-- Check para el hock -->
-                                <div class="mb-2">
-                                    <input type="checkbox" id="hock" x-model="checks.hock.selected" class="mr-2">
-                                    <label for="hock">Grasa</label>
-                                    <x-input type="number" x-show="checks.hock.selected" x-model="checks.hock.quantity"
-                                        placeholder="Cantidad en kilos" wire:model.live='form.grasaE'/>
-                                </div>
-                            </div>
-                          
-                            <x-danger-button wire:click='saveE'>Aceptar</x-danger-button>
-                        </div>
-
-
-                    </div>
+                <div class="relative z-0 w-full  ">
+                    <x-input type="number" wire:model='form.total' class="w-full bg-white mr-4" />
+                    <x-input-error for="form.total" />
                 </div>
+                <div class="ml-5">
 
-
-
-                <div class="mt-4 p-5 bg-white" x-data="{ open: false }">
-
-                    <div class=" py-6 px-4 bg-purple-100 flex" @click="open = ! open">
-
-                        <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
-
-                            {{ __('PIERNA') }}
-                            {{-- <i class="fa fa-chevron-down" aria-hidden="true"></i> --}}
-                            <i x-bind:class="{ 'fa-chevron-down': !open, 'fa-chevron-up': open }" class="fa"
-                                aria-hidden="true"></i>
-                                <input type="text" hidden wire:model='tipoP' value="2">
-
-                        </h2>
-                    </div>
-                    <div x-show="open">
-
-
-                        <div x-data="{ totalKilos: '' }">
-                            <div class="mb-4">
-                                <label class="block text-gray-700">Cantidad de Kilos:</label>
-                                <input type="text" x-model="totalKilos" wire:model='catidadP' class="w-full border border-gray-300 p-2">
-                            </div>
-                            {{-- <span x-text="totalKilos"></span> --}}
-                            
-                            <div x-data="{
-                                checks: {
-                                    ham: { selected: false, quantity: 0 },
-                                    trotters: { selected: false, quantity: 0 },
-                                    hock: { selected: false, quantity: 0 }
-                                }, 
-                            }">
-                                <!-- Check para el jamón -->
-                                <div class="mb-2">
-                                    <input type="checkbox" id="ham" x-model="checks.ham.selected" class="mr-2">
-                                    <label for="ham">Bisteck</label>
-                                    <x-input type="text" x-show="checks.ham.selected" x-model="checks.ham.quantity"
-                                        placeholder="Cantidad en kilos" wire:model='form.bisteckP' />
-
-                                </div>
-
-                                <!-- Check para los trotters -->
-                                <div class="mb-2">
-                                    <input type="checkbox" id="trotters" x-model="checks.trotters.selected" class="mr-2">
-                                    <label for="trotters">Hueso</label>
-                                    <x-input type="text" x-show="checks.trotters.selected"
-                                        x-model="checks.trotters.quantity" wire:model='form.huesoP' placeholder="Cantidad en kilos" />
-                                </div>
-
-                                <!-- Check para el hock -->
-                                <div class="mb-2">
-                                    <input type="checkbox" id="hock" x-model="checks.hock.selected" class="mr-2">
-                                    <label for="hock">Grasa</label>
-                                    <x-input type="text" x-show="checks.hock.selected" x-model="checks.hock.quantity"
-                                        placeholder="Cantidad en kilos" wire:model='form.grasaP'/>
-                                </div>
-                            </div>
-                            <x-danger-button wire:click='saveP'>Aceptar</x-danger-button>
-
-                        </div>
-
-
-
-                    </div>
+                    <select class="form-control" wire:model='form.gramaje_total'>
+                        <option value="" selected>Gramaje:</option>
+                        @foreach ($grammages as $grammage)
+                            @if ($grammage['id'] == 1 || $grammage['id'] == 4 || $grammage['id'] == 3 || $grammage['id'] == 6)
+                                :
+                                <option value="{{ $grammage['id'] }}">{{ $grammage['name'] }}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                    <x-input-error for="form.gramaje_total" />
                 </div>
             </div>
+
+            <hr class="mt-5 mb-5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                @foreach ($ctg_carne as $car)
+                    @if ($car['ctg_tipo_carnes_id'] == $tipo_modal)
+                        <div x-data="{ inputEnabled: false }">
+                            <div class="flex items-center">
+                                <input type="checkbox" x-model="inputEnabled" class="mr-2" />
+                                <x-label class="mr-2">{{ $car['name'] }}</x-label>
+                            </div>
+
+                            <div class="flex items-center" x-show="inputEnabled">
+                                <x-input type="number" value="0" class="w-full bg-white mt-2" />
+                                &nbsp;
+                                <select class="form-control bg-white mt-2">
+                                    <option value="" selected>Gramaje:</option>
+
+                                    @foreach ($grammages as $grammage)
+                                        @if ($grammage['id'] == 1 || $grammage['id'] == 4 || $grammage['id'] == 3 || $grammage['id'] == 6)
+                                            :
+
+                                            <option value="{{ $grammage['id'] }}">{{ $grammage['name'] }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
+            </div>
+
+
         @endslot
         @slot('footer')
-            <x-secondary-button wire:click="closeModalCarnes">Cerrar</x-secondary-button>
-            {{--  wire:click="{{ $productId ? 'update' : 'save' }}"" wire:click="$dispatch('confirm',{{ $productId }}) " --}}
-            {{-- <x-danger-button class=" ml-3 disabled:opacity-25" wire:click="$dispatch('confirm')">ACEPTAR</x-danger-button> --}}
+            <x-danger-button wire:click="$dispatch('confirm')">GUARDAR</x-danger-button> &nbsp;
+            <x-secondary-button wire:click="closeModal">CANCELAR</x-secondary-button>
         @endslot
     </x-dialog-modal>
 
     @push('js')
-     
+        <script>
+            document.addEventListener('livewire:initialized', () => {
+
+                @this.on('confirm', () => {
+
+                    Swal.fire({
+                        title: '¿Estas seguro?',
+                        text: "El cliente sera guardado",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si, adelante!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            @this.dispatch('save-carnes');
+                        }
+                    })
+                })
+                Livewire.on('alert', function(message) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                });
+
+            });
+        </script>
     @endpush
 </div>

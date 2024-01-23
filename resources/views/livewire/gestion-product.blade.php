@@ -180,7 +180,7 @@
                 <div class="grid md:grid-cols-2 md:gap-6">
                     <div class="relative z-0 w-full  group">
                         <x-label>Nombre del producto</x-label>
-                        <x-input type="text" class="w-full" placehorder="Nombre del producto" wire:model='form.name' />
+                        <x-input type="text" class="" placehorder="Nombre del producto" wire:model='form.name' />
                         <x-input-error for="form.name" />
                     </div>
                     <div class="relative z-0 w-full  group">

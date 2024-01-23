@@ -1,7 +1,7 @@
 <div wire:init='loadProducts'>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
-            {{ __('ALMACEN') }}
+            {{ __('Almacen') }}
         </h2>
 
 
@@ -150,7 +150,7 @@
                                 <td class="px-6 py-4">{{ $product->brand->name }}</td>
                                 <td class="px-6 py-4">${{ $product->price }}</td>
                                 <td class="px-6 py-4">
-                                    {{ $product->stock < $product->stock_min ? 'bg-red-200' : 'xxx' }}</td>
+                                    {{ $product->stock}}</td>
                                 <td>
                                     <button class="btn btn-green mr-2 p-2" wire:click='openModal({{ $product }})'>
                                         <i class="fas fa-edit"></i>

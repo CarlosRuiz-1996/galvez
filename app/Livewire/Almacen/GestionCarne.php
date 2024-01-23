@@ -4,8 +4,19 @@ namespace App\Livewire\Almacen;
 
 use Livewire\Component;
 use App\Livewire\Forms\CarneForm;
+use App\Models\ctg_tipo_carne;
+use Livewire\Attributes\On;
+
 class GestionCarne extends Component
-{  public $openCarnes = TRUE;
+{
+    public $open= false;
+    
+    public $ctg_carne = [];
+    public $carne_tipo = [];
+    public $grammages = [];
+
+    public $selectedItems = [];
+    public $GramageItems = [];
 
     public CarneForm $form;
 
@@ -20,31 +31,67 @@ class GestionCarne extends Component
         'orderBy' => ['except' => 'desc'],
         'form.search' => ['except' => ''],
     ];
-    public function openModalCarnes()
-    {
-      
-        $this->openCarnes = true;
-    }
-    public function closeModalCarnes()
-    {
 
-        $this->openCarnes = false;
+    #[On('save-carnes')]
+    public function save()
+    {
+        // $this->validate();
+
+        $this->form->store($this->tipo_modal);
+
+        // dd($this->selectedItems.'-'.$this->GramageItems);
+        // dd($this->GramageItems);
+        $this->dispatch('list-carnes');
+
+        $this->dispatch('alert', "Los datos se registraron con exito.");
+        $this->closeModal();
     }
 
+    #[On('list-carnes')]
     public function render()
     {
-        return view('livewire.almacen.gestion-carne');
-    }
-    public $cantidad = 0;
-    public $checkboxes = [];
+        $this->ctg_carne  = $this->form->getAllCtgCarnes();
+        $this->carne_tipo  = $this->form->getAllTypeCarnes();
+        $this->grammages  = $this->form->getAllGrammage();
+        $carnes  = $this->form->getAllCarne();
 
-    
-    public function saveE(){
-
-
-        // dd($this->form->tipoE,$this->form->catidadE,$this->form->grasaE,$this->form->huesoE);
-
-        // $this->form->store();
+        return view('livewire.almacen.gestion-carne',['carnes'=>$carnes]);
     }
 
+    public $nombre_modal="";
+    public $tipo_modal="";
+    public function openModal(ctg_tipo_carne $tipo)
+    {
+        $this->selectedItems = [];
+        $this->nombre_modal=$tipo->name;
+        $this->tipo_modal=$tipo->id;
+
+        $this->open= true;
+       
+
+    }
+    public function closeModal()
+    {
+        $this->selectedItems = [];
+
+        $this->open= false;
+      
+    }
+
+
+  //ordenar los filtros de las columnas
+  public function order($sort)
+  {
+
+      if ($this->sort == $sort) {
+          if ($this->orderBy == 'desc') {
+              $this->orderBy = 'asc';
+          } else {
+              $this->orderBy = 'desc';
+          }
+      } else {
+          $this->sort = $sort;
+          $this->orderBy = 'desc';
+      }
+  }
 }

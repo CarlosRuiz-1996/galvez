@@ -5,26 +5,55 @@ namespace App\Livewire\Forms;
 use App\Models\Carnes;
 use Livewire\Attributes\Rule;
 use Livewire\Form;
+use App\Models\ctg_carne;
+use App\Models\ctg_tipo_carne;
+use App\Models\Grammage;
 
 class CarneForm extends Form
 {
 
-    
-    public $grasaE;
-    public $huesoE;
-    public $bisteckE;
-    public $tipoE;
+  public $total;
 
-    public $grasaP;
-    public $huesoP;
-    public $bisteckP;
-    public $tipoP;
+  public $gramaje_total;
 
-    public $catidadE;
-    public $catidadP;
+  protected $rules = [
+    'total' => 'required',
+    'gramaje_total' => 'required',
 
-    public function storeE(){
-        Carnes::create($this->only(['tipo','catidad','grasa','hueso','bisteck']));
+  ];
 
-    }
+  public function getAllCarne()
+  {
+    return Carnes::orderBy('created_at', 'desc')->get();
+  }
+
+  public function getAllCtgCarnes()
+  {
+    return ctg_carne::orderBy('name', 'asc')->get()->toArray();
+  }
+  public function getAllTypeCarnes()
+  {
+    return ctg_tipo_carne::orderBy('id', 'asc')->get()->toArray();
+  }
+  public function getAllGrammage()
+  {
+    return Grammage::orderBy('id', 'asc')->get()->toArray();
+  }
+
+  public function store($tipo)
+  {
+
+
+    $this->validate();
+
+    Carnes::create([
+        'gramaje_total' => $this->total,
+        'gramaje_virtual' => $this->total,
+        'ctg_grammage_id' => $this->gramaje_total,
+        'ctg_tipo_carnes_id' => $tipo,
+
+      ]);
+      $this->reset();
+
+  }
 }

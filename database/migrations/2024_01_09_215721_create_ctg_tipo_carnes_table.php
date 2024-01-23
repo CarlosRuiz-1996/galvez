@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('carnes', function (Blueprint $table) {
+        Schema::disableForeignKeyConstraints();
+
+        Schema::create('ctg_tipo_carnes', function (Blueprint $table) {
             $table->id();
-            $table->integer('tipo');
-            $table->integer('cantidad');
-            $table->integer('grasa')->nullable();
-            $table->integer('hueso')->nullable();
-            $table->integer('bisteck')->nullable();
-            $table->integer('status')->default(1);
+            $table->string('name');
+            $table->string('image_path')->nullable();
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
+        Schema::enableForeignKeyConstraints();
+
     }
 
     /**
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('carnes');
+        Schema::dropIfExists('ctg_tipo_carnes');
     }
 };

@@ -16,11 +16,13 @@ return new class extends Migration
         Schema::create('carnes_details', function (Blueprint $table) {
             $table->id();
             $table->integer('status')->default(1);
-            $table->string('gramaje_total')->nullable();
-            $table->string('gramaje_virtual')->nullable();
+            $table->float('gramaje_total')->nullable();
+            $table->float('gramaje_virtual')->nullable();
             $table->foreignId('carnes_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('ctg_carnes_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
-
+            $table->foreignId('ctg_carnes_id')->constrained()->onDelete('cascade')->onUpdate('cascade');//debe aceptar nulos
+            //se agrego al final
+            $table->foreignId('ctg_grammage_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+            //asi lo meti desde sql// ALTER TABLE carnes_details ADD CONSTRAINT carnes_details_ctg_grammage_id_foreign FOREIGN KEY (ctg_grammage_id) REFERENCES ctg_grammages(id) ON DELETE CASCADE ON UPDATE CASCADE; 
             $table->timestamps();
         });
 

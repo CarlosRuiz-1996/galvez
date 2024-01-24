@@ -19,7 +19,7 @@
             @foreach ($carne_tipo as $tipo)
                 <li role="presentation" class="mr-2">
                     <button @click="activeTab = '{{ $tipo['name'] }}'"
-                        :class="{ 'bg-blue-500': activeTab === '{{ $tipo['name'] }}', 'text-white': activeTab === '{{ $tipo['name'] }}', 'border': activeTab !== '{{ $tipo['name'] }}', 'border-gray-300': activeTab !== '{{ $tipo['name'] }}' }"
+                        :class="{ 'bg-orange-500': activeTab === '{{ $tipo['name'] }}', 'text-white': activeTab === '{{ $tipo['name'] }}', 'border': activeTab !== '{{ $tipo['name'] }}', 'border-gray-300': activeTab !== '{{ $tipo['name'] }}' }"
                         :style="{
                             'background-color': activeTab === '{{ $tipo['name'] }}' ? '' : 'white',
                             'color': activeTab === '{{ $tipo['name'] }}' ?
@@ -51,7 +51,7 @@
                     <x-button class="ml-4" wire:click="openModal({{ $tipo['id'] }})">Registrar </x-button>
                 </div>
 
-                
+
                 <table class="w-full text-sm text-left text-gray-500">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-200 text-center">
                         <tr>
@@ -64,10 +64,9 @@
                                     @endif
                                 @else
                                     <i class="fas fa-sort float-right hover:float-left mt-1"></i>
-
                                 @endif
                             </th>
-                            
+
                             <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('ctg_grammage_id')">
                                 GRAMAJE
 
@@ -79,7 +78,6 @@
                                     @endif
                                 @else
                                     <i class="fas fa-sort float-right hover:float-left mt-1"></i>
-
                                 @endif
                             </th>
 
@@ -94,7 +92,6 @@
                                     @endif
                                 @else
                                     <i class="fas fa-sort float-right hover:float-left mt-1"></i>
-
                                 @endif
                             </th>
 
@@ -109,32 +106,56 @@
                                     @endif
                                 @else
                                     <i class="fas fa-sort float-right hover:float-left mt-1"></i>
-
                                 @endif
                             </th>
-                            <th scope="col" class="px-6 py-3">DETALLES</th>
+                            <th scope="col" class="px-6 py-3">ACCIONES</th>
                         </tr>
                     </thead>
-                    <tbody class="text-center">
-
+                    {{-- ocupo alpine para poder desplegar y comprimir detalles --}}
+                    <tbody class="text-center" x-data="{ openRow: false }">
                         @foreach ($carnes as $product)
-                        @if( $tipo['id'] == $product->ctg_tipo_carnes_id )
+                            @if ($tipo['id'] == $product->ctg_tipo_carnes_id)
+                                <tr class="table-row border-b bg-white hover:bg-orange-50"
+                                    @click="openRow === {{ $product->id }} ? openRow = false : openRow = {{ $product->id }}">
+                                    <td class="px-6 py-4">{{ $product->id }}</td>
+                                    <td class="px-6 py-4">
+                                        {{ $product->gramaje_total . ' ' . $product->grammage->name }}</td>
+                                    <td class="px-6 py-4">{{ $product->created_at }}</td>
+                                    <td class="px-6 py-4">{{ $product->updated_at }}</td>
+                                    <td>
+                                        <a class="btn btn-green mr-2 p-2"
+                                        href="{{ route('clientes.editar', [$product]) }}">
+                                        <i class="fas fa-edit"></i>
 
-                            <tr
-                                class="table-row  border-b hover:bg-blue-50" >
+                                    </a>
+                                    </td>
+                                </tr>
 
-                                <td class="px-6 py-4">{{ $product->id }}</td>
-                                <td class="px-6 py-4">{{ $product->gramaje_total.' '. $product->grammage->name }}</td>
-                                <td class="px-6 py-4">{{ $product->created_at }}</td>
-                                <td class="px-6 py-4">{{ $product->updated_at }}</td>
-                                <td>
-                                   editar
-                                </td>
-                            </tr>
+                                {{-- informacion que se despliega al dar click --}}
+                                <tr class="text-black bg-orange-200" x-show="openRow === {{ $product->id }}">
+                                    <td></td>
+                                    <td>
+                                        Producto
+                                    </td>
+                                    <td>
+                                        Gramaje
+                                    </td>
+                                </tr>
+                                @foreach ($product->details as $detail)
+                                    <tr class="text-black bg-purple-200" x-show="openRow === {{ $product->id }}">
+                                        <td>{{ $detail->id}}</td>
+                                        <td>
+                                            {{ $detail->tipo->name }}
+                                        </td>
+                                        <td>
+                                            {{ $detail->gramaje_total . ' ' . $detail->grammage->name }}
+                                        </td>
+                                    </tr>
+                                @endforeach
                             @endif
-
                         @endforeach
                     </tbody>
+
                 </table>
 
             </div>
@@ -170,8 +191,7 @@
                     <select class="form-control" wire:model='form.gramaje_total'>
                         <option value="" selected>Gramaje:</option>
                         @foreach ($grammages as $grammage)
-                            @if ($grammage['id'] == 1 || $grammage['id'] == 4 || $grammage['id'] == 3 || $grammage['id'] == 6)
-                                :
+                            @if ($grammage['id'] == 1 || $grammage['id'] == 4)
                                 <option value="{{ $grammage['id'] }}">{{ $grammage['name'] }}</option>
                             @endif
                         @endforeach
@@ -179,31 +199,46 @@
                     <x-input-error for="form.gramaje_total" />
                 </div>
             </div>
-
+            @if ($error_ctg)
+                <span>Debes especificar el tipo de gramages</span>
+            @endif
             <hr class="mt-5 mb-5">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 @foreach ($ctg_carne as $car)
                     @if ($car['ctg_tipo_carnes_id'] == $tipo_modal)
                         <div x-data="{ inputEnabled: false }">
                             <div class="flex items-center">
-                                <input type="checkbox" x-model="inputEnabled" class="mr-2" />
+
+                                <input type="checkbox" x-model="inputEnabled"
+                                    wire:model="selectedItems.{{ $car['id'] }}"
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 mr-2" />
                                 <x-label class="mr-2">{{ $car['name'] }}</x-label>
                             </div>
 
                             <div class="flex items-center" x-show="inputEnabled">
-                                <x-input type="number" value="0" class="w-full bg-white mt-2" />
+                                <x-input type="number" wire:model="GramageItems.{{ $car['id'] }}"
+                                    class="w-full bg-white mt-2" />
+
                                 &nbsp;
-                                <select class="form-control bg-white mt-2">
+                                <select class="form-control bg-white mt-2"
+                                    wire:model="GramageItemsCtg.{{ $car['id'] }}">
                                     <option value="" selected>Gramaje:</option>
 
                                     @foreach ($grammages as $grammage)
-                                        @if ($grammage['id'] == 1 || $grammage['id'] == 4 || $grammage['id'] == 3 || $grammage['id'] == 6)
-                                            :
-
+                                        @if ($grammage['id'] == 1 || $grammage['id'] == 4)
                                             <option value="{{ $grammage['id'] }}">{{ $grammage['name'] }}</option>
                                         @endif
                                     @endforeach
                                 </select>
+                            </div>
+                            <div class="flex items-center" x-show="inputEnabled">
+
+                                <x-input-error for="GramageItems.{{ $car['id'] }}" />
+
+                                &nbsp;
+
+                                <x-input-error for="GramageItemsCtg.{{ $car['id'] }}" />
+
                             </div>
                         </div>
                     @endif

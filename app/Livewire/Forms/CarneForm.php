@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Models\Carnes;
+use App\Models\CarnesDetails;
 use Livewire\Attributes\Rule;
 use Livewire\Form;
 use App\Models\ctg_carne;
@@ -16,15 +17,16 @@ class CarneForm extends Form
 
   public $gramaje_total;
 
-  protected $rules = [
-    'total' => 'required',
-    'gramaje_total' => 'required',
+  // protected $rules = [
+  //   'total' => 'required',
+  //   'gramaje_total' => 'required',
 
-  ];
+  // ];
 
-  public function getAllCarne()
+  public function getAllCarne($sort, $orderBy, $list)
   {
-    return Carnes::orderBy('created_at', 'desc')->get();
+    return Carnes::orderBy($sort, $orderBy)
+    ->paginate($list);
   }
 
   public function getAllCtgCarnes()
@@ -40,20 +42,32 @@ class CarneForm extends Form
     return Grammage::orderBy('id', 'asc')->get()->toArray();
   }
 
-  public function store($tipo)
+  public function store($tipo, $darivados)
   {
 
+    // dd($darivados);
+    // $this->validate();
 
-    $this->validate();
+    $carne = Carnes::create([
+      'gramaje_total' => $this->total,
+      'gramaje_virtual' => $this->total,
+      'ctg_grammage_id' => $this->gramaje_total,
+      'ctg_tipo_carnes_id' => $tipo,
 
-    Carnes::create([
-        'gramaje_total' => $this->total,
-        'gramaje_virtual' => $this->total,
-        'ctg_grammage_id' => $this->gramaje_total,
-        'ctg_tipo_carnes_id' => $tipo,
+    ]);
 
-      ]);
-      $this->reset();
+    if (count($darivados)) {
+      foreach ($darivados as $darivado) {
+        CarnesDetails::create([
+          'gramaje_total' => $darivado['gramaje'],
+          'gramaje_virtual' => $darivado['gramaje'],
+          'carnes_id' => $carne->id,
+          'ctg_carnes_id' => $darivado['tipo_carne'],
+          'ctg_grammage_id' => $darivado['ctg'],
 
+        ]);
+      }
+    }
+    $this->reset();
   }
 }

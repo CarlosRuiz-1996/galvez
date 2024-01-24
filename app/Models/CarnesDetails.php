@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Seeders\CtgCarne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,12 +12,21 @@ class CarnesDetails extends Model
 
     protected $fillable = [
        
-        ' gramaje_total',
+        'gramaje_total',
         'gramaje_virtual',
-        'ctg_grammage_id',
-        'ctg_tipo_carnes_id',
+        'carnes_id',
+        'ctg_carnes_id',
+        'ctg_grammage_id'
     ];
 
+    public function grammage()
+    {
+        return $this->belongsTo(Grammage::class,'ctg_grammage_id' );
+    }
 
-    
+    public function tipo()
+    {
+        return $this->belongsTo(ctg_carne::class,'ctg_carnes_id' );
+    }
+
 }

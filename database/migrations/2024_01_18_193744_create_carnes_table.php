@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('carnes', function (Blueprint $table) {
             $table->id();
             $table->integer('status')->default(1);
-            $table->string('gramaje_total')->nullable();
-            $table->string('gramaje_virtual')->nullable();
+            $table->float('gramaje_total')->nullable();
+            $table->float('gramaje_virtual')->nullable();
             $table->foreignId('ctg_grammage_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('ctg_tipo_carnes_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
 

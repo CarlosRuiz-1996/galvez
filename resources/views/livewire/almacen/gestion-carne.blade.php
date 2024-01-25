@@ -122,13 +122,12 @@
                                         {{ $product->gramaje_total . ' ' . $product->grammage->name }}</td>
                                     <td class="px-6 py-4">{{ $product->created_at }}</td>
                                     <td class="px-6 py-4">{{ $product->updated_at }}</td>
-                                    <td>
-                                        <a class="btn btn-green mr-2 p-2"
-                                        href="{{ route('clientes.editar', [$product]) }}">
-                                        <i class="fas fa-edit"></i>
-
-                                    </a>
+                                    <td class="px-6 py-4">
+                                        <button class="btn btn-blue mr-2 p-2" wire:click="openModal({{ $tipo['id'] }},1)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
                                     </td>
+
                                 </tr>
 
                                 {{-- informacion que se despliega al dar click --}}
@@ -140,18 +139,38 @@
                                     <td>
                                         Gramaje
                                     </td>
+                                    <td></td>
                                 </tr>
+                                <?php $total_k = 0; ?>
                                 @foreach ($product->details as $detail)
-                                    <tr class="text-black bg-purple-200" x-show="openRow === {{ $product->id }}">
-                                        <td>{{ $detail->id}}</td>
+                                    <tr class="text-black bg-gray-00" x-show="openRow === {{ $product->id }}">
+                                        <td>{{ $detail->id }}</td>
                                         <td>
                                             {{ $detail->tipo->name }}
                                         </td>
                                         <td>
                                             {{ $detail->gramaje_total . ' ' . $detail->grammage->name }}
                                         </td>
+                                        <td>
+                                            <button class="btn btn-green mr-2 p-2"
+                                                wire:click="edit({{ $detail->id }})">
+                                                <i class="fas fa-edit"></i>
+
+                                            </button>
+                                        </td>
                                     </tr>
+                                    <?php $total_k += $detail->gramaje_total; ?>
                                 @endforeach
+                                <tr class="text-black bg-gray-200" x-show="openRow === {{ $product->id }}">
+                                    <td></td>
+                                    <td>
+
+                                    </td>
+                                    <td>
+                                        Total:<?= $total_k ?>
+                                    </td>
+                                    <td></td>
+                                </tr>
                             @endif
                         @endforeach
                     </tbody>
@@ -169,7 +188,7 @@
 
 
 
-
+    {{-- crear --}}
     <x-dialog-modal-xl wire:model.live="open">
         @slot('title')
             <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
@@ -199,9 +218,7 @@
                     <x-input-error for="form.gramaje_total" />
                 </div>
             </div>
-            @if ($error_ctg)
-                <span>Debes especificar el tipo de gramages</span>
-            @endif
+
             <hr class="mt-5 mb-5">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 @foreach ($ctg_carne as $car)
@@ -248,20 +265,63 @@
 
         @endslot
         @slot('footer')
-            <x-danger-button wire:click="$dispatch('confirm')">GUARDAR</x-danger-button> &nbsp;
+            <x-danger-button wire:click="$dispatch('confirm',1)">GUARDAR</x-danger-button> &nbsp;
             <x-secondary-button wire:click="closeModal">CANCELAR</x-secondary-button>
         @endslot
-    </x-dialog-modal>
+    </x-dialog-modal-xl>
+
+    {{-- editar --}}
+    <x-dialog-modal-xl wire:model.live="openEdit">
+        @slot('title')
+            <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
+                <h1>EDITAR ENTRADA DE CARNE DE {{ Str::upper($nombre_modal) }}</h1>
+            </div>
+        @endslot
+        @slot('content')
+
+            <div class="flex items-center" x-show="inputEnabled">
+                <x-input type="number" wire:model='form.total' class="w-full bg-white mt-2" />
+
+                &nbsp;
+                <select class="form-control bg-white mt-2" wire:model="form.gramaje_total">
+                    <option value="" selected>Gramaje:</option>
+
+                    @foreach ($grammages as $grammage)
+                        @if ($grammage['id'] == 1 || $grammage['id'] == 4)
+                            <option value="{{ $grammage['id'] }}" selected>{{ $grammage['name'] }}</option>
+                        @endif
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex items-center" x-show="inputEnabled">
+
+                <x-input-error for="GramageItems.{{ $car['id'] }}" />
+
+                &nbsp;
+
+                <x-input-error for="GramageItemsCtg.{{ $car['id'] }}" />
+
+            </div>
+
+
+        @endslot
+        @slot('footer')
+            <x-danger-button wire:click="$dispatch('confirm',2)">GUARDAR</x-danger-button> &nbsp;
+            <x-secondary-button wire:click="closeModalEdit">CANCELAR</x-secondary-button>
+        @endslot
+    </x-dialog-modal-xl>
+
 
     @push('js')
         <script>
             document.addEventListener('livewire:initialized', () => {
 
-                @this.on('confirm', () => {
+                @this.on('confirm', (opcion) => {
 
                     Swal.fire({
                         title: '¿Estas seguro?',
-                        text: "El cliente sera guardado",
+                        text: opcion == 1 ? "Los producto y sus gramajes seran guardado" :
+                            "El gramaje sera actualizado",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
@@ -269,8 +329,13 @@
                         confirmButtonText: 'Si, adelante!',
                         cancelButtonText: 'Cancelar'
                     }).then((result) => {
-                        if (result.isConfirmed) {
+
+
+                        if (opcion == 1) {
                             @this.dispatch('save-carnes');
+                        } else if (opcion == 2) {
+                            @this.dispatch('update-carnes');
+
                         }
                     })
                 })

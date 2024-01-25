@@ -26,4 +26,9 @@ class Carnes extends Model
     {
         return $this->belongsTo(Grammage::class,'ctg_grammage_id' );
     }
+
+    public function tipo()
+    {
+        return $this->belongsTo(ctg_tipo_carne::class,'ctg_tipo_carnes_id' );
+    }
 }

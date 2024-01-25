@@ -26,7 +26,7 @@ class CarneForm extends Form
   public function getAllCarne($sort, $orderBy, $list)
   {
     return Carnes::orderBy($sort, $orderBy)
-    ->paginate($list);
+      ->paginate($list);
   }
 
   public function getAllCtgCarnes()
@@ -45,8 +45,6 @@ class CarneForm extends Form
   public function store($tipo, $darivados)
   {
 
-    // dd($darivados);
-    // $this->validate();
 
     $carne = Carnes::create([
       'gramaje_total' => $this->total,
@@ -68,6 +66,64 @@ class CarneForm extends Form
         ]);
       }
     }
+    $this->reset();
+  }
+
+
+
+  public function update($carne_detail)
+  {
+
+
+    //sacar diferencia
+    $diferencia = 0;
+    $mayor = 0;
+    // $carne = Carnes::where('id', $carne_detail->carnes_id)->get();
+    $carne = Carnes::find($carne_detail->carnes_id);
+
+    if ($carne_detail->gramaje_total < $this->total) {
+
+      $diferencia =  $this->total - $carne_detail->gramaje_total;
+      $mayor = 1;
+
+    } else {
+      $diferencia = $carne_detail->gramaje_total - $this->total;
+    }
+
+
+    
+
+    //reviso si se hace una suma o una resta a la cantidad total de carnes. 
+    if ($mayor != 1) {
+      $new = $carne->gramaje_total - $diferencia;
+    } else {
+      $new = $carne->gramaje_total + $diferencia;
+    }
+
+    //reviso si es gramo o kilogramo en carnes general
+    if($carne->ctg_grammage_id==4 && $this->gramaje_total= 1){
+      $new_gramaje = 1;
+    }else{
+      $new_gramaje = $carne->ctg_grammage_id;
+    }
+
+
+    //actualizar tabla details_carnes
+    $carne_detail->update(
+      [
+        'gramaje_total' => $this->total,
+        'gramaje_virtual' => $this->total,
+        'ctg_grammage_id' => $this->gramaje_total
+      ]
+    );
+    //actualizar tabla carnes
+    $carne->update([
+      'gramaje_total' => $new,
+      'gramaje_virtual' => $new,
+      'ctg_grammage_id' => $new_gramaje
+
+    ]);
+
     $this->reset();
   }
 }

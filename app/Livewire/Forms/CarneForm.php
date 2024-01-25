@@ -42,7 +42,7 @@ class CarneForm extends Form
     return Grammage::orderBy('id', 'asc')->get()->toArray();
   }
 
-  public function store($tipo, $darivados)
+  public function store($tipo, $derivados)
   {
 
 
@@ -54,8 +54,8 @@ class CarneForm extends Form
 
     ]);
 
-    if (count($darivados)) {
-      foreach ($darivados as $darivado) {
+    if (count($derivados)) {
+      foreach ($derivados as $darivado) {
         CarnesDetails::create([
           'gramaje_total' => $darivado['gramaje'],
           'gramaje_virtual' => $darivado['gramaje'],
@@ -78,20 +78,18 @@ class CarneForm extends Form
     //sacar diferencia
     $diferencia = 0;
     $mayor = 0;
-    // $carne = Carnes::where('id', $carne_detail->carnes_id)->get();
     $carne = Carnes::find($carne_detail->carnes_id);
 
     if ($carne_detail->gramaje_total < $this->total) {
 
       $diferencia =  $this->total - $carne_detail->gramaje_total;
       $mayor = 1;
-
     } else {
       $diferencia = $carne_detail->gramaje_total - $this->total;
     }
 
 
-    
+
 
     //reviso si se hace una suma o una resta a la cantidad total de carnes. 
     if ($mayor != 1) {
@@ -101,9 +99,9 @@ class CarneForm extends Form
     }
 
     //reviso si es gramo o kilogramo en carnes general
-    if($carne->ctg_grammage_id==4 && $this->gramaje_total= 1){
+    if ($carne->ctg_grammage_id == 4 && $this->gramaje_total = 1) {
       $new_gramaje = 1;
-    }else{
+    } else {
       $new_gramaje = $carne->ctg_grammage_id;
     }
 
@@ -125,5 +123,79 @@ class CarneForm extends Form
     ]);
 
     $this->reset();
+  }
+
+  public function updateCarne($carne, $derivados, $total)
+  {
+
+    //sacar diferencia
+    $diferencia = 0;
+    if ($carne->gramaje_total != $this->total) {
+
+      if ($carne->gramaje_total < $this->total) {
+
+        $diferencia =  $this->total - $carne->gramaje_total;
+        $this->total = $carne->gramaje_total + $diferencia;
+
+      } else {
+        $diferencia = $carne->gramaje_total - $this->total;
+        $this->total = $carne->gramaje_total - $diferencia;
+
+      }
+  
+    } else {
+      if($carne->gramaje_total<$total){
+        $this->total = $carne->gramaje_total + $total;
+      }
+
+      $suma=0;
+      foreach($carne->details as $detail){
+        $suma +=$detail->gramaje_total;
+      }
+      if($carne->gramaje_total<($suma+$total)){
+
+        $diferencia = ($suma+$total)-$carne->gramaje_total;
+        $this->total = $carne->gramaje_total + $diferencia;
+
+      }
+    }
+
+
+    if (!count($derivados)){
+      $suma=0;
+      foreach($carne->details as $detail){
+        $suma +=$detail->gramaje_total;
+      }
+
+      if($this->total<$suma ){
+        // break;
+        return 0;
+      }
+    }
+
+    //actualizar tabla details_carnes
+    $carne->update(
+      [
+        'gramaje_total' => $this->total,
+        'gramaje_virtual' => $this->total,
+        'ctg_grammage_id' => $this->gramaje_total
+      ]
+    );
+
+    if (count($derivados)) {
+      foreach ($derivados as $darivado) {
+        CarnesDetails::create([
+          'gramaje_total' => $darivado['gramaje'],
+          'gramaje_virtual' => $darivado['gramaje'],
+          'carnes_id' => $carne->id,
+          'ctg_carnes_id' => $darivado['tipo_carne'],
+          'ctg_grammage_id' => $darivado['ctg'],
+
+        ]);
+      }
+    }
+
+    $this->reset();
+    return 1;
   }
 }

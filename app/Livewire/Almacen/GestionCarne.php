@@ -41,18 +41,23 @@ class GestionCarne extends Component
     {
         $rules = [];
 
-        foreach ($this->selectedItems as $carId => $selected) {
-            if (!empty($this->GramageItems) || !empty($this->GramageItemsCtg)) {
-                if ($selected) {
-                    $rules["GramageItems.{$carId}"] = 'required|numeric';
-                    $rules["GramageItemsCtg.{$carId}"] = 'required';
-                }
-            }else{
-                if ($selected) {
-                    $rules["selectedItems.{$carId}"] = 'required';
-                    // $rules["GramageItemsCtg.{$carId}"] = 'required';
+        if (!empty($this->selectedItems)) {
+            foreach ($this->selectedItems as $carId => $selected) {
+                if (!empty($this->GramageItems) || !empty($this->GramageItemsCtg)) {
+                    if ($selected) {
+                        $rules["GramageItems.{$carId}"] = 'required|numeric';
+                        $rules["GramageItemsCtg.{$carId}"] = 'required';
+                    }
+                } else {
+                    if ($selected) {
+                        $rules["selectedItems.{$carId}"] = 'required';
+                        // $rules["GramageItemsCtg.{$carId}"] = 'required';
+                    }
                 }
             }
+        } else {
+            $rules["form.total"] = 'required';
+            $rules["form.gramaje_total"] = 'required';
         }
 
         return $rules;
@@ -107,7 +112,7 @@ class GestionCarne extends Component
 
         $total += $kilos + ($gramos / 1000);
 
-        if ($total < 1) {
+        if ($total < 1 && $this->form->gramaje_total == 4) {
             //si es mayor a 1 es un kilo
             $this->form->gramaje_total = 4;
         } else {
@@ -121,8 +126,8 @@ class GestionCarne extends Component
         }
 
         //reviso si el gramagge existe, si no lo mando en 0 a la base para que no sea null
-        if($this->form->total==null){
-            $this->form->total=0;
+        if ($this->form->total == null) {
+            $this->form->total = 0;
         }
 
         $this->form->store($this->tipo_modal, $darivados);
@@ -148,7 +153,8 @@ class GestionCarne extends Component
     public $tipo_modal = "";
     public function openModal(ctg_tipo_carne $tipo)
     {
-        $this->reset('nombre_modal', 'form.gramaje_total','form.total');
+
+        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total');
 
         $this->selectedItems = [];
         $this->nombre_modal = $tipo->name;
@@ -162,6 +168,7 @@ class GestionCarne extends Component
         $this->GramageItems = [];
         $this->GramageItemsCtg = [];
         $this->open = false;
+        $this->edit = false;
     }
 
 
@@ -185,9 +192,11 @@ class GestionCarne extends Component
 
     public $openEdit = false;
     public $carne;
-    public function edit(CarnesDetails $carne)
+    public $check_edit = [];
+
+    public function editt(CarnesDetails $carne)
     {
-        $this->reset('nombre_modal', 'form.gramaje_total','form.total');
+        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total');
 
         $this->carne = $carne;
         $this->nombre_modal = $carne->tipo->name;
@@ -197,6 +206,8 @@ class GestionCarne extends Component
         $this->openEdit = true;
     }
 
+
+    //actualiza los derivados de carne item por item
     #[On('update-carnes')]
     public function update()
     {
@@ -215,5 +226,97 @@ class GestionCarne extends Component
         $this->reset('nombre_modal');
 
         $this->openEdit = false;
+    }
+    public $edit = false;
+    public $fecha;
+    public function agregar(ctg_tipo_carne $tipo, Carnes $carne)
+    {
+        $this->carne = $carne;
+        $this->edit = true;
+        foreach ($carne->details as $check) {
+            $this->check_edit[] = $check['ctg_carnes_id'];
+        }
+        // dd($this->check_edit);
+        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total');
+
+        $this->selectedItems = [];
+        $this->nombre_modal = $tipo->name;
+        $this->tipo_modal = $tipo->id;
+        $this->form->gramaje_total = $carne->ctg_grammage_id;
+        $this->fecha = $carne->created_at;
+
+        $this->form->total = $carne->gramaje_total;
+        $this->open = true;
+    }
+
+
+
+    #[On('agregar-carnes')]
+    public function agregarCarnes()
+    {
+
+        $this->validate();
+
+
+        $kilos = 0;
+        $gramos = 0;
+        $darivados = [];
+        $bandera = 0;
+        $total = 0;
+        foreach ($this->selectedItems as $item => $i) {
+            // inicializo mi arreglo con los id de mi ctg de tipo de carne;
+            $darivados[$bandera] = [
+                'tipo_carne' => $item,
+                'gramaje' => 0,
+                'ctg' => 4,
+
+            ];
+            //obtengo valores de mi gramage para el tipo de carne
+            foreach ($this->GramageItems as $gramma => $g) {
+                if ($item == $gramma) {
+                    $darivados[$bandera]['gramaje'] = $g;
+                }
+            }
+
+
+
+            foreach ($this->GramageItemsCtg as $ctg => $c) {
+                if ($item == $ctg) {
+                    $darivados[$bandera]['ctg'] = $c;
+                    //voy acumolando los kilos y gramajes para compararlos con la entrada total
+                    if ($c == 1) {
+                        $kilos += $darivados[$bandera]['gramaje'];
+                    } else {
+                        $gramos += $darivados[$bandera]['gramaje'];
+                    }
+                }
+            }
+            $bandera++;
+        }
+
+        $total += $kilos + ($gramos / 1000);
+
+        if ($total < 1) {
+            //si es mayor a 1 es un kilo
+            $this->form->gramaje_total = 4;
+        } else {
+            //si es menor a 1 son gramos
+            $this->form->gramaje_total = 1;
+        }
+
+
+        //reviso si el gramagge existe, si no lo mando en 0 a la base para que no sea null
+        if ($this->form->total == null) {
+            $this->form->total = 0;
+        }
+
+        $res = $this->form->updateCarne($this->carne, $darivados, $total);
+        $this->dispatch('list-carnes');
+        if ($res == 0) {
+            $this->dispatch('alert-error',"No se puede ingresar una cantidad menor a la suma de los productos");
+        } else {
+            $this->dispatch('alert', "Los datos se registraron con exito.");
+        }
+        $this->closeModal();
     }
 }

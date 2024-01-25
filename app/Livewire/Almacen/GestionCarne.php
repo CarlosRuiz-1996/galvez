@@ -153,8 +153,9 @@ class GestionCarne extends Component
     public $tipo_modal = "";
     public function openModal(ctg_tipo_carne $tipo)
     {
+        $this->edit = false;
 
-        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total');
+        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total','fecha');
 
         $this->selectedItems = [];
         $this->nombre_modal = $tipo->name;
@@ -196,7 +197,9 @@ class GestionCarne extends Component
 
     public function editt(CarnesDetails $carne)
     {
-        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total');
+        $this->edit = false;
+
+        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total','fecha');
 
         $this->carne = $carne;
         $this->nombre_modal = $carne->tipo->name;

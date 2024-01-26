@@ -180,7 +180,11 @@
                     </tbody>
 
                 </table>
-
+                @if ($carnes->hasPages())
+                <div class="px-6 py-3 text-gray-500">
+                    {{ $carnes->links() }}
+                </div>
+            @endif
             </div>
         @endforeach
     </div>

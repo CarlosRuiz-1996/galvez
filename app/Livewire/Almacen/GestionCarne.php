@@ -8,9 +8,12 @@ use App\Models\Carnes;
 use App\Models\CarnesDetails;
 use App\Models\ctg_tipo_carne;
 use Livewire\Attributes\On;
+use Livewire\WithPagination;
 
 class GestionCarne extends Component
 {
+    use WithPagination;
+
     public $open = false;
 
     public $ctg_carne = [];

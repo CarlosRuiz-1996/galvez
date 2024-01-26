@@ -112,7 +112,7 @@
                                 <td class="px-6 py-4">{{ $producto->presentation->name }}</td>
                                 <td class="px-6 py-4">
 
-                                    <img class="p-8 rounded-t-lg h-80 w-80"
+                                    <img class="p-8 rounded-t-lg h-40 w-40"
                                         @if ($producto->image_path) src="{{ asset('storage/' . $producto->image_path) }}"
                                             alt="product image"
                                         @else

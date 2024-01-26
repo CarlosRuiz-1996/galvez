@@ -161,7 +161,9 @@
                                             </button>
                                         </td>
                                     </tr>
-                                    <?php $total_k += $detail->gramaje_total; ?>
+                                    <?php
+                                    $total_k += $detail->gramaje_total;
+                                    ?>
                                 @endforeach
                                 <tr class="text-black bg-gray-200" x-show="openRow === {{ $product->id }}">
                                     <td></td>
@@ -359,6 +361,7 @@
                         showConfirmButton: false,
                         timer: 1500
                     })
+                    inputEnabled = false;
                 });
                 Livewire.on('alert-error', function(message) {
                     Swal.fire({
@@ -367,7 +370,8 @@
                         text: message,
                         showConfirmButton: false,
                         timer: 2500
-                    })
+                    });
+                    inputEnabled = false;
                 });
 
             });

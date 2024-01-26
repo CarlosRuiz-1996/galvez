@@ -156,7 +156,7 @@
     <x-dialog-modal wire:model.live="open">
         @slot('title')
             <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
-                <h1> {{ $foodId ? 'EDITAR PRODUCTO' : 'AGREGAR PRODUCTO' }}</h1>
+                <h1> {{ $foodId ? 'EDITAR PLATILLO' : 'AGREGAR PLATILLO' }}</h1>
             </div>
         @endslot
         @slot('content')

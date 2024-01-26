@@ -73,30 +73,17 @@ class CarneForm extends Form
 
   public function update($carne_detail)
   {
-
-
     //sacar diferencia
     $diferencia = 0;
-    $mayor = 0;
     $carne = Carnes::find($carne_detail->carnes_id);
-
+    $new = 0;
     if ($carne_detail->gramaje_total < $this->total) {
+      $diferencia = $this->total - $carne_detail->gramaje_total;
+      if (($carne_detail->gramaje_total + $diferencia) > $carne->gramaje_total) {
+        $new = $carne->gramaje_total + (($carne_detail->gramaje_total + $diferencia) - $carne->gramaje_total);
+      }
+    } 
 
-      $diferencia =  $this->total - $carne_detail->gramaje_total;
-      $mayor = 1;
-    } else {
-      $diferencia = $carne_detail->gramaje_total - $this->total;
-    }
-
-
-
-
-    //reviso si se hace una suma o una resta a la cantidad total de carnes. 
-    if ($mayor != 1) {
-      $new = $carne->gramaje_total - $diferencia;
-    } else {
-      $new = $carne->gramaje_total + $diferencia;
-    }
 
     //reviso si es gramo o kilogramo en carnes general
     if ($carne->ctg_grammage_id == 4 && $this->gramaje_total = 1) {
@@ -114,10 +101,22 @@ class CarneForm extends Form
         'ctg_grammage_id' => $this->gramaje_total
       ]
     );
+
+
+    //revisar si la suma de todos los derivados de carne es menor a la entrada total
+
+    $verificar_total=0;
+    foreach ($carne->details as $details) {
+      $verificar_total += $details->gramaje_total;
+    }
+    if($new < $verificar_total && $carne->gramaje_total < $verificar_total){
+      $new= $verificar_total;
+    }
+
     //actualizar tabla carnes
     $carne->update([
-      'gramaje_total' => $new,
-      'gramaje_virtual' => $new,
+      'gramaje_total' => $new != 0 ? $new : $carne->gramaje_total,
+      'gramaje_virtual' => $new != 0 ? $new : $carne->gramaje_total,
       'ctg_grammage_id' => $new_gramaje
 
     ]);
@@ -131,47 +130,46 @@ class CarneForm extends Form
     //sacar diferencia
     $diferencia = 0;
     if ($carne->gramaje_total != $this->total) {
-
+      // dd('if-1-'.$carne->gramaje_total .'-'.$this->total);
       if ($carne->gramaje_total < $this->total) {
 
         $diferencia =  $this->total - $carne->gramaje_total;
         $this->total = $carne->gramaje_total + $diferencia;
-
       } else {
         $diferencia = $carne->gramaje_total - $this->total;
         $this->total = $carne->gramaje_total - $diferencia;
-
       }
-  
     } else {
-      if($carne->gramaje_total<$total){
+      // dd('else-1');
+
+      if ($carne->gramaje_total < $total) {
         $this->total = $carne->gramaje_total + $total;
       }
 
-      $suma=0;
-      foreach($carne->details as $detail){
-        $suma +=$detail->gramaje_total;
+      $suma = 0;
+      foreach ($carne->details as $detail) {
+        $suma += $detail->gramaje_total;
       }
-      if($carne->gramaje_total<($suma+$total)){
+      if ($carne->gramaje_total < ($suma + $total)) {
 
-        $diferencia = ($suma+$total)-$carne->gramaje_total;
+        $diferencia = ($suma + $total) - $carne->gramaje_total;
         $this->total = $carne->gramaje_total + $diferencia;
-
       }
     }
 
 
-    if (!count($derivados)){
-      $suma=0;
-      foreach($carne->details as $detail){
-        $suma +=$detail->gramaje_total;
+    if (!count($derivados)) {
+      $suma = 0;
+      foreach ($carne->details as $detail) {
+        $suma += $detail->gramaje_total;
       }
 
-      if($this->total<$suma ){
+      if ($this->total < $suma) {
         // break;
         return 0;
       }
     }
+    // dd($this->total);
 
     //actualizar tabla details_carnes
     $carne->update(

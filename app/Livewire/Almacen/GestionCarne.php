@@ -69,16 +69,10 @@ class GestionCarne extends Component
     #[On('save-carnes')]
     public function save()
     {
-
-
         $this->validate();
-
-
         $kilos = 0;
-        $gramos = 0;
         $darivados = [];
         $bandera = 0;
-        $total = 0;
         foreach ($this->selectedItems as $item => $i) {
             // inicializo mi arreglo con los id de mi ctg de tipo de carne;
             $darivados[$bandera] = [
@@ -94,35 +88,39 @@ class GestionCarne extends Component
                 }
             }
 
-
-
             foreach ($this->GramageItemsCtg as $ctg => $c) {
                 if ($item == $ctg) {
                     $darivados[$bandera]['ctg'] = $c;
                     //voy acumolando los kilos y gramajes para compararlos con la entrada total
-                    if ($c == 1) {
-                        $kilos += $darivados[$bandera]['gramaje'];
-                    } else {
-                        $gramos += $darivados[$bandera]['gramaje'];
-                    }
+                    if ($c != 1) {
+                        // $kilos += $darivados[$bandera]['gramaje'];
+                        $darivados[$bandera]['gramaje'] = $darivados[$bandera]['gramaje']/1000;
+                    } 
+
+                    $kilos += $darivados[$bandera]['gramaje'];
+
                 }
             }
             $bandera++;
         }
 
-        $total += $kilos + ($gramos / 1000);
+        //reviso que sean kilos o gramos la entrada general
+        if($this->form->gramaje_total==4){
+            $this->form->total = $this->form->total /1000;
+        }
 
-        if ($total < 1 && $this->form->gramaje_total == 4) {
+        if ($kilos < 1 && $this->form->gramaje_total == 4) {
             //si es mayor a 1 es un kilo
             $this->form->gramaje_total = 4;
         } else {
             //si es menor a 1 son gramos
             $this->form->gramaje_total = 1;
         }
+
         //reviso que los kilos de los derivados de pollo no supere la entrada general
-        if ($total > $this->form->total) {
+        if ($kilos > $this->form->total) {
             //reasigna el valor de kilogramos
-            $this->form->total = $total;
+            $this->form->total = $kilos;
         }
 
         //reviso si el gramagge existe, si no lo mando en 0 a la base para que no sea null
@@ -165,6 +163,8 @@ class GestionCarne extends Component
     }
     public function closeModal()
     {
+        $this->resetValidation();
+
         $this->selectedItems = [];
         $this->GramageItems = [];
         $this->GramageItemsCtg = [];
@@ -215,6 +215,9 @@ class GestionCarne extends Component
     public function update()
     {
 
+        if($this->form->gramaje_total==4){
+            $this->form->total = $this->form->total /1000;
+        }
         $this->form->update($this->carne);
         $this->dispatch('list-carnes');
 
@@ -260,7 +263,6 @@ class GestionCarne extends Component
 
         $this->validate();
 
-
         $kilos = 0;
         $gramos = 0;
         $darivados = [];
@@ -299,19 +301,24 @@ class GestionCarne extends Component
 
         $total += $kilos + ($gramos / 1000);
 
-        if ($total < 1) {
-            //si es mayor a 1 es un kilo
-            $this->form->gramaje_total = 4;
-        } else {
-            //si es menor a 1 son gramos
-            $this->form->gramaje_total = 1;
-        }
+        // if ($total < 1) {
+        //     //si es mayor a 1 es un kilo
+        //     $this->form->gramaje_total = 4;
+        // } else {
+        //     //si es menor a 1 son gramos
+        //     $this->form->gramaje_total = 1;
+        // }
+        // dd($this->form->gramaje_total);
 
+        if($this->form->gramaje_total==4){
+            $this->form->total = $this->form->total /1000;
+        }
 
         //reviso si el gramagge existe, si no lo mando en 0 a la base para que no sea null
         if ($this->form->total == null) {
             $this->form->total = 0;
         }
+
 
         $res = $this->form->updateCarne($this->carne, $darivados, $total);
         $this->dispatch('list-carnes');

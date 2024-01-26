@@ -106,7 +106,7 @@
 
                         @foreach ($products as $producto)
                             <tr class="table-row bg-white border-b hover:bg-gray-50">
-                                <td class="px-6 py-4">{{ $producto->id .'--'.$producto->ctg_categories_food_id }}</td>
+                                <td class="px-6 py-4">{{ $producto->id}}</td>
 
                                 <td class="px-6 py-4">{{ $producto->name }}</td>
                                 <td class="px-6 py-4">{{ $producto->presentation->name }}</td>
@@ -120,7 +120,7 @@
                                             alt="product image" @endif />
 
                                 </td>
-
+                                {{-- foods/EcKg9YVsr6QwZxTUhDf6KWaA6WMh5qwtcXD8ZT2Z.jpg --}}
                                 <td class="px-6 py-4">{{ $producto->description }}</td>
                                 <td class="text-center">
                                     <button class="btn btn-green mr-2 p-2" wire:click='edit({{ $producto }})'>

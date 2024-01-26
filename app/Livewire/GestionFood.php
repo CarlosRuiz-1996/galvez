@@ -150,7 +150,7 @@ class GestionFood extends Component
     #[On('update-food')]
     public function update()
     {
-        dd($this->image);
+        // dd($this->ingredients);
         if ($this->image) {
             File::delete([$this->form->image_path]);
             $this->form->image_path = $this->image->store('foods');

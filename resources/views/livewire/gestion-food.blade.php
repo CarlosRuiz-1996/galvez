@@ -112,7 +112,7 @@
                                 <td class="px-6 py-4">{{ $producto->presentation->name }}</td>
                                 <td class="px-6 py-4">
 
-                                    <img class="p-8 rounded-t-lg h-40 w-40"
+                                    <img class="p-8 rounded-t-lg"
                                         @if ($producto->image_path) src="{{ asset('storage/' . $producto->image_path) }}"
                                             alt="product image"
                                         @else
@@ -344,30 +344,7 @@
         
         <script>
             document.addEventListener('livewire:initialized', () => {
-                // @this.on('deleteProd', (prodId) => {
-                //     Swal.fire({
-                //         title: 'Are you sure?',
-                //         text: "You won't be able to revert this! " + prodId,
-                //         icon: 'warning',
-                //         showCancelButton: true,
-                //         confirmButtonColor: '#3085d6',
-                //         cancelButtonColor: '#d33',
-                //         confirmButtonText: 'Yes, delete it!'
-                //     }).then((result) => {
-                //         if (result.isConfirmed) {
-
-                //             @this.dispatch('delete-prod', {
-                //                 product: prodId
-                //             });
-
-                //             Swal.fire(
-                //                 'Deleted!',
-                //                 'Your file has been deleted.',
-                //                 'success'
-                //             )
-                //         }
-                //     })
-                // })
+       
                 @this.on('confirm', (foodId) => {
 
                     var txt = foodId != null ? "Actualizado" : "Creado"

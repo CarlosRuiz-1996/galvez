@@ -150,7 +150,7 @@
                                 <td class="px-6 py-4">{{ $product->brand->name }}</td>
                                 <td class="px-6 py-4">${{ $product->price }}</td>
                                 <td class="px-6 py-4">
-                                    {{ $product->stock}}</td>
+                                    {{ $product->stock }}</td>
                                 <td>
                                     <button class="btn btn-green mr-2 p-2" wire:click='openModal({{ $product }})'>
                                         <i class="fas fa-edit"></i>
@@ -201,17 +201,17 @@
 
                 </div>
                 <div class="relative z-0 w-full  group" x-data="{ open: false }">
-                   
+
 
                     <x-label>STOCK
                         <button x-on:mouseenter="open = ! open" x-on:mouseleave="open = false">
                             <i class="fa fa-info-circle bg-orange-400 text-white rounded-full p-1"></i>
                         </button></x-label>
-                        <div x-show="open" id="tooltip-light" role="tooltip"
-                            class="absolute z-10 mt-2 bg-white border border-orange-300 rounded p-2 text-sm shadow-md">
-                            La cantidad en existencia del producto.
-                            <div class="tooltip-arrow" data-popper-arrow></div>
-                        </div>
+                    <div x-show="open" id="tooltip-light" role="tooltip"
+                        class="absolute z-10 mt-2 bg-white border border-orange-300 rounded p-2 text-sm shadow-md">
+                        La cantidad en existencia del producto.
+                        <div class="tooltip-arrow" data-popper-arrow></div>
+                    </div>
                     <x-input type="text" class="w-full" placehorder="stock" wire:model='form.stock' />
 
                     <x-input-error for="form.ctg_presentation_id" />

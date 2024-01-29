@@ -137,15 +137,25 @@ class GestionCarne extends Component
         $this->dispatch('alert', "Los datos se registraron con exito.");
         $this->closeModal();
     }
-
+    //renderisa la tabla una ves que carga la pagina
+    public function loadCarnes()
+    {
+        $this->readyToLoad = true;
+    }
     #[On('list-carnes')]
     public function render()
     {
         $this->ctg_carne  = $this->form->getAllCtgCarnes();
         $this->carne_tipo  = $this->form->getAllTypeCarnes();
         $this->grammages  = $this->form->getAllGrammage();
-        $carnes  = $this->form->getAllCarne($this->sort, $this->orderBy, $this->list);
 
+        if ($this->readyToLoad) {
+
+
+            $carnes  = $this->form->getAllCarne($this->sort, $this->orderBy, $this->list);
+        } else {
+            $carnes = [];
+        }
         return view('livewire.almacen.gestion-carne', ['carnes' => $carnes]);
     }
 
@@ -153,12 +163,7 @@ class GestionCarne extends Component
     public $tipo_modal = "";
     public function openModal(ctg_tipo_carne $tipo)
     {
-
-        $this->edit = false;
-
-        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total', 'fecha');
-
-        $this->selectedItems = [];
+        $this->reset('open', 'edit', 'nombre_modal', 'form.gramaje_total', 'form.total', 'fecha', 'carne', 'check_edit', 'selectedItems', 'GramageItems', 'GramageItemsCtg');
         $this->nombre_modal = $tipo->name;
         $this->tipo_modal = $tipo->id;
 
@@ -170,12 +175,7 @@ class GestionCarne extends Component
     public function closeModal()
     {
         $this->resetValidation();
-
-        $this->selectedItems = [];
-        $this->GramageItems = [];
-        $this->GramageItemsCtg = [];
-        $this->open = false;
-        $this->edit = false;
+        $this->reset('open', 'edit', 'nombre_modal', 'form.gramaje_total', 'form.total', 'fecha', 'carne', 'check_edit', 'selectedItems', 'GramageItems', 'GramageItemsCtg');
     }
 
 
@@ -248,10 +248,8 @@ class GestionCarne extends Component
         foreach ($carne->details as $check) {
             $this->check_edit[] = $check['ctg_carnes_id'];
         }
-        // dd($this->check_edit);
-        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total');
 
-        $this->selectedItems = [];
+        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total', 'selectedItems');
         $this->nombre_modal = $tipo->name;
         $this->tipo_modal = $tipo->id;
         $this->form->gramaje_total = $carne->ctg_grammage_id;
@@ -342,8 +340,12 @@ class GestionCarne extends Component
     {
         $this->entrada = array('5', '10', '15', '20', '50', '100');
         $this->list = '10';
-        $this->readyToLoad = false;
         $this->sort = "id";
         $this->orderBy = "desc";
+        // $this->readyToLoad = true;
+
+        
+        // $this->dispatch('list-carnes');
+        // $this->loadCarnes();
     }
 }

@@ -242,43 +242,41 @@
                 @foreach ($ctg_carne as $car)
                     @if ($car['ctg_tipo_carnes_id'] == $tipo_modal)
                         @if (!in_array($car['id'], $check_edit))
-                            <div>
+                            <div x-data="{ inputEnabled: false }">
+
                                 <div class="flex items-center">
 
-                                    <input type="checkbox" wire:model.live="selectedItems.{{ $car['id'] }}"
+                                    <input type="checkbox" x-model="inputEnabled"
+                                        wire:model="selectedItems.{{ $car['id'] }}"
                                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 mr-2" />
                                     <x-label class="mr-2">{{ $car['name'] }}</x-label>
                                 </div>
 
-                                {{-- valido si esta seleccionado mi check y si es asi muestro el input y el select --}}
-                                @if (isset($selectedItems[$car['id']]) && $selectedItems[$car['id']])
-                                    <div class="flex items-center">
-                                        <x-input type="number" wire:model="GramageItems.{{ $car['id'] }}"
-                                            class="w-full bg-white mt-2" />
+                                <div class="flex items-center" x-show="inputEnabled">
+                                    <x-input type="number" wire:model="GramageItems.{{ $car['id'] }}"
+                                        class="w-full bg-white mt-2" />
 
-                                        &nbsp;
-                                        <select class="form-control bg-white mt-2"
-                                            wire:model="GramageItemsCtg.{{ $car['id'] }}">
-                                            <option value="" selected>Gramaje:</option>
+                                    &nbsp;
+                                    <select class="form-control bg-white mt-2"
+                                        wire:model="GramageItemsCtg.{{ $car['id'] }}">
+                                        <option value="" selected>Gramaje:</option>
 
-                                            @foreach ($grammages as $grammage)
-                                                @if ($grammage['id'] == 1 || $grammage['id'] == 4)
-                                                    <option value="{{ $grammage['id'] }}">{{ $grammage['name'] }}
-                                                    </option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="flex items-center">
+                                        @foreach ($grammages as $grammage)
+                                            @if ($grammage['id'] == 1 || $grammage['id'] == 4)
+                                                <option value="{{ $grammage['id'] }}">{{ $grammage['name'] }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="flex items-center" x-show="inputEnabled">
 
-                                        <x-input-error for="GramageItems.{{ $car['id'] }}" />
+                                    <x-input-error for="GramageItems.{{ $car['id'] }}" />
 
-                                        &nbsp;
+                                    &nbsp;
 
-                                        <x-input-error for="GramageItemsCtg.{{ $car['id'] }}" />
+                                    <x-input-error for="GramageItemsCtg.{{ $car['id'] }}" />
 
-                                    </div>
-                                @endif
+                                </div>
                             </div>
                         @endif
                     @endif
@@ -356,7 +354,7 @@
                 }))
 
                 Livewire.on('alert', function(message) {
-
+                   
                 });
             })
             document.addEventListener('livewire:initialized', () => {

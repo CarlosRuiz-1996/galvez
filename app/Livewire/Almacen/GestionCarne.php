@@ -97,19 +97,18 @@ class GestionCarne extends Component
                     //voy acumolando los kilos y gramajes para compararlos con la entrada total
                     if ($c != 1) {
                         // $kilos += $darivados[$bandera]['gramaje'];
-                        $darivados[$bandera]['gramaje'] = $darivados[$bandera]['gramaje']/1000;
-                    } 
+                        $darivados[$bandera]['gramaje'] = $darivados[$bandera]['gramaje'] / 1000;
+                    }
 
                     $kilos += $darivados[$bandera]['gramaje'];
-
                 }
             }
             $bandera++;
         }
 
         //reviso que sean kilos o gramos la entrada general
-        if($this->form->gramaje_total==4){
-            $this->form->total = $this->form->total /1000;
+        if ($this->form->gramaje_total == 4) {
+            $this->form->total = $this->form->total / 1000;
         }
 
         if ($kilos < 1 && $this->form->gramaje_total == 4) {
@@ -154,9 +153,10 @@ class GestionCarne extends Component
     public $tipo_modal = "";
     public function openModal(ctg_tipo_carne $tipo)
     {
+
         $this->edit = false;
 
-        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total','fecha');
+        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total', 'fecha');
 
         $this->selectedItems = [];
         $this->nombre_modal = $tipo->name;
@@ -164,6 +164,9 @@ class GestionCarne extends Component
 
         $this->open = true;
     }
+
+    public $alpineEnabled = [];
+
     public function closeModal()
     {
         $this->resetValidation();
@@ -173,6 +176,7 @@ class GestionCarne extends Component
         $this->GramageItemsCtg = [];
         $this->open = false;
         $this->edit = false;
+
     }
 
 
@@ -202,7 +206,7 @@ class GestionCarne extends Component
     {
         $this->edit = false;
 
-        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total','fecha');
+        $this->reset('nombre_modal', 'form.gramaje_total', 'form.total', 'fecha');
 
         $this->carne = $carne;
         $this->nombre_modal = $carne->tipo->name;
@@ -218,8 +222,8 @@ class GestionCarne extends Component
     public function update()
     {
 
-        if($this->form->gramaje_total==4){
-            $this->form->total = $this->form->total /1000;
+        if ($this->form->gramaje_total == 4) {
+            $this->form->total = $this->form->total / 1000;
         }
         $this->form->update($this->carne);
         $this->dispatch('list-carnes');
@@ -313,8 +317,8 @@ class GestionCarne extends Component
         // }
         // dd($this->form->gramaje_total);
 
-        if($this->form->gramaje_total==4){
-            $this->form->total = $this->form->total /1000;
+        if ($this->form->gramaje_total == 4) {
+            $this->form->total = $this->form->total / 1000;
         }
 
         //reviso si el gramagge existe, si no lo mando en 0 a la base para que no sea null
@@ -326,7 +330,7 @@ class GestionCarne extends Component
         $res = $this->form->updateCarne($this->carne, $darivados, $total);
         $this->dispatch('list-carnes');
         if ($res == 0) {
-            $this->dispatch('alert-error',"No se puede ingresar una cantidad menor a la suma de los productos");
+            $this->dispatch('alert-error', "No se puede ingresar una cantidad menor a la suma de los productos");
         } else {
             $this->dispatch('alert', "Los datos se registraron con exito.");
         }

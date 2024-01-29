@@ -18,7 +18,7 @@
 
             @foreach ($carne_tipo as $tipo)
                 <li role="presentation" class="mr-2">
-                    <button @click="activeTab = '{{ $tipo['name'] }}'"
+                    <button @click="activeTab = '{{ $tipo['name'] }}'" wire:click='tab'
                         :class="{ 'bg-orange-500': activeTab === '{{ $tipo['name'] }}', 'text-white': activeTab === '{{ $tipo['name'] }}', 'border': activeTab !== '{{ $tipo['name'] }}', 'border-gray-300': activeTab !== '{{ $tipo['name'] }}' }"
                         :style="{
                             'background-color': activeTab === '{{ $tipo['name'] }}' ? '' : 'white',
@@ -46,7 +46,7 @@
                         <span>Entradas</span>
                     </div>
 
-                    <x-input type="text" placeholder="Busca un {{ $tipo['name'] }}" class="w-full ml-4" />
+                    <x-input type="text" placeholder="Busca un producto derivado de la carne de {{ strtolower($tipo['name']) }}" class="w-full ml-4" />
 
                     <x-button class="ml-4" wire:click="openModal({{ $tipo['id'] }})">Registrar </x-button>
                 </div>
@@ -337,10 +337,10 @@
 
 
 
-  
+ 
     @push('js')
         <script>
-            
+          
             document.addEventListener('livewire:initialized', () => {
 
 

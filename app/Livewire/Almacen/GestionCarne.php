@@ -176,7 +176,6 @@ class GestionCarne extends Component
         $this->GramageItemsCtg = [];
         $this->open = false;
         $this->edit = false;
-
     }
 
 
@@ -335,5 +334,16 @@ class GestionCarne extends Component
             $this->dispatch('alert', "Los datos se registraron con exito.");
         }
         $this->closeModal();
+    }
+
+
+    //tabulador de carnes
+    public function tab()
+    {
+        $this->entrada = array('5', '10', '15', '20', '50', '100');
+        $this->list = '10';
+        $this->readyToLoad = false;
+        $this->sort = "id";
+        $this->orderBy = "desc";
     }
 }

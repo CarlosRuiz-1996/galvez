@@ -337,28 +337,10 @@
 
 
 
-    <div x-data="dropdown">
-        <button @click="toggle">Toggle Content</button>
-
-        <div x-show="open">
-            Content...
-        </div>
-    </div>
+  
     @push('js')
         <script>
-            document.addEventListener('alpine:init', () => {
-                Alpine.data('dropdown', () => ({
-                    open: false,
-
-                    toggle() {
-                        this.open = !this.open
-                    },
-                }))
-
-                Livewire.on('alert', function(message) {
-
-                });
-            })
+            
             document.addEventListener('livewire:initialized', () => {
 
 

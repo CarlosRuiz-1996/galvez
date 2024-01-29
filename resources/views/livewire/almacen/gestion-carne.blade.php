@@ -35,6 +35,7 @@
         {{-- muestro datos dentro de los tabs --}}
         @foreach ($carne_tipo as $tipo)
             <div x-show="activeTab === '{{ $tipo['name'] }}'" class="py-4 px-0 bg-gray-100">
+
                 {{-- valido que exista almenos un registro de carnes para mostra la tabla o un mnsj --}}
                 <?php $res = 0; ?>
                 @foreach ($carnes as $c)
@@ -42,10 +43,10 @@
                         <?php $res++; ?>
                     @endif
                 @endforeach
-                {{-- @if (count($carnes)) --}}
 
-                @if ($res > 0)
-                    <div class="py-6 px-4 bg-gray-200 flex">
+                <div class="py-6 px-4 bg-gray-200 flex">
+
+                    @if ($res > 0)
                         <div class="flex items-center">
                             <span>Mostrar</span>
                             <select class="form-control" wire:model.live='list'>
@@ -59,11 +60,18 @@
                         <x-input type="text"
                             placeholder="Busca un producto derivado de la carne de {{ strtolower($tipo['name']) }}"
                             class="w-full ml-4" />
+                    @else
+                    <x-input type="text" disabled
+                            placeholder="Sin productos para buscar"
+                            class="w-full ml-4 bg-slate-100" />
+                    @endif
+                    <x-button class="ml-4" wire:click="openModal({{ $tipo['id'] }})">Registrar </x-button>
+                </div>
 
-                        <x-button class="ml-4" wire:click="openModal({{ $tipo['id'] }})">Registrar </x-button>
-                    </div>
 
+                {{-- @if (count($carnes)) --}}
 
+                @if ($res > 0)
                     <table class="w-full text-sm text-left text-gray-500">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-200 text-center">
                             <tr>

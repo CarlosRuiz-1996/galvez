@@ -147,12 +147,12 @@ class GestionCarne extends Component
             $this->form->total = 0;
         }
 
-        // $this->form->store($this->tipo_modal, $darivados);
+        $this->form->store($this->tipo_modal, $darivados);
 
-        // $this->dispatch('list-carnes');
+        $this->dispatch('list-carnes');
 
-        // $this->dispatch('alert', "Los datos se registraron con exito.");
-        // $this->closeModal();
+        $this->dispatch('alert', "Los datos se registraron con exito.");
+        $this->closeModal();
     }
     //renderisa la tabla una ves que carga la pagina
     public function loadCarnes()

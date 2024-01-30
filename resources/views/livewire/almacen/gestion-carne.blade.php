@@ -252,12 +252,12 @@
 
 
                 <div class="relative z-0 w-full  ">
-                    <x-input type="number" wire:model='form.total' class="w-full bg-white mr-4" />
+                    <x-input type="number" wire:model.live='form.total' class="w-full bg-white mr-4" />
                     <x-input-error for="form.total" />
                 </div>
                 <div class="ml-5">
 
-                    <select class="form-control" wire:model='form.gramaje_total'>
+                    <select class="form-control" wire:model.live='form.gramaje_total'>
                         <option value="" selected>Gramaje:</option>
                         @foreach ($grammages as $grammage)
                             @if ($grammage['id'] == 1 || $grammage['id'] == 4)

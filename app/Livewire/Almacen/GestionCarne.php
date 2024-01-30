@@ -47,11 +47,27 @@ class GestionCarne extends Component
         if (!empty($this->selectedItems)) {
             foreach ($this->selectedItems as $carId => $selected) {
                 if (!empty($this->GramageItems) || !empty($this->GramageItemsCtg)) {
+                    $x = 0;
+                    // dd($this->GramageItems);
                     if ($selected) {
-                        $rules["GramageItems.{$carId}"] = 'required|numeric';
-                        $rules["GramageItemsCtg.{$carId}"] = 'required';
+
+                        foreach ($this->GramageItems as $gramma => $g) {
+                            if ($carId == $gramma) {
+                                $x = 1;
+                            }
+                        }
+                        foreach ($this->GramageItemsCtg as $gramma => $g) {
+                            if ($carId == $gramma) {
+                                $x = 1;
+                            }
+                        }
+                        if ($x == 1) {
+                            $rules["GramageItems.{$carId}"] = 'required|numeric';
+                            $rules["GramageItemsCtg.{$carId}"] = 'required';
+                        }
                     }
                 } else {
+                    // dd('entra else');
                     if ($selected) {
                         $rules["selectedItems.{$carId}"] = 'required';
                         // $rules["GramageItemsCtg.{$carId}"] = 'required';
@@ -59,6 +75,7 @@ class GestionCarne extends Component
                 }
             }
         } else {
+            dd('entra else fuera');
             $rules["form.total"] = 'required';
             $rules["form.gramaje_total"] = 'required';
         }
@@ -130,12 +147,12 @@ class GestionCarne extends Component
             $this->form->total = 0;
         }
 
-        $this->form->store($this->tipo_modal, $darivados);
+        // $this->form->store($this->tipo_modal, $darivados);
 
-        $this->dispatch('list-carnes');
+        // $this->dispatch('list-carnes');
 
-        $this->dispatch('alert', "Los datos se registraron con exito.");
-        $this->closeModal();
+        // $this->dispatch('alert', "Los datos se registraron con exito.");
+        // $this->closeModal();
     }
     //renderisa la tabla una ves que carga la pagina
     public function loadCarnes()
@@ -344,7 +361,7 @@ class GestionCarne extends Component
         $this->orderBy = "desc";
         // $this->readyToLoad = true;
 
-        
+
         // $this->dispatch('list-carnes');
         // $this->loadCarnes();
     }

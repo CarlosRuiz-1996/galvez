@@ -59,7 +59,7 @@ class ModalProductForm extends Form
                 return $query->where('ctg_category_id', '=', $this->filtra_cat);
             })
             ->orderBy('id', 'desc')
-            ->paginate(2);
+            ->paginate(5);
     }
 
     //obtengo el nombre del gramage para mostrarlo en la vista del modal

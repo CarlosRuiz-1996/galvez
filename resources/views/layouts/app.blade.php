@@ -9,15 +9,23 @@
 
     <title>{{ config('app.name', 'Galvez') }}</title>
 
+
+
+    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
-
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {{-- alertas --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {{-- jquery --}}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+   
+    
     <!-- Styles -->
     @livewireStyles
 </head>
@@ -27,6 +35,8 @@
 
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
         @livewire('navigation-menu')
+        {{-- @include('navigation-menu') --}}
+
 
         <!-- Page Heading -->
         @if (isset($header))

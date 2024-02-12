@@ -2,24 +2,22 @@
 
 namespace App\Livewire\Cotizaciones;
 
-use App\Livewire\Forms\ClienteForm;
 use Livewire\Component;
 use App\Livewire\Forms\CotizacionForm;
 use Livewire\WithPagination;
+use Livewire\Attributes\On;
 
 class GestionCotizacion extends Component
 {
 
 
     public CotizacionForm $form;
-    public ClienteForm $form_cliente;
     use WithPagination;
 
-    public  $identificador, $image;
     public $entrada = array('5', '10', '15', '20', '50', '100');
     public $list = '10';
     public $readyToLoad = false;
-    public $sort = "id";
+    public $sort = "c.created_at";
     public $orderBy = "desc";
 
     protected $queryString = [
@@ -34,9 +32,12 @@ class GestionCotizacion extends Component
     {
         $this->readyToLoad = true;
     }
+
     public function render()
     {
 
+        session()->forget('productosArray');
+        session()->forget('FoodsArray');
         if ($this->readyToLoad) {
 
 
@@ -73,51 +74,15 @@ class GestionCotizacion extends Component
 
     public $open = false;
     public $openD = false;
+    public $openCli = false;
+
 
     public $productosArray = [];
 
-    public function openModal()
-    {
-        $this->resetValidation();
-        $this->open = true;
-    }
-    public function closeModal()
-    {
-        $this->open = false;
-        session()->forget('productosArray');
-        session()->forget('FoodsArray');
-
-        //evento para el modal del cliente
-        $this->dispatch('list-products');
-    }
-
-    public function validarCp()
-    {
-
-        $this->validate([
-            'form_cliente.cp' => 'required|digits_between:1,5',
-        ], [
-            'form_cliente.cp.digits_between' => 'El código postal solo contiene 5 digitos.',
-            'form_cliente.cp.required' => 'Código postal requerido.',
-
-        ]);
-
-        $this->form_cliente->validarCp();
-    }
 
 
-    public function save()
-    {
-        $this->form_cliente->store(2);
-        session()->forget('productosArray');
-        session()->forget('FoodsArray');
 
-        //evento para el modal del cliente
-        $this->dispatch('list-products');
 
-        $this->dispatch('alert', "  Cotizacion creada con exito.");
-        $this->closeModal();
-    }
 
 
     //modal detalle:
@@ -136,4 +101,14 @@ class GestionCotizacion extends Component
     {
         $this->openD = false;
     }
+
+
+
+    public function redirectToRoute()
+    {
+        // Aquí puedes personalizar la ruta a la que deseas redirigir
+
+        return redirect()->to('/admin/cotizacion/crear');
+    }
+  
 }

@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Session;
 
 class ClienteForm extends Form
 {
+    public $activo = false; //para ver si es un cliente nuevo o un cliente existente para la cotizacion
+    public $cliente_existente;//guardo objeto del cliente para una cotizacion
+
     public $no_contrato;
     public $cliente;
     public $name;
@@ -76,18 +79,18 @@ class ClienteForm extends Form
 
     public function store($sts)
     {
-
-        $this->validate();
-
         $this->password =  bcrypt($this->password);
         $this->status_user =  $sts;
+        //si no existe activo se crea el cliente 
+        //de lo contrario se consulta para obtener el cliente al que se le hace la cotizacion
+        if (!$this->activo) {
+            $this->validate();
 
-        // dd($this->no_contrato);
-        // die();
-        $user = User::create($this->only(['name', 'email', 'password', 'address', 'cat_cp_id', 'cliente', 'rfc', 'phone', 'no_contrato', 'status_user']));
-
-        $user->roles()->sync(2);
-
+            $user = User::create($this->only(['name', 'email', 'password', 'address', 'cat_cp_id', 'cliente', 'rfc', 'phone', 'no_contrato', 'status_user']));
+            $user->roles()->sync(2);
+        } else {
+            $user = $this->cliente_existente;
+        }
         $clienteId = $user->id;
 
         $productos = Session::get('productosArray', []);
@@ -139,21 +142,21 @@ class ClienteForm extends Form
     public function getAll($sort, $orderBy, $list)
     {
         return User::role('cliente')
-        ->where(function ($query) {
-            $query->where('name', 'like', '%' . $this->search . '%')
-                ->orWhere('email', 'like', '%' . $this->search . '%')
-                ->orWhere('cliente', 'like', '%' . $this->search . '%')
-                ->orWhere('rfc', 'like', '%' . $this->search . '%')
-                ->orWhere('phone', 'like', '%' . $this->search . '%')
-                ->orWhere('no_contrato', 'like', '%' . $this->search . '%');
-        })
+            ->where(function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('email', 'like', '%' . $this->search . '%')
+                    ->orWhere('cliente', 'like', '%' . $this->search . '%')
+                    ->orWhere('rfc', 'like', '%' . $this->search . '%')
+                    ->orWhere('phone', 'like', '%' . $this->search . '%')
+                    ->orWhere('no_contrato', 'like', '%' . $this->search . '%');
+            })
             ->orderBy($sort, $orderBy)
             ->paginate($list);
 
-            //  return User::role('2')
-            //  ->where('name', 'like', '%' . $this->search . '%')
-            //  ->orderBy($sort, $orderBy)
-            //  ->get();
+        //  return User::role('2')
+        //  ->where('name', 'like', '%' . $this->search . '%')
+        //  ->orderBy($sort, $orderBy)
+        //  ->get();
     }
 
 
@@ -223,7 +226,7 @@ class ClienteForm extends Form
             ->orderBy('id', 'asc')
             ->paginate($list);
     }
-    
+
 
 
     public function updateCliente()

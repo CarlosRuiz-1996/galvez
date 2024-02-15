@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CatalogsController;
 use App\Http\Controllers\UserController;
 use App\Livewire\Almacen\GestionAlmacen;
 use App\Livewire\Almacen\GestionCarne;
+use App\Livewire\Catalogos\GestionBrand;
 use App\Livewire\Clientes\CreateCliente;
 use App\Livewire\Clientes\EditarCliente;
 use App\Livewire\Clientes\GestionClientes;
@@ -75,6 +76,10 @@ Route::middleware([
     Route::get('clientes/pedidos', GestionarPedidos::class)->name('clientes.pedidos');
     Route::get('clientes/almacen', GestionAlmacen::class)->name('clientes.almacen');
     Route::get('admin/clientes/carnes', GestionCarne::class)->name('clientes.carnes');
+
+    //catalogos
+    Route::get('admin/ctg/brand', GestionBrand::class)->name('ctg.brand');
+
 
 });
 

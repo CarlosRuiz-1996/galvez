@@ -92,4 +92,12 @@ class ListarProductos extends Component
         $this->dispatch('list-products');
         $this->closeModalF();
     }
+
+
+    #[On('deleteArrays')]
+    public function deleteArrays()
+    {
+        $this->FoodsArray = [];
+        $this->productosArray = [];
+    }
 }

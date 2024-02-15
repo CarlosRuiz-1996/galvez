@@ -2,21 +2,19 @@
 
 namespace App\Livewire\Forms;
 
-use Livewire\Attributes\Rule;
 use Livewire\Form;
 use App\Models\User;
-use App\Models\Estado;
-use App\Models\Municipio;
 use App\Models\Cp;
 use App\Models\ClienteProduct;
 use App\Models\ClienteFood;
+use App\Models\Cotizacion;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class ClienteForm extends Form
 {
     public $activo = false; //para ver si es un cliente nuevo o un cliente existente para la cotizacion
-    public $cliente_existente;//guardo objeto del cliente para una cotizacion
+    public $cliente_existente; //guardo objeto del cliente para una cotizacion
 
     public $no_contrato;
     public $cliente;
@@ -92,7 +90,26 @@ class ClienteForm extends Form
             $user = $this->cliente_existente;
         }
         $clienteId = $user->id;
+        $cotizacion= "";
+        //tabla de cotizacion, si es cotizacion
+        if ($this->activo) {
 
+            $cotizacion = Cotizacion::where('user_id', '=', $clienteId)
+                ->where('status', '=', 1)->first();
+
+
+            if (!$cotizacion) {
+
+                Cotizacion::create([
+                    'status' => 1,
+                    'user_id' => $clienteId,
+                ]);
+            }else{
+                $cotizacion->update(['updated_at'=>now()]);
+            }
+        }
+
+        //guardar productos y comidas para el cliente
         $productos = Session::get('productosArray', []);
 
         if (count($productos)) {
@@ -123,10 +140,12 @@ class ClienteForm extends Form
         if (count($foods)) {
 
             foreach ($foods as $producto) {
+
                 ClienteFood::create([
                     'description' => $producto['descripcion'],
                     'max' => $producto['max'],
                     'min' => $producto['min'],
+                    'status' => $sts == 2 ? $sts : 1,
                     'food_id' => $producto['id'],
                     'user_id' => $clienteId,
                 ]);
@@ -142,6 +161,7 @@ class ClienteForm extends Form
     public function getAll($sort, $orderBy, $list)
     {
         return User::role('cliente')
+        ->where('status_user','=',1)
             ->where(function ($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
                     ->orWhere('email', 'like', '%' . $this->search . '%')

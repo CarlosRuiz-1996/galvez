@@ -2,11 +2,7 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
             <a href="{{ route('clientes.cotizacion') }}" title="ATRAS">
-                <svg class="w-5 h-5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 14 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"
-                        d="M13 5H3M8 1L3 5l5 4" />
-                </svg>
+                <i class="fa-solid fa-arrow-left"></i>
             </a>
             &nbsp;
             {{ __('Cotizaciones') }}
@@ -158,17 +154,14 @@
 
 
 
-                    <div class="col-span-1">
-
+                    <div class="col-span-2">
                         <livewire:clientes.modal-productos :type="2" />
                     </div>
-                    <div class="col-span-1">
-
-                        {{-- <livewire:clientes.modal-foods /> --}}
+                    <div class="col-span-2">
+                        <livewire:clientes.modal-foods />
                     </div>
                     <div class="col-span-1">
                         <livewire:clientes.listar-productos />
-
                     </div>
                 </div>
             </div>
@@ -249,7 +242,16 @@
                         timer: 1500
                     })
                 });
-
+                Livewire.on('error', function(message) {
+                    Swal.fire({
+                        // position: 'top-end',
+                        icon: 'error',
+                        title: "Oops...",
+                        text: message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                });
             });
         </script>
     @endpush

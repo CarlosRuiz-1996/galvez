@@ -45,7 +45,7 @@
                                 <th scope="col" class="col-1">NOMBRE</th>
                                 <th scope="col" class="col-2">PRESENTACIÓN</th>
                                 <th scope="col" class="col-1">GRAMAGE</th>
-                                {{-- <th scope="col" class="col-1">IMAGEN</th> --}}
+                                <th scope="col" class="col-1">IMAGEN</th>
                                 <th scope="col" class="">
                                     @if ($type == 2)
                                         PRECIO UNITARIO
@@ -75,15 +75,15 @@
                                     <td class="w-1/6">{{ $product->name }}</td>
                                     <td class="w-1/6">{{ $product->presentation->name }}</td>
                                     <td class="w-1/18">{{ $product->grammage->name }}</td>
-                                    {{-- <td class="w-1/6">
+                                    <td class="w-1/12">
+                                        <button title="VER IMAGEN"
+                                         wire:click='openModalI("{{ $product->image_path }}")'>
+                                            <i class="fa fa-picture-o" aria-hidden="true"></i>
+                                            <i class="fa-solid fa-image"></i>
+                                        </button>
 
-                                        <img class="p-8 rounded-t-lg " <?php $nombreDeLaImagen = basename($product->image_path); ?>
-                                            @if ($product->image_path) src="{{ asset('storage/products/' . $nombreDeLaImagen) }}"
-                                            alt="product image"
-                                        @else
-                                            src="{{ asset('img/producto.png/') }}"
-                                            alt="product image" @endif />
-                                    </td> --}}
+
+                                    </td>
                                     <td class="w-1/4">
 
                                         @if ($type == 2)
@@ -141,6 +141,29 @@
     </x-dialog-modal-xl>
 
 
+    {{-- modal img --}}
+    <x-dialog-modal wire:model.live="openI">
+        @slot('title')
+            <div class="px-6 py-4 items-center  bg-gray-200 overflow-x-auto shadow-md sm:rounded-lg">
+                <h1>IMAGEN</h1>
+            </div>
+        @endslot
+        @slot('content')
+            <img class="p-8 rounded-t-lg " 
+            @if ($imagen_modal)
+                src="{{ asset('storage/products/' . basename($imagen_modal)) }}"
+                alt="product image"
+            @else
+                src="{{ asset('img/producto.png/') }}"
+                alt="product image"
+            @endif />
+
+        @endslot
+        @slot('footer')
+            <x-secondary-button wire:click="closeModalI">CERRAR</x-secondary-button>
+        @endslot
+    </x-dialog-modal>
+
     @push('js')
         <script>
             //muevo el dom de los productos checkeados
@@ -156,7 +179,7 @@
 
 
                 if (checkbox.checked) {
-                    console.log('checkeado')
+                    // console.log('checkeado')
 
                     // Habilita el campo min y quita el atributo disabled
                     if (descInput) {
@@ -183,10 +206,6 @@
                     minInput.classList.remove('bg-gray-100');
                     minInput.classList.add('bg-white');
 
-                    // Limpia el valor del campo min
-                    // descInput.value = '';
-                    // maxInput.value = '';
-                    // minInput.value = '';
                 } else {
                     console.log('des checkeado')
 

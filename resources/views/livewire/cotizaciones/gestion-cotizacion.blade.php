@@ -50,9 +50,9 @@
 
                                 @endif
                             </th>
-                            <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('name')">
+                            <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('users.name')">
                                 CONTACTO
-                                @if ($sort == 'name')
+                                @if ($sort == 'users.name')
                                     @if ($orderBy == 'asc')
                                         <i class="fas fa-sort-alpha-up-alt mt-1"></i>
                                     @else
@@ -117,9 +117,9 @@
 
                                 @endif
                             </th>
-                            <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('created_at')">
+                            <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="order('updated_at')">
                                 FECHA DE COTIZACIÓN
-                                @if ($sort == 'created_at')
+                                @if ($sort == 'updated_at')
                                     @if ($orderBy == 'asc')
                                         <i class="fas fa-sort-alpha-up-alt mt-1"></i>
                                     @else
@@ -139,25 +139,26 @@
                             <tr class="table-row bg-white border-b hover:bg-gray-50">
                                 <td class="px-6 py-4">{{ $order->id }}</td>
 
-                                <td class="px-6 py-4">{{ $order->name }}</td>
-                                <td class="px-6 py-4">{{ $order->email }}</td>
+                                <td class="px-6 py-4">{{ $order->user->name }}</td>
+                                <td class="px-6 py-4">{{ $order->user->email }}</td>
 
 
-                                <td class="px-6 py-4">{{ $order->cliente }}</td>
-                                <td class="px-6 py-4">{{ $order->rfc }}</td>
-                                <td class="px-6 py-4">{{ $order->phone }}</td>
-                                <td class="px-6 py-4">{{ $order->created_at }}</td>
+                                <td class="px-6 py-4">{{ $order->user->cliente }}</td>
+                                <td class="px-6 py-4">{{ $order->user->rfc }}</td>
+                                <td class="px-6 py-4">{{ $order->user->phone }}</td>
+                                <td class="px-6 py-4">{{ $order->updated_at }}</td>
 
                                 <td>
 
                                     {{-- <p class="mt-4 flex"> --}}
                                     <a class="btn btn-green mr-2 p-2"
-                                        href="{{ route('clientes.cotizacion.excel', ['user' => $order->id]) }}">
+                                        href="{{ route('clientes.cotizacion.excel', ['user' => $order->user->id]) }}">
                                         Excel<i class="fa fa-download" aria-hidden="true"></i>
 
                                     </a>
                                     {{-- </p> --}}
-                                    <button class="btn btn-blue mr-2 p-2" wire:click='openModalD({{ $order->id }})'>
+                                    <button class="btn btn-blue mr-2 p-2"
+                                        wire:click='openModalD({{ $order->user->id }})'>
                                         <i class="fa fa-info-circle" aria-hidden="true"></i>
 
                                     </button>
@@ -198,55 +199,162 @@
             </div>
         @endslot
         @slot('content')
+            @if (!empty($products['data']))
+                <div class="mt-4 p-5 bg-white" x-data="{ open: false }">
+
+                    <div class=" py-6 px-4 bg-purple-100 flex" @click="open = ! open">
+
+                        <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
+
+                            {{ __('Productos') }}
+                            {{-- <i class="fa fa-chevron-down" aria-hidden="true"></i> --}}
+                            <i x-bind:class="{ 'fa-chevron-down': !open, 'fa-chevron-up': open }" class="fa"
+                                aria-hidden="true"></i>
+
+                        </h2>
+                    </div>
+                    <table class=" w-full text-sm text-left text-gray-500" x-show="open">
+                        <thead class="items-center  bg-gray-50 overflow-x-auto shadow-md sm:rounded-lg">
+                            <th class="px-6 py-4">Nombre producto</th>
+                            <th class="px-6 py-4">Presentación</th>
+                            <th class="px-6 py-4">Gramage</th>
+
+                            <th class="px-4 py-4">Precio unitario</th>
+                            <th class="px-2 py-4">Maximo</th>
+                            <th class="px-2 py-4">Minimo</th>
+                            <th class="px-6 py-4">Total maximo</th>
+                            <th class="px-6 py-4">Total minimo</th>
+                        </thead>
+                        <tbody>
+                            @if ($products)
+                                <?php
+                                $maximo = 0;
+                                $minimo = 0;
+                                ?>
+                                @foreach ($products['data'] as $product)
+                                    <?php
+                                    $maximo += $product['max'] * $product['price_prod'];
+                                    $minimo += $product['min'] * $product['price_prod'];
+                                    ?>
+                                    <tr class="text-center table-row bg-white border-b hover:bg-gray-50 px-4 py-2 ">
+                                        <td>{{ $product['product']['name'] }}</td>
+                                        <td>{{ $product['product']['presentation']['name'] }}</td>
+                                        {{-- <td>{{ $clienteProduct->producto->presentacion->nombre }}</td> --}}
+
+                                        <td>{{ $product['product']['grammage']['name'] }}</td>
+
+                                        <td>${{ $product['price_prod'] }}</td>
+                                        <td>{{ $product['max'] }}</td>
+                                        <td>{{ $product['min'] }}</td>
+
+                                        <td>${{ $product['max'] * $product['price_prod'] }}</td>
+                                        <td>${{ $product['min'] * $product['price_prod'] }}</td>
 
 
-            <table class="w-full text-sm text-left text-gray-500">
-                <thead class="items-center  bg-gray-50 overflow-x-auto shadow-md sm:rounded-lg">
-                    <th class="px-6 py-4">Nombre producto</th>
-                    <th class="px-6 py-4">Presentación</th>
-                    <th class="px-6 py-4">Gramage</th>
+                                    </tr>
+                                @endforeach
+                                <tr class="text-center table-row bg-gray-200 border-b hover:bg-gray-100 px-4 py-2 ">
+                                    <td></td>
+                                    <td></td>
 
-                    <th class="px-6 py-4">Precio unitario</th>
-                    <th class="px-6 py-4">Maximo</th>
-                    <th class="px-6 py-4">Minimo</th>
-                    <th class="px-6 py-4">Total maximo</th>
-                    <th class="px-6 py-4">Total minimo</th>
-                </thead>
-                <tbody>
-                    @if ($products)
-                        @foreach ($products['data'] as $product)
-                            <tr class="text-center table-row bg-white border-b hover:bg-gray-50 px-4 py-2 ">
-                                <td>{{ $product['product']['name'] }}</td>
-                                <td>{{ $product['product']['presentation']['name'] }}</td>
-                                {{-- <td>{{ $clienteProduct->producto->presentacion->nombre }}</td> --}}
+                                    <td></td>
 
-                                <td>{{ $product['product']['grammage']['name'] }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>TOTALES:</td>
 
-                                <td>{{ $product['price_prod'] }}</td>
-                                <td>{{ $product['min'] }}</td>
-                                <td>{{ $product['max'] * $product['price_prod'] }}</td>
-                                <td>{{ $product['min'] * $product['price_prod'] }}</td>
-                                <td>{{ $product['id'] }}</td>
+                                    <td>${{ $maximo }}</td>
+                                    <td>${{ $minimo }}</td>
 
 
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+            @if (!empty($foods['data']))
+                <div class="mt-4 p-5 bg-white" x-data="{ open: false }">
+
+                    <div class=" py-6 px-4 bg-purple-100 flex" @click="open = ! open">
+
+                        <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
+
+                            {{ __('Platillos') }}
+                            {{-- <i class="fa fa-chevron-down" aria-hidden="true"></i> --}}
+                            <i x-bind:class="{ 'fa-chevron-down': !open, 'fa-chevron-up': open }" class="fa"
+                                aria-hidden="true"></i>
+
+                        </h2>
+                    </div>
+                    <table class="w-full text-sm text-left text-gray-500" x-show="open">
+                        <thead class="items-center  bg-gray-50 overflow-x-auto shadow-md sm:rounded-lg">
+                            <th class="px-6 py-4">Nombre del platillo</th>
+                            <th class="px-6 py-4">Presentación</th>
+                            <th class="px-6 py-4">Gramage</th>
+
+                            <th class="px-6 py-4">Precio unitario</th>
+                            <th class="px-2 py-4">Maximo</th>
+                            <th class="px-2 py-4">Minimo</th>
+                            <th class="px-6 py-4">Total maximo</th>
+                            <th class="px-6 py-4">Total minimo</th>
+                        </thead>
+                        <tbody>
+                            @if ($foods)
+                                <?php
+                                $maximo = 0;
+                                $minimo = 0;
+                                ?>
+                                @foreach ($foods['data'] as $product)
+                                    <?php
+                                    $maximo += $product['max'] * $product['price_food'];
+                                    $minimo += $product['min'] * $product['price_food'];
+                                    ?>
+                                    <tr class="text-center table-row bg-white border-b hover:bg-gray-50 px-4 py-2 ">
+                                        <td>{{ $product['food']['name'] }}</td>
+                                        <td>{{ $product['food']['categorie']['name'] }}</td>
+                                        {{-- <td>{{ $clienteProduct->producto->presentacion->nombre }}</td> --}}
+
+                                        <td>{{ $product['description'] }}</td>
+
+                                        <td>${{ $product['price_food'] }}</td>
+                                        <td>{{ $product['max'] }}</td>
+
+                                        <td>{{ $product['min'] }}</td>
+
+                                        <td>${{ $product['max'] * $product['price_food'] }}</td>
+                                        <td>${{ $product['min'] * $product['price_food'] }}</td>
 
 
+                                    </tr>
+                                @endforeach
+                                <tr class="text-center table-row bg-gray-200 border-b hover:bg-gray-100 px-4 py-2 ">
+                                    <td></td>
+                                    <td></td>
+
+                                    <td></td>
+
+                                    <td></td>
+                                    <td></td>
+                                    <td>TOTALES:</td>
+
+                                    <td>${{ $maximo }}</td>
+                                    <td>${{ $minimo }}</td>
+
+
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         @endslot
         @slot('footer')
             <x-secondary-button wire:click="closeModalD">Cerrar</x-secondary-button>
-            {{-- <x-danger-button class="ml-2" wire:click="save">Aceptar</x-danger-button> --}}
         @endslot
     </x-dialog-modal-xl>
 
     @push('js')
-    <script>
-        
-    </script>
-        
+        <script></script>
     @endpush
 </div>

@@ -17,12 +17,12 @@ class GestionCotizacion extends Component
     public $entrada = array('5', '10', '15', '20', '50', '100');
     public $list = '10';
     public $readyToLoad = false;
-    public $sort = "c.created_at";
+    public $sort = "updated_at";
     public $orderBy = "desc";
 
     protected $queryString = [
         'list' => ['except' => '10'],
-        'sort' => ['except' => 'id'],
+        'sort' => ['except' => 'updated_at'],
         'orderBy' => ['except' => 'desc'],
         'form.search' => ['except' => ''],
     ];
@@ -45,6 +45,7 @@ class GestionCotizacion extends Component
         } else {
             $orders = [];
         }
+
 
         // dd($orders);
         return view('livewire.cotizaciones.gestion-cotizacion', [
@@ -87,13 +88,17 @@ class GestionCotizacion extends Component
 
     //modal detalle:
     public $products;
+    public $foods;
+
     public function openModalD($id)
     {
 
         $this->resetValidation();
         $products = $this->form->readCotizacionProducts($id);
-        // dd($this->products);
+        $foods = $this->form->readCotizacionFoods($id);
+
         $this->products = $products->toArray();
+        $this->foods = $foods->toArray();
 
         $this->openD = true;
     }

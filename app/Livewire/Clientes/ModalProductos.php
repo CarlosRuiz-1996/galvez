@@ -14,6 +14,8 @@ class ModalProductos extends Component
     use WithPagination;
 
     public $openP = false;
+    public $openI = false;
+
     public ModalProductForm $form;
     public $nameProduct;
     public $detalle;
@@ -57,6 +59,21 @@ class ModalProductos extends Component
         $this->reset('nameProduct', 'detalle', 'imagenPath');
     }
 
+    public $imagen_modal;
+    // MODAL DE IMAGEN:
+    public function openModalI($img)
+    {        
+        $this->reset('imagen_modal');
+
+        $this->imagen_modal = $img;
+        $this->openI = true;
+    }
+    public function closeModalI()
+    {
+        $this->openI = false;
+        $this->reset('imagen_modal');
+
+    }
     public function render()
     {
         if ($this->readyToLoad) {

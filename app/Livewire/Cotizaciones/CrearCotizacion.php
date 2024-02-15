@@ -8,11 +8,12 @@ use App\Livewire\Forms\CotizacionForm;
 use App\Models\User;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Session;
 
 class CrearCotizacion extends Component
 {
 
-    
+
     public CotizacionForm $form;
     public ClienteForm $form_cliente;
     use WithPagination;
@@ -49,7 +50,7 @@ class CrearCotizacion extends Component
     public function clienteSelect(User $user)
     {
         // dd($user->id);
-        
+
         $this->form_cliente->cliente_existente = $user;
 
         $this->form_cliente->activo = true;
@@ -59,16 +60,14 @@ class CrearCotizacion extends Component
         $this->form_cliente->phone = $user->phone;
         $this->form_cliente->email = $user->email;
         $this->form_cliente->rfc = $user->rfc;
-       
+
         $this->clientes = [];
         $this->search = '';
         $this->closeModalCli();
-        
-
     }
 
 
-    
+
     public function validarCp()
     {
 
@@ -88,9 +87,17 @@ class CrearCotizacion extends Component
     #[On('save-cotizacion')]
     public function save()
     {
-        $this->form_cliente->store(2);
-        session()->forget('productosArray');
-        session()->forget('FoodsArray');
-        $this->dispatch('alert', "  Cotizacion creada con exito.");
+        if (Session::has('productosArray') || Session::has('FoodsArray')) {
+
+            $this->form_cliente->store(2);
+            session()->forget('productosArray');
+            session()->forget('FoodsArray');
+
+            $this->dispatch('deleteArrays');
+
+            $this->dispatch('alert', "  Cotizacion creada con exito.");
+        } else {
+            $this->dispatch('error', "  No hay productos asignados.");
+        }
     }
 }

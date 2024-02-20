@@ -16,8 +16,11 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
         Schema::create('catalogos', function (Blueprint $table) {
             $table->id();
-            $table->string('catalogo');
-            $table->string('ruta')->nullable();
+            $table->string('name');
+            $table->string('description')->nullable();
+            $table->string('route')->nullable();
+            $table->string('model_type')->nullable();
+            $table->string('image_path')->nullable();
             $table->integer('status')->default(1);
             $table->timestamps();
         });

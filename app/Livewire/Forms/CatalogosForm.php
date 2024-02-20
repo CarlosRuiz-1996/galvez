@@ -9,9 +9,11 @@ use Livewire\Form;
 class CatalogosForm extends Form
 {
     public $search;
-    public function getAllBrands($sort, $orderBy, $list)
+    public function getAllCtg($sort, $orderBy, $list, $ctg)
     {
-        return  Brand::where('name','like','%'.$this->search.'%')
+
+
+        return  $ctg->model_type::where('name','like','%'.$this->search.'%')
         ->orderBy($sort, $orderBy)
         ->paginate($list);
     }

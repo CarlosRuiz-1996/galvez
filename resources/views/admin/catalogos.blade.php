@@ -5,86 +5,37 @@
         </h2>
 
     </x-slot>
-
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-40">
             <x-alert />
             <div class="grid grid-cols-2 gap-4 place-items-center">
-                <div class="max-w-sm p-3  bg-white border border-gray-200 rounded-lg shadow">
+                @foreach ($catalogos as $catalogo)
+                    <div class="max-w-sm p-3  bg-white border border-gray-200 rounded-lg shadow">
 
-                    <img class="p-8 rounded-t-lg ml-12" src="{{ asset('images/ctg/productos.png') }}" alt="product image" />
-                    <h5 class="mb-2 text-2xl text-center font-bold tracking-tight text-gray-900">
-                        Productos
-                    </h5>
-                    <p class="mb-3 font-normal text-gray-700">
-                        Bienvenido al catalogo de productos de Grupo Galvez.
-                    </p>
-                    <div class=" text-center">
-                        <a href="{{ route('buscar.producto') }}"
-                            class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-orange-700 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300">
-                            Ingresar
-                        </a>
+                        {{-- <img class="p-8 rounded-t-lg ml-12" src="{{ asset($catalogo->image_path) }}" alt="product image" /> --}}
+                        <h5 class="mb-2 text-2xl text-center font-bold tracking-tight text-gray-900">
+                            {{ $catalogo->name }}
+                        </h5>
+                        <p class="mb-3 font-normal text-gray-700">
+                            {{ $catalogo->description }}
+                        </p>
+                        <div class=" text-center">
+                            <?php
+                                $parametros = $catalogo->id > 2 ? ['ctg' => $catalogo] : [];
+                            ?>
+                            <a href="{{route($catalogo->route,$parametros)}}"
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-orange-700 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300">
+                                Ingresar
+                            </a>
+                        </div>
                     </div>
-                </div>
+                @endforeach
 
                 
-                <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow">
-                    <img class="p-8 rounded-t-lg h-70" src="{{ asset('images/ctg/platillos.png') }}"
-                        alt="product image" />
-                    <h5 class="mb-2 text-2xl text-center font-bold tracking-tight text-gray-900">
-                        Alta de menús
-                    </h5>
-                    <p class="mb-3 font-normal text-gray-700">
-                        Bienvenido al catalogo de recetas y platillos de Grupo Galvez.
-                    </p>
-                    <div class=" text-center">
-                        <a href="{{ route('buscar.comida') }}"
-                            class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-orange-700 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300">
-                            Ingresar
-
-                        </a>
-                    </div>
-                </div>
             </div>
 
-            
-            <div class="grid grid-cols-2 gap-4 place-items-center">
-                <div class="max-w-sm p-3  bg-white border border-gray-200 rounded-lg shadow">
 
-                    {{-- <img class="p-8 rounded-t-lg ml-12" src="{{ asset('images/ctg/productos.png') }}" alt="product image" /> --}}
-                    <h5 class="mb-2 text-2xl text-center font-bold tracking-tight text-gray-900">
-                        Marcas
-                    </h5>
-                    <p class="mb-3 font-normal text-gray-700">
-                        Bienvenido al catalogo de marcas de Grupo Galvez.
-                    </p>
-                    <div class=" text-center">
-                        <a href="{{ route('ctg.brand') }}"
-                            class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-orange-700 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300">
-                            Ingresar
-                        </a>
-                    </div>
-                </div>
 
-                
-                <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow">
-                    <img class="p-8 rounded-t-lg h-70" src="{{ asset('images/ctg/platillos.png') }}"
-                        alt="product image" />
-                    <h5 class="mb-2 text-2xl text-center font-bold tracking-tight text-gray-900">
-                        Alta de menús
-                    </h5>
-                    <p class="mb-3 font-normal text-gray-700">
-                        Bienvenido al catalogo de recetas y platillos de Grupo Galvez.
-                    </p>
-                    <div class=" text-center">
-                        <a href="{{ route('buscar.comida') }}"
-                            class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-orange-700 rounded-lg hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300">
-                            Ingresar
-
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </x-app-layout>

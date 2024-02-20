@@ -30,6 +30,7 @@
                             request()->routeIs('buscar.producto') ||
                             request()->routeIs('buscar.comida') ||
                             request()->routeIs('gestion.ctg.comida') ||
+                            request()->routeIs('ctg.show') ||
                             request()->routeIs('gestion.ctg.producto')">
                             {{-- Str::startsWith(
                             request()

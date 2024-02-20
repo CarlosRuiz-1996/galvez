@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Catalogos;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,8 @@ use Illuminate\Support\Facades\Auth;
 class CatalogsController extends Controller
 {
     public function index(){
-        return view('admin.catalogos');
+        $catalogos = Catalogos::all();
+        return view('admin.catalogos',compact('catalogos'));
     }
 
 

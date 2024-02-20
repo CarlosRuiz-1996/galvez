@@ -1,6 +1,9 @@
 <x-slot name="header">
     <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
-        <a href="{{ route('catalogos') }}"> {{ __('Catalogos > ') }}</a>
+        <a href="{{ route('catalogos') }}" title="ATRAS">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        &nbsp;        
         {{ __('Platillos') }}
     </h2>
 </x-slot>

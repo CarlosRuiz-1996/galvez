@@ -93,7 +93,7 @@
                             <div class="max-w-sm p-3 text-center bg-white border border-gray-200 rounded-lg shadow">
                                 <div class="card-image">
                                         <img class="p-8 rounded-t-lg h-70"
-                                            src="{{ asset('images/ctg/' . $category->image_path) }}"
+                                            src="{{ asset('storage/' . $category->image_path) }}"
                                             alt="product image" />
                                     <!-- Contenido de la tarjeta -->
                                     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">

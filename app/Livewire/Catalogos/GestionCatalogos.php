@@ -5,9 +5,13 @@ namespace App\Livewire\Catalogos;
 use Livewire\Component;
 use App\Livewire\Forms\CatalogosForm;
 use App\Models\Catalogos;
+use Livewire\WithFileUploads;
+use Livewire\Attributes\On;
+use Illuminate\Support\Facades\File;
 
 class GestionCatalogos extends Component
 {
+    use WithFileUploads;
 
     public CatalogosForm $form;
     public $entrada = array('5', '10', '15', '20', '50', '100');
@@ -21,19 +25,19 @@ class GestionCatalogos extends Component
         'orderBy' => ['except' => 'desc'],
         'form.search' => ['except' => ''],
     ];
-    public $ctg;
+    public $identificador, $image, $ctgId;
     public $imagen_existe= false;
     //recibo el tipo de catalogo...
     public function mount(Catalogos $ctg)
     {
-        $this->ctg = $ctg;
-
+        $this->form->ctg = $ctg;
+        $this->identificador = rand();
     }
     public function render()
     {
         if ($this->readyToLoad) {
 
-            $catalogos = $this->form->getAllCtg($this->sort, $this->orderBy, $this->list, $this->ctg);
+            $catalogos = $this->form->getAllCtg($this->sort, $this->orderBy, $this->list);
         } else {
             $catalogos = [];
         }
@@ -67,5 +71,86 @@ class GestionCatalogos extends Component
     public function loadCatalogos()
     {
         $this->readyToLoad = true;
+    }
+
+    // modal
+    public $openC = false;
+
+    public function openModalC()
+    {
+        $this->resetValidation();
+        $this->openC = true;
+    }
+    public function closeModalC()
+    {
+        $this->openC = false;
+
+      
+    }
+
+
+    // CREAR
+    #[On('save-ctg')]
+    public function save()
+    {
+
+        if($this->image){
+            $this->form->image_path = $this->image->store('catalogs_image'); //-la imagen se guarda con la ruta products/image.jpg
+        }
+
+        $this->form->store($this->image);
+        $this->reset(['openC', 'image','imagen_existe']);
+        $this->identificador = rand();
+
+        $this->dispatch('alert', "El registro se agrego al catalogo exitosamente.");
+        $this->closeModalC();
+    }
+
+
+    public function edit($ctg)
+    {     
+        
+
+        $this->ctgId = $ctg['id'];
+        $this->form->setCatalogo($ctg);
+        $this->openModalC();
+    }
+
+
+    #[On('update-ctg')]
+    public function update()
+    {
+
+        if ($this->image) {
+            File::delete([$this->form->image_path]);
+            $this->form->image_path = $this->image->store('catalogs_image');
+        }
+        $this->form->update($this->image);
+
+        $this->reset('image', 'ctgId','imagen_existe');
+        $this->identificador = rand();
+        // $this->dispatch('show-productos');
+        $this->dispatch('alert', "El registro se actializo satisfactoriamente.");
+        $this->closeModalC();
+    }
+
+    //eliminar
+    #[On('delete-ctg')]
+    public function delete($ctg)
+    {
+        $this->form->setCatalogo($ctg);
+        $this->form->delete();
+        $this->dispatch('alert', "El registro dio de baja.");
+
+    }
+
+    //reactivar
+    #[On('reactive-ctg')]
+    public function reactive($ctg)
+    {
+        $this->form->setCatalogo($ctg);
+        $this->form->reactive();
+        $this->dispatch('alert', "El registro se dio de alta nuevamente.");
+
     }
 }

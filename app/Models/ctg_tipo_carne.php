@@ -10,4 +10,8 @@ class ctg_tipo_carne extends Model
     // protected $table = 'ctg_carnes';
 
     use HasFactory;
+    protected $fillable = [
+        'name',
+        'image_path','status'
+    ];
 }

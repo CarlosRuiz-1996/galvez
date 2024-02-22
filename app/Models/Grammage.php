@@ -11,4 +11,7 @@ class Grammage extends Model
     protected $table = 'ctg_grammages';
 
     use HasFactory;
+    protected $fillable = [
+        'name','status'
+    ];
 }

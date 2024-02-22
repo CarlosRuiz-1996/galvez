@@ -9,5 +9,8 @@ class CategoriesFood extends Model
 {
     use HasFactory;
     protected $table = 'ctg_categories_food';
-
+    protected $fillable = [
+        'name',
+        'image_path','status'
+    ];
 }

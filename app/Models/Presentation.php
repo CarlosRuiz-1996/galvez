@@ -10,5 +10,7 @@ class Presentation extends Model
     use HasFactory;
     
     protected $table = 'ctg_presentations';
-
+    protected $fillable = [
+        'name','status'
+    ];
 }

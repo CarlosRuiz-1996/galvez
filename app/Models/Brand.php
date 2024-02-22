@@ -11,4 +11,11 @@ class Brand extends Model
     
     protected $table = 'ctg_brands';
 
+    protected $fillable = [
+        'name',
+        'image_path',
+        'status'
+    ];
+
+
 }

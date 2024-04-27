@@ -86,6 +86,10 @@ class Abastecimiento extends Component
                 $existe = 0;
                 $this->apartar = 0;
             }
+
+            if($existe != 1){
+                $this->form->solicitudCompras($detail->clienteProduct->product->id,$detail->clienteProduct->max,$existe, $detail->clienteProduct->id);
+            }
             $this->existencias[$detail->id] = [
                 'id' => $detail->id,
                 'existe' => $existe
@@ -113,7 +117,7 @@ class Abastecimiento extends Component
     {
         foreach ($this->products as $detail) {
 
-            
+            dd($detail);
             // $detail->clienteProduct->product->stock; //stock para descontar
             // $detail->clienteProduct->max; //monto a descontar.
             // $detail->clienteProduct->min;

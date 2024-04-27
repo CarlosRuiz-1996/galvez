@@ -36,7 +36,7 @@ class GestionProductos extends Component
         'orderBy' => ['except' => 'desc'],
         'form.search' => ['except' => ''],
     ];
-    public $open = true;
+    public $open = false;
     public $productId; //VARIABLE PARA CUANDO EDITE
     //GESTION MODAL
     public function create()

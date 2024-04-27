@@ -11,20 +11,20 @@
 
 
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-3" x-data="{ activeTab: 'Productos' }">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-3" x-data="{ activeTab: 'Solicitudes' }">
         {{-- muestro los tabs --}}
 
         <ul class="flex" role="tablist">
 
             <li role="presentation" class="mr-2">
-                <button @click="activeTab = 'Pedidos'" 
-                    :class="{ 'bg-orange-500': activeTab === 'Pedidos', 'text-white': activeTab === 'Pedidos', 'border': activeTab !== 'Pedidos', 'border-gray-300': activeTab !== 'Pedidos' }"
+                <button @click="activeTab = 'Solicitudes'" 
+                    :class="{ 'bg-orange-500': activeTab === 'Solicitudes', 'text-white': activeTab === 'Solicitudes', 'border': activeTab !== 'Solicitudes', 'border-gray-300': activeTab !== 'Solicitudes' }"
                     :style="{
-                        'background-color': activeTab === 'Pedidos' ? '' : 'white',
-                        'color': activeTab === 'Pedidos' ?
+                        'background-color': activeTab === 'Solicitudes' ? '' : 'white',
+                        'color': activeTab === 'Solicitudes' ?
                             '' : 'black'
                     }"
-                    class="py-2 px-4 rounded-t-md" role="tab" aria-selected="true">Pedidos</button>
+                    class="py-2 px-4 rounded-t-md" role="tab" aria-selected="true">Solicitudes</button>
             </li>
             <li role="presentation" class="mr-2">
                 <button @click="activeTab = 'Productos'" 
@@ -40,11 +40,9 @@
         </ul>
 
         {{-- muestro datos dentro de los tabs --}}
-        <div x-show="activeTab === 'Pedidos'" class="py-4 px-0 bg-gray-100">
-            <div class="py-6 px-4 bg-gray-200 flex">
-                <h1>pedodps</h1>
+        <div x-show="activeTab === 'Solicitudes'" class="py-4 px-0 bg-gray-100">
+                <livewire:compras.gestion-solicitudes />
 
-            </div>
         </div>
 
         <div x-show="activeTab === 'Productos'" class="py-4 px-0 bg-gray-100">

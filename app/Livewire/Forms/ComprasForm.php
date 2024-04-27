@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Models\ComprasProductos;
+use App\Models\ComprasSolicitudes;
 use App\Models\Product;
 use Livewire\Attributes\Rule;
 use Livewire\Form;
@@ -94,6 +95,66 @@ class ComprasForm extends Form
             return 1;
         } catch (\Exception $e) {
             $this->validate();
+            DB::rollBack();
+            Log::error('No se pudo completar la solicitud: ' . $e->getMessage());
+            Log::info('Info: ' . $e);
+            return 0;
+        }
+    }
+
+
+    public function Solicitudes(){
+        // return ComprasSolicitudes::where('status',1)->orderBy('id','DESC')->paginate(10);
+
+        //  return ComprasSolicitudes::with(['producto'])
+        //  ->select('product_id', DB::raw('SUM(cantidad) as total_cantidad'), DB::raw('MAX(urgencia) as urgencia'), DB::raw('MAX(mensaje) as mensaje'), DB::raw('MAX(created_at) as created_at'))
+        //  ->where('status', 1)
+        // ->groupBy('product_id')
+        // ->orderBy('id', 'DESC')
+        // ->paginate(10);
+
+        return ComprasSolicitudes::select('product_id','user_id', DB::raw('SUM(cantidad) as total_cantidad'),
+        DB::raw('MAX(urgencia) as urgencia'), DB::raw('MAX(mensaje) as mensaje'), DB::raw('MAX(created_at) as created_at')
+        )
+        ->where('status', 1)
+        ->groupBy('product_id','user_id')
+        ->orderBy('id', 'DESC')
+        ->paginate(10);
+
+    
+    }
+
+
+
+    //save datos nuevos
+    public function ResolverSolicitud(Product $producto)
+    {
+
+        try {
+            DB::beginTransaction();
+
+
+            //actualizo el stock del producto
+            $producto->stock =  $producto->stock+$this->stock;
+            $producto->save();
+
+
+            ComprasProductos::create([
+                'product_id' => $producto->id,
+                'cantidad' => $this->stock,
+                'precio'=> $this->price,
+                'total'=> $this->total,
+                'user_id'=>auth()->user()->id
+            ]);
+
+
+            ComprasSolicitudes::where('status','=',1)->where('product_id',$producto->id)->update(['status'=>2]);
+
+
+            DB::commit();
+            $this->reset();
+            return 1;
+        } catch (\Exception $e) {
             DB::rollBack();
             Log::error('No se pudo completar la solicitud: ' . $e->getMessage());
             Log::info('Info: ' . $e);

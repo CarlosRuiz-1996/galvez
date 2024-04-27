@@ -252,9 +252,10 @@
                         Swal.fire({
                             // position: 'top-end',
                             icon: 'error',
-                            title: 'Debe esperar a que surtan todos los productos.',
-                            showConfirmButton: false,
-                            timer: 1500
+                            title: 'Ya se ha notificado a compras.',
+                            text:"Debe esperar a que surtan todos los productos.",
+                            showConfirmButton: true,
+                            // timer: 1500
                         })
                     }
                 })

@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Models\ClienteProduct;
+use App\Models\ComprasSolicitudes;
 use App\Models\Detail;
 use App\Models\Order;
 use App\Models\Product;
@@ -10,6 +11,7 @@ use Livewire\Attributes\Rule;
 use Livewire\Form;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+
 class GestionPedidos extends Form
 {
     //
@@ -60,13 +62,15 @@ class GestionPedidos extends Form
             ->paginate($list);
     }
 
-    public function readPedidoProducts($order_id){
+    public function readPedidoProducts($order_id)
+    {
 
-        return Order::with('details.clienteProduct.product.presentation',
-        'details.clienteProduct.product.grammage', 'details.clienteProduct.product.brand')
-        ->find($order_id)->details;
-
-
+        return Order::with(
+            'details.clienteProduct.product.presentation',
+            'details.clienteProduct.product.grammage',
+            'details.clienteProduct.product.brand'
+        )
+            ->find($order_id)->details;
     }
 
 
@@ -145,5 +149,26 @@ class GestionPedidos extends Form
     {
 
         return Product::findOrFail($id);
+    }
+
+
+    public function solicitudCompras($producto_id, $cantidad, $existe,$cliente_product_id)
+    {
+
+        $msg = $existe == 2 ? 'Orden surtida con el minimo' : 'No se ha podido surtir orden.';
+
+        $solicitudes = ComprasSolicitudes::where('cliente_product_id', $cliente_product_id)->where('status', 1)->count();
+
+
+        if ($solicitudes ==0) {
+            ComprasSolicitudes::create([
+                'product_id' => $producto_id,
+                'cantidad' => $cantidad,
+                'urgencia' => $existe,
+                'mensaje' => $msg,
+                'user_id' => auth()->user()->id,
+                'cliente_product_id'=>$cliente_product_id
+            ]);
+        } 
     }
 }

@@ -8,6 +8,7 @@ use App\Livewire\Catalogos\GestionCatalogos;
 use App\Livewire\Clientes\CreateCliente;
 use App\Livewire\Clientes\EditarCliente;
 use App\Livewire\Clientes\GestionClientes;
+use App\Livewire\Compras\Compras;
 use App\Livewire\Cotizaciones\CrearCotizacion;
 use App\Livewire\Cotizaciones\GestionCotizacion;
 use App\Livewire\GestionFood;
@@ -74,13 +75,18 @@ Route::middleware([
     Route::get('admin/editar/{user}', EditarCliente::class)->name('clientes.editar');
 
     Route::get('clientes/pedidos', GestionarPedidos::class)->name('clientes.pedidos');
-    Route::get('clientes/almacen', GestionAlmacen::class)->name('clientes.almacen');
-    Route::get('admin/clientes/carnes', GestionCarne::class)->name('clientes.carnes');
+    
 
     //catalogos
     Route::get('admin/ctg/show/{ctg}', GestionCatalogos::class)->name('ctg.show');
 
+    //almacen
+    Route::get('almacen', GestionAlmacen::class)->name('almacen');
+    Route::get('admin/clientes/carnes', GestionCarne::class)->name('clientes.carnes');
 
+    //compras
+    Route::get('compras', Compras::class)->name('compras');
+    
 });
 
 //rutas para livewire

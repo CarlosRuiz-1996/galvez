@@ -6,6 +6,8 @@ use Livewire\Component;
 use App\Livewire\Forms\GestionPedidos;
 use Livewire\WithPagination;
 use App\Models\User;
+use Livewire\Attributes\On;
+
 class Abastecimiento extends Component
 {
 
@@ -65,20 +67,63 @@ class Abastecimiento extends Component
             $this->orderBy = 'desc';
         }
     }
-    
+
 
     public $products;
-    public function detail($id){
+    public $existencias = [];
+    public $apartar = 1;
+    public function detail($id)
+    {
         $products = $this->form->readPedidoProducts($id);
+
+        foreach ($products as $detail) {
+
+            if ($detail->clienteProduct->product->stock >= $detail->clienteProduct->max) {
+                $existe = 1;
+            } elseif ($detail->clienteProduct->product->stock < $detail->clienteProduct->max && $detail->clienteProduct->product->stock > $detail->clienteProduct->min) {
+                $existe = 2;
+            } else {
+                $existe = 0;
+                $this->apartar = 0;
+            }
+            $this->existencias[$detail->id] = [
+                'id' => $detail->id,
+                'existe' => $existe
+            ];
+        }
+
         $this->products = $products->toArray();
+
         $this->openModal();
     }
 
     public $open = false;
-    public function openModal(){
+    public function openModal()
+    {
         $this->open = true;
     }
-    public function closeModal(){
+    public function closeModal()
+    {
         $this->open = false;
+        $this->reset('products', 'apartar');
+    }
+
+    #[On('apartar-orden')]
+    public function save()
+    {
+        foreach ($this->products as $detail) {
+
+            
+            // $detail->clienteProduct->product->stock; //stock para descontar
+            // $detail->clienteProduct->max; //monto a descontar.
+            // $detail->clienteProduct->min;
+            if ($detail['id'] == $this->existencias[$detail['id']]['id'] && $this->existencias[$detail['id']]['existe'] == 1) {
+                dd('lleva maximo');
+            } elseif ($detail['id'] == $this->existencias[$detail['id']]['id']&& $this->existencias[$detail['id']]['existe'] == 2) {
+                dd('lleva minimo');
+            } else {
+                dd('error');
+            }
+        }
     }
 }

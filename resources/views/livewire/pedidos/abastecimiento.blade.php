@@ -186,13 +186,13 @@
                     <th class="px-6 py-4">Marca</th>
                     <th class="px-6 py-4">Maximo</th>
                     <th class="px-6 py-4">Minimo</th>
-                   
+                    <th class="px-6 py-4">Existencia</th>
                 </thead>
                 <tbody>
                     @if ($products)
                         @foreach ($products as $product)
-                           
                             <tr class="text-center table-row bg-white border-b hover:bg-gray-50 px-4 py-2">
+
                                 <td>{{ $product['cliente_product']['product']['name'] }}</td>
                                 <td> {{ $product['cliente_product']['product']['presentation']['name'] }}</td>
                                 <td> {{ $product['cliente_product']['product']['grammage']['name'] }}</td>
@@ -200,7 +200,16 @@
 
                                 <td> {{ $product['cliente_product']['max'] }}</td>
                                 <td> {{ $product['cliente_product']['min'] }}</td>
+                                <td>
 
+                                    @if (isset($existencias[$product['id']]) && $existencias[$product['id']]['existe'] == 1)
+                                        <i class="fa fa-check text-green-500" aria-hidden="true"></i>
+                                    @elseif(isset($existencias[$product['id']]) && $existencias[$product['id']]['existe'] == 2)
+                                        <i class="fa fa-check text-orange-500" aria-hidden="true"></i>
+                                    @else
+                                        <i class="fa fa-times-circle text-red-500" aria-hidden="true"></i>
+                                    @endif
+                                </td>
 
                             </tr>
                         @endforeach
@@ -212,7 +221,54 @@
         @endslot
         @slot('footer')
             <x-secondary-button wire:click="closeModal">Cerrar</x-secondary-button>
-            {{-- <x-danger-button class="ml-2" wire:click="save">Aceptar</x-danger-button> --}}
+            <x-danger-button class="ml-2"
+                wire:click="$dispatch('confirm',[1,{{ $apartar }}])">Surtir</x-danger-button>
         @endslot
     </x-dialog-modal-xl>
+
+
+    @push('js')
+        <script>
+            document.addEventListener('livewire:initialized', () => {
+
+                @this.on('confirm', ([op, apartar]) => {
+
+                    if (apartar == 1) {
+                        Swal.fire({
+                            title: '¿Estas seguro?',
+                            text: op == 1 ? "Los productos seran apartados para este cliente." : "",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Si, adelante!',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                @this.dispatch(op == 1 ? 'apartar-orden' : '');
+                            }
+                        })
+                    } else {
+                        Swal.fire({
+                            // position: 'top-end',
+                            icon: 'error',
+                            title: 'Debe esperar a que surtan todos los productos.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                })
+                Livewire.on('alert', function(message) {
+                    Swal.fire({
+                        // position: 'top-end',
+                        icon: 'success',
+                        title: message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                });
+
+            });
+        </script>
+    @endpush
 </div>

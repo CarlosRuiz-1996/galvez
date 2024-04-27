@@ -12,19 +12,29 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    {{-- <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+
+                    {{-- 
+                        al parecer si ocupo: 
+                            @role('Cliente') el rol debe de escribirse como en la bd
+                            @endrole
+
+                            @can('admin') el rol debe de escribirse en minusculas
+                            @endcan
+
+                        si no lo detecta, puedo usar esta forma:
+                            @if (auth()->user()->roles[0]->name === 'Cliente') 
+                            @endif
+                    --}}
+
+                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
-                    </x-nav-link> --}}
-                    {{-- {{ auth()->user()->roles }} --}}
-
-
-                    @if(auth()->user()->roles[0]->name === 'Cliente')
-                    <x-nav-link href="{{ route('clientes.pedidos') }}" :active="request()->routeIs('clientes.pedidos')">
-                        {{ __('Pedidos') }}
                     </x-nav-link>
-                    
-                    @endif
-                  
+                    @role('Cliente')
+                        <x-nav-link href="{{ route('clientes.pedidos') }}" :active="request()->routeIs('clientes.pedidos')">
+                            {{ __('Pedidos') }}
+                        </x-nav-link>
+                    @endrole
+
                     @can('admin')
                         <x-nav-link href="{{ route('catalogos') }}" :active="request()->routeIs('catalogos') ||
                             request()->routeIs('buscar.producto') ||
@@ -32,21 +42,13 @@
                             request()->routeIs('gestion.ctg.comida') ||
                             request()->routeIs('ctg.show') ||
                             request()->routeIs('gestion.ctg.producto')">
-                            {{-- Str::startsWith(
-                            request()
-                                ->route()
-                                ->getName(),
-                            'gestion.ctg.producto',
-                        ) --}}
-
-
                             {{ __('Catalogos') }}
                         </x-nav-link>
 
                         <x-nav-link href="{{ route('clientes') }}" :active="request()->routeIs('clientes') ||
-                                                        request()->routeIs('clientes.gestion') ||
-                                                        request()->routeIs('clientes.crear')||
-                                                        request()->routeIs('clientes.editar')">
+                            request()->routeIs('clientes.gestion') ||
+                            request()->routeIs('clientes.crear') ||
+                            request()->routeIs('clientes.editar')">
                             {{ __('Clientes') }}
 
 
@@ -65,8 +67,14 @@
 
                         </x-nav-link>
 
-                        <x-nav-link href="{{ route('clientes.almacen') }}" :active="request()->routeIs('clientes.almacen')">
+                        <x-nav-link href="{{ route('almacen') }}" :active="request()->routeIs('almacen')">
                             {{ __('Almacen') }}
+
+
+                        </x-nav-link>
+
+                        <x-nav-link href="{{ route('compras') }}" :active="request()->routeIs('compras')">
+                            {{ __('Compras') }}
 
 
                         </x-nav-link>

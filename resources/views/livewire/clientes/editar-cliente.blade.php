@@ -168,38 +168,37 @@
             <table class="w-full text-sm text-left text-gray-500">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-200">
                     <tr>
-                        <th scope="col" class="w-24 px-4 py-2 cursor-pointer" >
+                        <th scope="col" class="w-24 px-4 py-2 cursor-pointer">
                             ID
-                           
-                        </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" >
-                            NOMBRE
-                           
-                        </th>
-                        <th scope="col" class="w-40 px-6 py-3 cursor-pointer"
-                          >PRESENTACIÓN
 
-                           
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer">
+                            NOMBRE
+
+                        </th>
+                        <th scope="col" class="w-40 px-6 py-3 cursor-pointer">PRESENTACIÓN
+
+
                         </th>
                         <th scope="col" class="w-40 px-6 py-3 cursor-pointer">
                             GRAMAJE
-                       
+
 
                         </th>
                         <th scope="col" class="px-6 py-3">IMAGEN</th>
                         <th scope="col" class="px-6 py-3 cursor-pointer">
                             FICHA
                             TECNICA
-                          
+
                         </th>
 
                         <th scope="col" class="px-6 py-3 cursor-pointer">
                             MAX
-                           
+
                         </th>
-                        <th scope="col" class="px-6 py-3 cursor-pointer" >
+                        <th scope="col" class="px-6 py-3 cursor-pointer">
                             MIN
-                          
+
                         </th>
                         <th scope="col" class="px-6 py-3">EDITAR</th>
                     </tr>
@@ -241,7 +240,7 @@
 
                 </tbody>
             </table>
-         
+
 
         </div>
     </div>
@@ -449,7 +448,7 @@
 
                 </tbody>
             </table>
-          
+
         </div>
     </div>
     <br><br>

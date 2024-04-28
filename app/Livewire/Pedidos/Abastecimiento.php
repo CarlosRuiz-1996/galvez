@@ -4,9 +4,12 @@ namespace App\Livewire\Pedidos;
 
 use Livewire\Component;
 use App\Livewire\Forms\GestionPedidos;
+use App\Models\Order;
 use Livewire\WithPagination;
 use App\Models\User;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class Abastecimiento extends Component
 {
@@ -14,7 +17,6 @@ class Abastecimiento extends Component
     public GestionPedidos $form;
     use WithPagination;
 
-    public $identificador, $image;
     public $entrada = array('5', '10', '15', '20', '50', '100');
     public $list = '10';
     public $readyToLoad = false;
@@ -72,8 +74,12 @@ class Abastecimiento extends Component
     public $products;
     public $existencias = [];
     public $apartar = 1;
+    public $order_detail;
     public function detail($id)
     {
+        $this->order_detail= Order::find($id);
+
+        
         $products = $this->form->readPedidoProducts($id);
 
         foreach ($products as $detail) {
@@ -87,17 +93,15 @@ class Abastecimiento extends Component
                 $this->apartar = 0;
             }
 
-            if($existe != 1){
-                $this->form->solicitudCompras($detail->clienteProduct->product->id,$detail->clienteProduct->max,$existe, $detail->clienteProduct->id);
+            if ($existe != 1) {
+                $this->form->solicitudCompras($detail->clienteProduct->product->id, $detail->clienteProduct->max, $existe, $detail->clienteProduct->id);
             }
             $this->existencias[$detail->id] = [
                 'id' => $detail->id,
                 'existe' => $existe
             ];
         }
-
         $this->products = $products->toArray();
-
         $this->openModal();
     }
 
@@ -106,28 +110,47 @@ class Abastecimiento extends Component
     {
         $this->open = true;
     }
-    public function closeModal()
-    {
-        $this->open = false;
-        $this->reset('products', 'apartar');
-    }
+    
 
+    public function clean(){
+        $this->reset('products','order_detail','apartar','existencias','open');
+        $this->apartar=1;
+    }
     #[On('apartar-orden')]
     public function save()
     {
-        foreach ($this->products as $detail) {
 
-            dd($detail);
-            // $detail->clienteProduct->product->stock; //stock para descontar
-            // $detail->clienteProduct->max; //monto a descontar.
-            // $detail->clienteProduct->min;
-            if ($detail['id'] == $this->existencias[$detail['id']]['id'] && $this->existencias[$detail['id']]['existe'] == 1) {
-                dd('lleva maximo');
-            } elseif ($detail['id'] == $this->existencias[$detail['id']]['id']&& $this->existencias[$detail['id']]['existe'] == 2) {
-                dd('lleva minimo');
-            } else {
-                dd('error');
+        
+        try {
+            DB::beginTransaction();
+            foreach ($this->products as $detail) {
+
+                $descontar = 0;
+                //reviso si se manda el mini o maximo 
+                if ($detail['id'] == $this->existencias[$detail['id']]['id'] && $this->existencias[$detail['id']]['existe'] == 1) {
+                    $descontar = $detail['cliente_product']['max'];
+                } elseif ($detail['id'] == $this->existencias[$detail['id']]['id'] && $this->existencias[$detail['id']]['existe'] == 2) {
+                    $descontar = $detail['cliente_product']['min'];
+                    $this->form->updateDetail($detail['id']);
+                }
+
+                //descuento del stock del producto
+                $this->form->descontarStock($detail['cliente_product']['product_id'], $descontar);
             }
+
+            //actualizo la orden de compra
+            $this->form->updateOrder($this->order_detail,2);
+
+            DB::commit();
+
+            //limpio los campos
+            $this->clean();
+            $this->dispatch('alert', ["Los productos estan listos para la entrega.",'success']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->dispatch('alert', ["Ha ocurrido un error intenta más tarde.",'error']);
+
         }
     }
 }

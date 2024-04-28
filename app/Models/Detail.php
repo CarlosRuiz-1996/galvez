@@ -17,6 +17,7 @@ class Detail extends Model
         'amount',
         'created_at',
         'updated_at',
+        'status_detail'
         // otros campos permitidos en masa
     ];
 

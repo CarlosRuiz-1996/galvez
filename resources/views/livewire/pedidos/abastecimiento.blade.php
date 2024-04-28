@@ -137,7 +137,7 @@
 
                                 <td class="px-6 py-4">{{ $order->observations }}</td>
                                 <td class="text-center">
-                                    <button class="btn btn-blue mr-2 p-2" wire:click='detail({{ $order->id }})'>
+                                    <button class="btn {{$order->status==1?'btn-blue':'btn-green'}} mr-2 p-2" wire:click='detail({{ $order->id }})'>
                                         <i class="fa fa-info-circle" aria-hidden="true"></i>
                                     </button>
                                 </td>
@@ -168,49 +168,65 @@
 
     </div>
 
+    {{-- modal para apartar productos y surtir --}}
     <x-dialog-modal-xl wire:model.live="open">
         @slot('title')
             <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
-                <h1>Productos del pedido</h1>
+                <h1>{{ isset($order_detail) && $order_detail->status == 1 ? 'Productos del pedido' : 'Detalles de la entrega' }}
+                </h1>
             </div>
         @endslot
         @slot('content')
 
-
+            @if ($apartar != 1)
+                <div class=" bg-red-100 border-red-400 text-red-700 px-4 py-3 rounded relative mb-3" role="alert">
+                    <strong class="font-bold">Información!</strong>
+                    <span class="block sm:inline">Compras ya fue notificada de los productos faltantes.</span>
+                </div>
+            @endif
             <table class="w-full text-sm text-left text-gray-500">
-                <thead class="items-center  bg-gray-50 overflow-x-auto shadow-md sm:rounded-lg">
-                    <th class="px-6 py-4">Nombre producto</th>
+                <thead class="items-center text-xs uppercase bg-blue-100 overflow-x-auto shadow-md sm:rounded-lg">
+                    <th class="px-6 py-4 ">Nombre producto</th>
                     <th class="px-6 py-4">Presentación</th>
                     <th class="px-6 py-4">Gramage</th>
 
                     <th class="px-6 py-4">Marca</th>
-                    <th class="px-6 py-4">Maximo</th>
-                    <th class="px-6 py-4">Minimo</th>
-                    <th class="px-6 py-4">Existencia</th>
+                    @if (isset($order_detail) && $order_detail->status == 2)
+                        <th class="px-6 py-4">Cantidad</th>
+                    @else
+                        <th class="px-6 py-4">Maximo</th>
+                        <th class="px-6 py-4">Minimo</th>
+                        <th class="px-6 py-4">Existencia</th>
+                    @endif
+
                 </thead>
                 <tbody>
                     @if ($products)
                         @foreach ($products as $product)
                             <tr class="text-center table-row bg-white border-b hover:bg-gray-50 px-4 py-2">
 
-                                <td>{{ $product['cliente_product']['product']['name'] }}</td>
+                                <td class="px-6 py-4">{{ $product['cliente_product']['product']['name'] }}</td>
                                 <td> {{ $product['cliente_product']['product']['presentation']['name'] }}</td>
                                 <td> {{ $product['cliente_product']['product']['grammage']['name'] }}</td>
                                 <td> {{ $product['cliente_product']['product']['brand']['name'] }}</td>
 
-                                <td> {{ $product['cliente_product']['max'] }}</td>
-                                <td> {{ $product['cliente_product']['min'] }}</td>
-                                <td>
+                                @if (isset($order_detail) && $order_detail->status == 2)
+                                    <td> {{ $product['status_detail'] == 1 ? $product['cliente_product']['max'] : $product['cliente_product']['min'] }}
+                                    </td>
+                                @else
+                                    <td> {{ $product['cliente_product']['max'] }}</td>
+                                    <td> {{ $product['cliente_product']['min'] }}</td>
+                                    <td>
 
-                                    @if (isset($existencias[$product['id']]) && $existencias[$product['id']]['existe'] == 1)
-                                        <i class="fa fa-check text-green-500" aria-hidden="true"></i>
-                                    @elseif(isset($existencias[$product['id']]) && $existencias[$product['id']]['existe'] == 2)
-                                        <i class="fa fa-check text-orange-500" aria-hidden="true"></i>
-                                    @else
-                                        <i class="fa fa-times-circle text-red-500" aria-hidden="true"></i>
-                                    @endif
-                                </td>
-
+                                        @if (isset($existencias[$product['id']]) && $existencias[$product['id']]['existe'] == 1)
+                                            <i class="fa fa-check text-green-500" aria-hidden="true"></i>
+                                        @elseif(isset($existencias[$product['id']]) && $existencias[$product['id']]['existe'] == 2)
+                                            <i class="fa fa-check text-orange-500" aria-hidden="true"></i>
+                                        @else
+                                            <i class="fa fa-times-circle text-red-500" aria-hidden="true"></i>
+                                        @endif
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                     @endif
@@ -220,9 +236,11 @@
 
         @endslot
         @slot('footer')
-            <x-secondary-button wire:click="closeModal">Cerrar</x-secondary-button>
-            <x-danger-button class="ml-2"
-                wire:click="$dispatch('confirm',[1,{{ $apartar }}])">Surtir</x-danger-button>
+            <x-secondary-button wire:click="clean">Cerrar</x-secondary-button>
+            @if (isset($order_detail) && $order_detail->status == 1)
+                <x-danger-button class="ml-2"
+                    wire:click="$dispatch('confirm',[1,{{ $apartar }}])">Surtir</x-danger-button>
+            @endif
         @endslot
     </x-dialog-modal-xl>
 
@@ -253,17 +271,17 @@
                             // position: 'top-end',
                             icon: 'error',
                             title: 'Ya se ha notificado a compras.',
-                            text:"Debe esperar a que surtan todos los productos.",
+                            text: "Debe esperar a que surtan todos los productos.",
                             showConfirmButton: true,
                             // timer: 1500
                         })
                     }
                 })
-                Livewire.on('alert', function(message) {
+                Livewire.on('alert', function([message]) {
                     Swal.fire({
                         // position: 'top-end',
-                        icon: 'success',
-                        title: message,
+                        icon: message[1],
+                        title: message[0],
                         showConfirmButton: false,
                         timer: 1500
                     })

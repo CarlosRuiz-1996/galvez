@@ -19,6 +19,7 @@ class Order extends Model
         'observations',
         'total',
         'user_id',
+        'status'
     ];
 
     public function detalles()

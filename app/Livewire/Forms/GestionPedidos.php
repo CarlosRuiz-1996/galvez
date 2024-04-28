@@ -171,4 +171,26 @@ class GestionPedidos extends Form
             ]);
         } 
     }
+
+
+
+    //apartar pedidos...
+    public function updateDetail(Detail $detail){
+        $detail->status_detail=2;
+        $detail->save();
+    }
+
+    //apartar pedidos...
+    public function descontarStock($product,$descontar){
+
+        $producto = Product::find($product);
+        $producto->stock-=$descontar;
+        $producto->save();
+    }
+
+    //apartar pedidos...
+    public function updateOrder(Order $order,$status){
+        $order->status=$status;
+        $order->save();
+    }
 }

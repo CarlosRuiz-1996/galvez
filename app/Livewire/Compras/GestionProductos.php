@@ -37,6 +37,7 @@ class GestionProductos extends Component
         'form.search' => ['except' => ''],
     ];
     public $open = false;
+    public $openU = false;
     public $productId; //VARIABLE PARA CUANDO EDITE
     //GESTION MODAL
     public function create()
@@ -56,8 +57,16 @@ class GestionProductos extends Component
     {
         $this->open = false;
     }
+    public function closeModalU()
+    {
+        $this->openU = false;
+        $this->clean();
+    }
 
-
+    public function clean()
+    {
+        $this->reset('productId', 'openU', 'open', 'form.price', 'form.stock', 'form.total');
+    }
     public function mount()
     {
         //para poder setear la imagen input
@@ -122,13 +131,17 @@ class GestionProductos extends Component
     {
         if ($property === 'form.price') {
             if ($this->form->stock != 0) {
-                $this->form->total = $this->form->stock * $value;
+                if ($value != '') {
+                    $this->form->total = $this->form->stock * $value;
+                }
             }
         }
 
         if ($property === 'form.stock') {
             if ($this->form->price != 0) {
-                $this->form->total = $this->form->price * $value;
+                if ($value != '') {
+                    $this->form->total = $this->form->price * $value;
+                }
             }
         }
     }
@@ -146,38 +159,50 @@ class GestionProductos extends Component
         $res = $this->form->store();
 
         if ($res == 1) {
-            $this->reset(['open', 'image']);
+            $this->clean();
             $this->identificador = rand();
 
             $this->dispatch('show-productos');
-            $this->dispatch('alert', ["El producto se creo satisfactoriamente.",'success']);
-            $this->closeModal();
+            $this->dispatch('dashboard-compras');
+            $this->dispatch('alert', ["El producto se creo satisfactoriamente.", 'success']);
         } else {
-            $this->dispatch('alert', ["Ha ocurrido un error intenta más tarde.",'error']);
+            $this->dispatch('alert', ["Ha ocurrido un error intenta más tarde.", 'error']);
         }
     }
 
 
-    // public function edit(Product $product)
-    // {
-    //     $this->form->setProduct($product);
-    //     $this->productId = $product->id;
-    //     $this->openModal();
-    // }
-    // #[On('update-productos-compras')]
-    // public function update()
-    // {
+    public function edit(Product $product)
+    {
+        $this->productId = $product->id;
+        $this->form->name = $product->name;
+        $this->form->gramaje = $product->grammage->name;
+        $this->form->ctg_presentation_id = $product->presentation->name;
+        $this->form->ctg_brand_id = $product->Brand->name;
+        $this->form->ctg_category_id = $product->Categories->name;
+        $this->openU = true;
+    }
+    #[On('update-productos-compras')]
+    public function update()
+    {
+        $this->validate([
+            'form.price' => 'required|numeric|gt:0',
+            'form.stock' => 'required|numeric|gt:0',
+        ], [
+            'form.price' => 'El precio es obligatorio.',
+            'form.stock.required' => 'El stock es obligatorio',
+            'form.stock.gt' => 'El stock debe ser mayor que 0.',
+            'form.precio.gt' => 'El precio debe ser mayor que 0.',
+        ]);
 
-    //     if ($this->image) {
-    //         File::delete([$this->form->image_path]);
-    //         $this->form->image_path = $this->image->store('products');
-    //     }
-    //     $this->form->update();
 
-    //     $this->reset('image', 'productId');
-    //     $this->identificador = rand();
-    //     $this->dispatch('show-productos');
-    //     $this->dispatch('alert', "El producto se actializo satisfactoriamente.");
-    //     $this->closeModal();
-    // }
+        $res = $this->form->update($this->productId);
+        if ($res == 1) {
+            $this->clean();
+            $this->dispatch('show-productos');
+            $this->dispatch('dashboard-compras');
+            $this->dispatch('alert', "El producto se actializo satisfactoriamente.");
+        } else {
+            $this->dispatch('error', "Ha ocurrido un error, intenta mas tarde.");
+        }
+    }
 }

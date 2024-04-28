@@ -84,9 +84,43 @@ class ComprasForm extends Form
             ComprasProductos::create([
                 'product_id' => $producto->id,
                 'cantidad' => $this->stock,
-                'precio'=> $this->price,
-                'total'=> $this->total,
-                'user_id'=>$user_id
+                'precio' => $this->price,
+                'total' => $this->total,
+                'user_id' => $user_id
+            ]);
+
+
+            DB::commit();
+            $this->reset();
+            return 1;
+        } catch (\Exception $e) {
+            $this->validate();
+            DB::rollBack();
+            Log::error('No se pudo completar la solicitud: ' . $e->getMessage());
+            Log::info('Info: ' . $e);
+            return 0;
+        }
+    }
+    //save datos nuevos
+    public function update($producto)
+    {
+
+        $product= Product::find($producto);
+
+        try {
+            DB::beginTransaction();
+           
+            $product->stock= $product->stock+$this->stock;
+            $product->save();
+
+            
+            $user_id = auth()->user()->id;
+            ComprasProductos::create([
+                'product_id' => $product->id,
+                'cantidad' => $this->stock,
+                'precio' => $this->price,
+                'total' => $this->total,
+                'user_id' => $user_id
             ]);
 
 
@@ -102,8 +136,8 @@ class ComprasForm extends Form
         }
     }
 
-
-    public function Solicitudes(){
+    public function Solicitudes()
+    {
         // return ComprasSolicitudes::where('status',1)->orderBy('id','DESC')->paginate(10);
 
         //  return ComprasSolicitudes::with(['producto'])
@@ -113,15 +147,18 @@ class ComprasForm extends Form
         // ->orderBy('id', 'DESC')
         // ->paginate(10);
 
-        return ComprasSolicitudes::select('product_id','user_id', DB::raw('SUM(cantidad) as total_cantidad'),
-        DB::raw('MAX(urgencia) as urgencia'), DB::raw('MAX(mensaje) as mensaje'), DB::raw('MAX(created_at) as created_at')
+        return ComprasSolicitudes::select(
+            'product_id',
+            'user_id',
+            DB::raw('SUM(cantidad) as total_cantidad'),
+            DB::raw('MAX(urgencia) as urgencia'),
+            DB::raw('MAX(mensaje) as mensaje'),
+            DB::raw('MAX(created_at) as created_at')
         )
-        ->where('status', 1)
-        ->groupBy('product_id','user_id')
-        ->orderBy('id', 'DESC')
-        ->paginate(10);
-
-    
+            ->where('status', 1)
+            ->groupBy('product_id', 'user_id')
+            ->orderBy('id', 'DESC')
+            ->paginate(10);
     }
 
 
@@ -135,20 +172,20 @@ class ComprasForm extends Form
 
 
             //actualizo el stock del producto
-            $producto->stock =  $producto->stock+$this->stock;
+            $producto->stock =  $producto->stock + $this->stock;
             $producto->save();
 
 
             ComprasProductos::create([
                 'product_id' => $producto->id,
                 'cantidad' => $this->stock,
-                'precio'=> $this->price,
-                'total'=> $this->total,
-                'user_id'=>auth()->user()->id
+                'precio' => $this->price,
+                'total' => $this->total,
+                'user_id' => auth()->user()->id
             ]);
 
 
-            ComprasSolicitudes::where('status','=',1)->where('product_id',$producto->id)->update(['status'=>2]);
+            ComprasSolicitudes::where('status', '=', 1)->where('product_id', $producto->id)->update(['status' => 2]);
 
 
             DB::commit();

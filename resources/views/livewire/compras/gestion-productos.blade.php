@@ -157,8 +157,6 @@
                 </div>
             @endslot
             @slot('content')
-          
-
                 <div class="grid grid-cols-4 gap-4">
                     <div class="col-span-2 ">
                         <x-label>Nombre del producto</x-label>
@@ -167,8 +165,8 @@
                     </div>
                     <div class="col-span-2">
                         <x-label>Categoria</x-label>
-                        <select class="form-control w-full"  wire:model='form.ctg_category_id'>
-                            <option value="" selected >Seleccione una categoria</option>
+                        <select class="form-control w-full" wire:model='form.ctg_category_id'>
+                            <option value="" selected>Seleccione una categoria</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
@@ -176,35 +174,35 @@
                         <x-input-error for="form.ctg_category_id" />
                     </div>
 
-                    <div >
+                    <div>
                         <x-label>Cantidad/stock</x-label>
                         <x-input type="number" class="w-full" wire:model.live='form.stock' />
                         <x-input-error for="form.stock" />
                     </div>
-                    
-                    <div >
+
+                    <div>
                         <x-label>Costo/Precio</x-label>
                         <x-input type="number" class="w-full" wire:model.live='form.price' />
                         <x-input-error for="form.price" />
                     </div>
-                    <div >
+                    <div>
 
-                       
+
                         <x-label>Total de la compra</x-label>
-                        <x-input type="number" class="text-gray-900 bg-gray-50"  wire:model.live='form.total' readonly />
-                     </div>
-                    <div >
+                        <x-input type="number" class="text-gray-900 bg-gray-50" wire:model.live='form.total' readonly />
+                    </div>
+                    <div>
                         <x-label>Gramaje</x-label>
-                        <x-input type="number"  wire:model='form.gramaje' />
+                        <x-input type="number" wire:model='form.gramaje' />
                         <x-input-error for="form.gramaje" />
                     </div>
-                    
-                   
+
+
 
                     <div>
                         <x-label>Medida</x-label>
                         <select class="form-control w-full" wire:model='form.ctg_grammage_id'>
-                            <option value="" selected >Seleccione:</option>
+                            <option value="" selected>Seleccione:</option>
                             @foreach ($grammages as $grammage)
                                 <option value="{{ $grammage->id }}">{{ $grammage->name }}</option>
                             @endforeach
@@ -215,7 +213,7 @@
                     <div>
                         <x-label>Marca</x-label>
                         <select class="form-control w-full" wire:model='form.ctg_brand_id'>
-                            <option value="" selected >Seleccione:</option>
+                            <option value="" selected>Seleccione:</option>
                             @foreach ($brands as $brand)
                                 <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                             @endforeach
@@ -256,11 +254,10 @@
 
                         </div>
                         @if ($image)
-                            <img class="p-8 rounded-t-lg h-40 max-w-lg rounded-lg" 
-                                src="{{ $image->temporaryUrl() }}" />
+                            <img class="p-8 rounded-t-lg h-40 max-w-lg rounded-lg" src="{{ $image->temporaryUrl() }}" />
                         @elseif($form->image_path)
                             <?php $nombreDeLaImagen = basename($form->image_path); ?>
-                            <img class="p-8 rounded-t-lg h-40 max-w-lg rounded-lg" 
+                            <img class="p-8 rounded-t-lg h-40 max-w-lg rounded-lg"
                                 src="{{ asset('storage/products/' . $nombreDeLaImagen) }}" />
                         @endif
                     </div>
@@ -277,6 +274,63 @@
         </x-dialog-modal-xl>
     @endif
 
+    {{-- modal para editar producto --}}
+    <x-dialog-modal wire:model.live="openU">
+        @slot('title')
+            <div class="px-6 py-4 items-center  bg-gray-100 overflow-x-auto shadow-md sm:rounded-lg">
+                <h1> EDITAR STOCK </h1>
+            </div>
+        @endslot
+        @slot('content')
+            <div class="grid md:grid-cols-2 md:gap-6">
+                <div class="relative z-0 w-full  group">
+                    <x-label>PRODUCTO</x-label>
+                    <x-input type="text" class="w-full bg-gray-200" disabled wire:model='form.name' />
+                </div>
+                <div class="relative z-0 w-full  group">
+                    <x-label>Total</x-label>
+                    <x-input type="number" class="w-full bg-green-200" wire:model.live='form.total' />
+                </div>
+                <div class="relative z-0 w-full  group">
+                    <x-label>Gramaje</x-label>
+                    <x-input type="text" class="w-full text-gray-900 bg-gray-100" readonly
+                        wire:model='form.gramaje' />
+                </div>
+                <div class="relative z-0 w-full  group">
+                    <x-label>Presentación</x-label>
+                    <x-input type="text" class="w-full text-gray-900 bg-gray-100" readonly
+                        wire:model='form.ctg_presentation_id' />
+                </div>
+                <div class="relative z-0 w-full  group">
+                    <x-label>Marca</x-label>
+                    <x-input type="text" class="w-full text-gray-900 bg-gray-100" readonly
+                        wire:model='form.ctg_brand_id' />
+                </div>
+                <div class="relative z-0 w-full  group">
+                    <x-label>Categoria</x-label>
+                    <x-input type="text" class="w-full text-gray-900 bg-gray-100" readonly
+                        wire:model='form.ctg_category_id' />
+                </div>
+                <div class="relative z-0 w-full  group">
+                    <x-label>Cantidad a ingresar</x-label>
+                    <x-input type="number" class="w-full" wire:model.live='form.stock' />
+                    <x-input-error for="form.stock" />
+                </div>
+                <div class="relative z-0 w-full  group">
+                    <x-label>Precio/Costo</x-label>
+                    <x-input type="number" class="w-full" wire:model.live='form.price' />
+                    <x-input-error for="form.price" />
+                </div>
+
+            </div>
+        @endslot
+        @slot('footer')
+            <x-secondary-button wire:click="closeModalU">Cancelar</x-secondary-button>
+            {{--  wire:click="{{ $productId ? 'update' : 'save' }}"" wire:click="$dispatch('confirm',{{ $productId }}) " --}}
+            <x-danger-button class=" ml-3 disabled:opacity-25"
+                wire:click="$dispatch('confirm',{{ $productId }})">ACEPTAR</x-danger-button>
+        @endslot
+    </x-dialog-modal>
 
     @push('js')
         <script>

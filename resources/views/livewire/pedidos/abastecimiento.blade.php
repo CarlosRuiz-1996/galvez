@@ -199,6 +199,7 @@
                     <th class="px-6 py-4">Marca</th>
                     @if (isset($order_detail) && $order_detail->status == 2)
                         <th class="px-6 py-4">Cantidad</th>
+                        <th class="px-6 py-4">Precio</th>
                     @else
                         <th class="px-6 py-4">Maximo</th>
                         <th class="px-6 py-4">Minimo</th>
@@ -218,6 +219,8 @@
 
                                 @if (isset($order_detail) && $order_detail->status == 2)
                                     <td> {{ $product['status_detail'] == 1 ? $product['cliente_product']['max'] : $product['cliente_product']['min'] }}
+                                    </td>
+                                    <td> {{ $product['cliente_product']['price_prod'] }}
                                     </td>
                                 @else
                                     <td> {{ $product['cliente_product']['max'] }}</td>

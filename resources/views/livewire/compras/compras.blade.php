@@ -1,4 +1,4 @@
-<div >
+<div>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-purple-800 leading-tight inline-flex items-center">
             {{ __('Compras') }}
@@ -11,13 +11,22 @@
 
 
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-3" x-data="{ activeTab: 'Solicitudes' }">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-3" x-data="{ activeTab: 'Inicio' }">
         {{-- muestro los tabs --}}
 
         <ul class="flex" role="tablist">
-
             <li role="presentation" class="mr-2">
-                <button @click="activeTab = 'Solicitudes'" 
+                <button @click="activeTab = 'Inicio'"
+                    :class="{ 'bg-orange-500': activeTab === 'Inicio', 'text-white': activeTab === 'Inicio', 'border': activeTab !== 'Inicio', 'border-gray-300': activeTab !== 'Inicio' }"
+                    :style="{
+                        'background-color': activeTab === 'Inicio' ? '' : 'white',
+                        'color': activeTab === 'Inicio' ?
+                            '' : 'black'
+                    }"
+                    class="py-2 px-4 rounded-t-md" role="tab" aria-selected="true">Inicio</button>
+            </li>
+            <li role="presentation" class="mr-2">
+                <button @click="activeTab = 'Solicitudes'"
                     :class="{ 'bg-orange-500': activeTab === 'Solicitudes', 'text-white': activeTab === 'Solicitudes', 'border': activeTab !== 'Solicitudes', 'border-gray-300': activeTab !== 'Solicitudes' }"
                     :style="{
                         'background-color': activeTab === 'Solicitudes' ? '' : 'white',
@@ -27,7 +36,7 @@
                     class="py-2 px-4 rounded-t-md" role="tab" aria-selected="true">Solicitudes</button>
             </li>
             <li role="presentation" class="mr-2">
-                <button @click="activeTab = 'Productos'" 
+                <button @click="activeTab = 'Productos'"
                     :class="{ 'bg-orange-500': activeTab === 'Productos', 'text-white': activeTab === 'Productos', 'border': activeTab !== 'Productos', 'border-gray-300': activeTab !== 'Productos' }"
                     :style="{
                         'background-color': activeTab === 'Productos' ? '' : 'white',
@@ -40,13 +49,18 @@
         </ul>
 
         {{-- muestro datos dentro de los tabs --}}
+        <div x-show="activeTab === 'Inicio'" class="py-4 px-0 bg-gray-100">
+
+            <livewire:compras.compras-dashboard />
+
+        </div>
         <div x-show="activeTab === 'Solicitudes'" class="py-4 px-0 bg-gray-100">
-                <livewire:compras.gestion-solicitudes />
+            <livewire:compras.gestion-solicitudes />
 
         </div>
 
         <div x-show="activeTab === 'Productos'" class="py-4 px-0 bg-gray-100">
-                <livewire:compras.gestion-productos />
+            <livewire:compras.gestion-productos />
         </div>
     </div>
 

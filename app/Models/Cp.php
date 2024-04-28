@@ -12,11 +12,11 @@ class Cp extends Model
 
     public function municipio()
     {
-        return $this->belongsTo(Municipio::class, 'idmunicipio');
+        return $this->belongsTo(Municipio::class, 'idmunicipio','idmunicipio');
     }
 
     public function estado()
     {
-        return $this->belongsTo(Estado::class, 'idestado');
+        return $this->belongsTo(Estado::class, 'idestado','idestado');
     }
 }

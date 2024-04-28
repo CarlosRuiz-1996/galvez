@@ -21,9 +21,9 @@ class Detail extends Model
         // otros campos permitidos en masa
     ];
 
-    public function product()
+    public function order()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Order::class);
     }
     public function detalles()
     {

@@ -137,9 +137,15 @@
 
                                 <td class="px-6 py-4">{{ $order->observations }}</td>
                                 <td class="text-center">
-                                    <button class="btn {{$order->status==1?'btn-blue':'btn-green'}} mr-2 p-2" wire:click='detail({{ $order->id }})'>
+                                    <button class="btn {{ $order->status == 1 ? 'btn-blue' : 'btn-green' }} mr-2 p-2"
+                                        wire:click='detail({{ $order->id }})'>
                                         <i class="fa fa-info-circle" aria-hidden="true"></i>
                                     </button>
+                                    @if ($order->status > 1)
+                                        <a class="btn btn-red mr-2 p-2" target="_blank" href="{{ route('pdf.order', $order->id) }}">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

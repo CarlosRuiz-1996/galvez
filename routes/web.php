@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CatalogsController;
+use App\Http\Controllers\ExportPDFController;
 use App\Http\Controllers\UserController;
 use App\Livewire\Almacen\GestionAlmacen;
 use App\Livewire\Almacen\GestionCarne;
@@ -86,6 +87,9 @@ Route::middleware([
 
     //compras
     Route::get('compras', Compras::class)->name('compras');
+
+    //EXPORT PDF'S
+    Route::get('export/pdf/order/{order}', [ExportPDFController::class, 'OrderPDF'])->name('pdf.order');
     
 });
 

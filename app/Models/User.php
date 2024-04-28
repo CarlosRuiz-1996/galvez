@@ -68,6 +68,8 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-
+    public function cp(){
+        return $this->belongsTo(Cp::class, 'cat_cp_id','idcp');
+    }
     
 }

@@ -75,7 +75,6 @@ class GestionCarne extends Component
                 }
             }
         } else {
-            dd('entra else fuera');
             $rules["form.total"] = 'required';
             $rules["form.gramaje_total"] = 'required';
         }
